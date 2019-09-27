@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "866131101456",
+    "firebase_url": "https://wafi-50a31.firebaseio.com",
+    "project_id": "wafi-50a31",
+    "storage_bucket": "wafi-50a31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866131101456:android:6383e607d1fdaaee08c795",
+        "android_client_info": {
+          "package_name": "com.example.wafi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "866131101456-4r9irtu8gmouq4up7r835ari6i67mhnq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV0Hgj19T2_lbzug8IHA8MmvroILK51o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "866131101456-4r9irtu8gmouq4up7r835ari6i67mhnq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
