@@ -47,10 +47,13 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  void _onSignedOut() {
+  void _onLoggedOut() {
     setState(() {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-      _userId = "";
+      Future<void> signedOutF = widget.auth.signOut();
+      signedOutF.then((aVoid) {
+        authStatus = AuthStatus.NOT_LOGGED_IN;
+        _userId = "";
+      });
     });
   }
 
@@ -77,7 +80,10 @@ class _RootPageState extends State<RootPage> {
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return MainMenuPage();
+          return MainMenuPage(
+            auth: widget.auth,
+            onLoggedOut: _onLoggedOut
+          );
         } else return _buildWaitingScreen();
         break;
       default:

@@ -99,6 +99,28 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     });
   }
 
+  // This must not reach prod.
+  FloatingActionButton _showFastFoodLoginButton() {
+    return new FloatingActionButton(
+        onPressed: _fastFoodLogin,
+        tooltip: 'Fast Food Login',
+        child: Icon(Icons.fastfood)
+    );
+  }
+
+  // This must not reach prod.
+  void _fastFoodLogin() {
+    print('PRESSED FAKE LOGIN !!!!');
+    Future<String> uidF = widget.auth.signIn('rnsoutob@gmail.com', '123457');
+    uidF.then((uid) {
+      if (uid == null) {
+        print('IN FAKE LOGIN, UID WAS NULL');
+        return;
+      }
+      widget.onSignedIn();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     _isIos = Theme.of(context).platform == TargetPlatform.iOS;
@@ -111,7 +133,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _showBody(),
             _showCircularProgress(),
           ],
-        ));
+        ),
+        floatingActionButton: _showFastFoodLoginButton()
+    );
   }
 
   Widget _showCircularProgress(){
