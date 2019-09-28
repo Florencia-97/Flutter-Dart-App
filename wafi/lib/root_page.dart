@@ -81,7 +81,6 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
           return MainMenuPage(
-            auth: widget.auth,
             onLoggedOut: _onLoggedOut
           );
         } else return _buildWaitingScreen();

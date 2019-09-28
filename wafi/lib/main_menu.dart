@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/extras/bar_app.dart';
 
-import 'login/authentification.dart';
-
-// !!!! Button
-class ButtomMenu extends StatelessWidget {
+class ButtonMenu extends StatelessWidget {
     final String text;
 
-    ButtomMenu(this.text);
+    ButtonMenu(this.text);
 
     @override
     Widget build(BuildContext context) {
@@ -25,9 +22,8 @@ class ButtomMenu extends StatelessWidget {
 }
 
 class MainMenuPage extends StatefulWidget {
-  MainMenuPage({this.auth, this.onLoggedOut});
+  MainMenuPage({this.onLoggedOut});
 
-  final BaseAuth auth;
   final VoidCallback onLoggedOut;
 
 
@@ -63,9 +59,9 @@ class _MainMenuPage extends State<MainMenuPage> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const SizedBox(height: 30),
-            ButtomMenu("Pedir algo"),
+            ButtonMenu("Pedir algo"),
           const SizedBox(height: 30),
-            ButtomMenu("Ser Capo"),
+            ButtonMenu("Ser Capo"),
         ],
       ),
     ),
