@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/login/login_signuo_page.dart';
+import 'package:wafi/main_menu.dart';
 
 class RootPage extends StatefulWidget {
   RootPage();
@@ -43,7 +44,6 @@ class _RootPageState extends State<RootPage> {
     });
     setState(() {
       authStatus = AuthStatus.LOGGED_IN;
-
     });
   }
 
@@ -77,7 +77,7 @@ class _RootPageState extends State<RootPage> {
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return null;
+          return MainMenuPage();
         } else return _buildWaitingScreen();
         break;
       default:

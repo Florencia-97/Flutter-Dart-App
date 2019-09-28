@@ -5,7 +5,6 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,7 +12,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: RootPage(),
+      home: Scaffold(
+        body: RootPage(),
+        ),
     );
   }
 }
