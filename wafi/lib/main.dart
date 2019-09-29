@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wafi/root_page.dart';
+import 'package:wafi/pages/root_page.dart';
 
 void main() => runApp(MyApp());
 

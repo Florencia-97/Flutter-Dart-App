@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/login/login_signuo_page.dart';
-import 'package:wafi/main_menu.dart';
+import 'package:wafi/pages/main_menu.dart';
 
 class RootPage extends StatefulWidget {
   RootPage();

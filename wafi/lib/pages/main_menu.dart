@@ -1,17 +1,19 @@
-import 'package:flutter/gestures.dart';
+// import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/extras/bar_app.dart';
 import 'package:wafi/login/authentification.dart';
+import 'package:wafi/pages/order_form_page.dart';
 
 class ButtonMenu extends StatelessWidget {
     final String text;
+    final Function onPressedButton;
 
-    ButtonMenu(this.text);
+    ButtonMenu(this.text, this.onPressedButton);
 
     @override
     Widget build(BuildContext context) {
         return RaisedButton(
-            onPressed: () {},
+            onPressed: () {onPressedButton();},
             child: Padding(
               padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 10.0, bottom: 10.0),
               child: Text(text,
@@ -74,9 +76,9 @@ class _MainMenuPage extends State<MainMenuPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const SizedBox(height: 30),
-              ButtonMenu("Pedir algo"),
+              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage()));}),
               const SizedBox(height: 30),
-              ButtonMenu("Ser Capo"),
+              ButtonMenu("Ser Capo", (){}),
             ],
           ),
         ),
