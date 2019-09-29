@@ -16,13 +16,14 @@ class _BarWafiState extends State<BarWafi>{
     @override
     Widget build(BuildContext context) {
         return AppBar(
-          title: Text("Wafi"),
+          title: Text("Wafi")/*,
+          // !!!!
           actions: <Widget>[
             Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: Icon(Icons.menu)
             )
-          ],
+          ],*/
         );
     }
 }
