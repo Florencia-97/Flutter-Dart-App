@@ -52,7 +52,7 @@ class _DrawerWafi extends State<DrawerWafi> {
               title: Text('Cerrar sesión'),
               onTap: () {
                 widget.onLoggedOut();
-                Navigator.pop(context);
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
             )
           ]
