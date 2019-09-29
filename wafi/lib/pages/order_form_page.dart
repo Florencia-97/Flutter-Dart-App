@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/login/authentification.dart';
+import 'package:wafi/extras/wafi_drawer.dart';
+import 'package:wafi/extras/bar_app.dart';
 
 class OrderPage extends StatefulWidget {
-  OrderPage();
+  OrderPage({this.auth, this.onLoggedOut});
 
+  final Auth auth;
+  final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
   @override
@@ -14,6 +19,7 @@ class _OrderPageState extends State<OrderPage> {
   final _formKey = GlobalKey<FormState>();
   final _typeOptions = ['Comedor', 'Fotocopiadora', 'Kiosco'];
 
+  String _userId;
   String _title;
   String _description;
   String _type;
@@ -22,13 +28,18 @@ class _OrderPageState extends State<OrderPage> {
   @override
   void initState() {
     super.initState();
+    widget.auth.getCurrentUser().then((user) {
+      setState(() {
+        _userId = user.uid;
+      });
+    });
   }
 
   void _onOrderSubmit() async {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      void response = await widget.db.addOrder(_title, _type, _description, int.parse(_classroom));
+      void response = await widget.db.addOrder(_userId, _title, _type, _description, int.parse(_classroom));
       Navigator.pop(context);/* TODO: Add message of success */
     }
   }
@@ -136,14 +147,16 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Crear Pedido'),
-        ),
+        appBar: BarWafi(),
         body: Stack(
           children: <Widget>[
             _showBody(),
           ],
         ),
+      endDrawer: DrawerWafi(
+          auth: widget.auth,
+          onLoggedOut: widget.onLoggedOut
+      ),
     );
   }
 }

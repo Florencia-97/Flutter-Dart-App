@@ -1,6 +1,7 @@
 // import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/extras/bar_app.dart';
+import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/pages/order_form_page.dart';
 
@@ -39,19 +40,6 @@ class MainMenuPage extends StatefulWidget {
 
 class _MainMenuPage extends State<MainMenuPage> {
 
-  String _userEmail = '';
-  int _wafiCredits = 0;
-
-
-  Text _buildDrawerHeader() {
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        _userEmail = user.email;
-      });
-    });
-    return Text('$_userEmail : \t\$ ${_wafiCredits.toString()}');
-  }
-
   // This must not reach prod.
   FloatingActionButton _showFastFoodSignedButton() {
     return new FloatingActionButton(
@@ -76,39 +64,18 @@ class _MainMenuPage extends State<MainMenuPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const SizedBox(height: 30),
-              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage()));}),
+              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
+                  auth: widget.auth,
+                  onLoggedOut: widget.onLoggedOut
+              )));}),
               const SizedBox(height: 30),
               ButtonMenu("Ser Capo", (){}),
             ],
           ),
         ),
-        endDrawer: Drawer(
-          child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  child: _buildDrawerHeader(),
-                  decoration: BoxDecoration(
-                      color: Colors.teal
-                  ),
-                ),
-                ListTile(
-                  title: Text('Gana 1 millón de wafi créditos'),
-                  onTap: () {
-                    setState(() {
-                      _wafiCredits += 1000000;
-                    });
-                  },
-                ),
-                ListTile(
-                  title: Text('Cerrar sesión'),
-                  onTap: () {
-                    widget.onLoggedOut();
-                    Navigator.pop(context);
-                  },
-                )
-              ]
-          ),
+        endDrawer: DrawerWafi(
+            auth: widget.auth,
+            onLoggedOut: widget.onLoggedOut
         ),
         floatingActionButton: _showFastFoodSignedButton()
     );

@@ -3,7 +3,7 @@ import 'dart:async';
 
 
 abstract class DataBaseController {
-  Future<void> addOrder(String title, String type, String description, int classroom);
+  Future<void> addOrder(String userId, String title, String type, String description, int classroom);
 
   /* TODO: Add getOrders, getOrderById, etc */
 }
@@ -11,8 +11,7 @@ abstract class DataBaseController {
 class FirebaseController implements DataBaseController {
   final DatabaseReference _databaseReference  = FirebaseDatabase.instance.reference();
 
-  /* TODO: Add index by userid */
-  Future<void> addOrder(String title, String type, String description, int classroom) {
+  Future<void> addOrder(String userId, String title, String type, String description, int classroom) {
     var order = {
       "titulo": title,
       "type": type,
@@ -21,6 +20,6 @@ class FirebaseController implements DataBaseController {
       "tomado": false
     };
 
-    return _databaseReference.child('pedidos').push().set(order);
+    return _databaseReference.child('pedidos').child(userId).push().set(order);
   }
 }
