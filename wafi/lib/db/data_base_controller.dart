@@ -5,6 +5,8 @@ import 'dart:async';
 abstract class DataBaseController {
   Future<void> addOrder(String userId, String title, String type, String description, int classroom);
 
+  DatabaseReference getReferenceById(String userId);
+
   /* TODO: Add getOrders, getOrderById, etc */
 }
 
@@ -21,5 +23,9 @@ class FirebaseController implements DataBaseController {
     };
 
     return _databaseReference.child('pedidos').child(userId).push().set(order);
+  }
+
+  DatabaseReference getReferenceById(String userId) {
+    return _databaseReference.child('pedidos').child(userId);
   }
 }

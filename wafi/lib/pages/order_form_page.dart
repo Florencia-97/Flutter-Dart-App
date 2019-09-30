@@ -39,7 +39,7 @@ class _OrderPageState extends State<OrderPage> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      void response = await widget.db.addOrder(_userId, _title, _type, _description, int.parse(_classroom));
+      widget.db.addOrder(_userId, _title, _type, _description, int.parse(_classroom));
       Navigator.pop(context);/* TODO: Add message of success */
     }
   }
