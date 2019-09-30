@@ -70,16 +70,16 @@ class _DrawerWafi extends State<DrawerWafi> {
               },
             ),
             ListTile(
+              title: Text('Mis Pedidos'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(_orders)));
+              },
+            ),
+            ListTile(
               title: Text('Cerrar sesión'),
               onTap: () {
                 widget.onLoggedOut();
                 Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-            ),
-            ListTile(
-              title: Text('Mis Pedidos'),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(_orders)));
               },
             ),
           ]
