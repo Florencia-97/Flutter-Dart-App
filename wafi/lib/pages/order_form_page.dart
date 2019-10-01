@@ -41,6 +41,7 @@ class _OrderPageState extends State<OrderPage> {
       form.save();
       widget.db.addOrder(
           _userId, _title, widget.type, _description, int.parse(_classroom));
+      Navigator.pop(context);
       Navigator.pop(context); /* TODO: Add message of success */
     }
   }
