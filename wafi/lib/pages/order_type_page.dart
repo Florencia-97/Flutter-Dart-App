@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
@@ -37,8 +39,9 @@ class _OrderTypePageState extends State<OrderTypePage> {
   }
 
   Widget _showTypeButton(String type) {
-    return Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+    return Container(
+        // color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20), //EdgeInsets.fromLTRB(20.0, 45.0, 0.0, 0.0),
         child: SizedBox(
           height: 60.0,
           child: RaisedButton(
@@ -56,7 +59,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
 
   Widget _showBody(){
     return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.fromLTRB(16, 80, 16, 0),
         child: Form(
           child: ListView(
             shrinkWrap: true,
