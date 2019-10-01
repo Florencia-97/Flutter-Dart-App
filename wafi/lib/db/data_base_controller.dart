@@ -8,6 +8,7 @@ abstract class DataBaseController {
   DatabaseReference getReferenceById(String userId);
 
   /* TODO: Add getOrders, getOrderById, etc */
+  Future<List<Classroom>> getClassrooms();
 }
 
 class FirebaseController implements DataBaseController {
@@ -22,10 +23,32 @@ class FirebaseController implements DataBaseController {
       "tomado": false
     };
 
-    return _databaseReference.child('pedidos').child(userId).push().set(order);
+    var x = _databaseReference.child('pedidos');
+    var y = x.child(userId);
+    var z = y.push();
+    print("$x $y $z");
+    var w = z.set(order);
+    return w;
   }
 
   DatabaseReference getReferenceById(String userId) {
     return _databaseReference.child('pedidos').child(userId);
   }
+
+  Future<List<Classroom>> getClassrooms() {
+    Future<DataSnapshot> x =_databaseReference.once();
+    return x.then((DataSnapshot snapshot) {
+      print('\n\nData : ${snapshot.value}\n\n');
+      //"classrooms".)
+      return [];
+    });
+  }
+}
+
+class Classroom {
+  final int classroomId;
+  final int floor;
+  final String code;
+
+  Classroom({this.classroomId, this.floor, this.code});
 }
