@@ -21,24 +21,32 @@ class AvailableOrdersPage extends StatefulWidget {
 
 class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
-  int _n;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _n = new Random().nextInt(100);
-    });
-  }
-
   List<Widget> _buildAvailableOrders() {
-    var x = new List<int>.generate(10, (i) => i + 1);
+    var x = new List<int>.generate(8, (i) => i + 1);
 
     var y = x.map((value) {
-      return ButtonMenu(value.toString(), () => null);
+      return ButtonOrder(value.toString(), () => null);
     }).toList();
 
     return y;
+  }
+
+  List<Widget> _buildDisplay() {
+    var title = Container(
+      margin: EdgeInsets.all(20),
+      child: Text(
+        "Elige qué pedido tomar:",
+        style: TextStyle(
+          fontSize: 20
+        ),
+      )
+    );
+    var availableOrders = _buildAvailableOrders();
+
+    List<Widget> finalList = [title];
+    finalList.addAll(availableOrders);
+
+    return finalList;
   }
 
   @override
@@ -47,10 +55,29 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
         appBar: BarWafi(),
         body: Center(
           child: Column(
-              children: _buildAvailableOrders(),
+              children: _buildDisplay(),
           )
         ),
       endDrawer: DrawerWafi(onLoggedOut: widget.onLoggedOut),
+    );
+  }
+}
+
+class ButtonOrder extends StatelessWidget {
+  final String text;
+  final Function onPressedButton;
+
+  ButtonOrder(this.text, this.onPressedButton);
+
+  @override
+  Widget build(BuildContext context) {
+    return ButtonTheme(
+      minWidth: 250.0,
+      child: RaisedButton(
+        color: Colors.white,
+        onPressed: onPressedButton,
+        child: Text(text),
+      ),
     );
   }
 }

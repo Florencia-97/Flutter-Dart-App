@@ -42,7 +42,7 @@ class MainMenuPage extends StatefulWidget {
 class _MainMenuPage extends State<MainMenuPage> {
 
   // This must not reach prod.
-  FloatingActionButton _showFastFoodLogOutButton() {
+  FloatingActionButton _showFastFoodSignInButton() {
     return new FloatingActionButton(
         onPressed: _fastFoodLoggedOut,
         tooltip: 'Fast Food LogOut',
@@ -80,7 +80,7 @@ class _MainMenuPage extends State<MainMenuPage> {
         endDrawer: DrawerWafi(
             onLoggedOut: widget.onLoggedOut
         ),
-        floatingActionButton: _showFastFoodLogOutButton()
+        floatingActionButton: _showFastFoodSignInButton()
     );
   }
 }
