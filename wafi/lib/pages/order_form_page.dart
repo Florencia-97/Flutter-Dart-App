@@ -5,9 +5,10 @@ import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/extras/bar_app.dart';
 
 class OrderPage extends StatefulWidget {
-  OrderPage({this.auth, this.onLoggedOut});
+  OrderPage({this.type, this.onLoggedOut});
 
-  final Auth auth;
+  final Auth auth = Auth();
+  final String type;
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
@@ -22,7 +23,6 @@ class _OrderPageState extends State<OrderPage> {
   String _userId;
   String _title;
   String _description;
-  String _type;
   String _classroom;
 
   @override
@@ -39,23 +39,39 @@ class _OrderPageState extends State<OrderPage> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      widget.db.addOrder(_userId, _title, _type, _description, int.parse(_classroom));
-      Navigator.pop(context);/* TODO: Add message of success */
+      widget.db.addOrder(
+          _userId, _title, widget.type, _description, int.parse(_classroom));
+      Navigator.pop(context);
+      Navigator.pop(context); /* TODO: Add message of success */
     }
   }
 
+  Widget _showOrderTitle() {
+    return Container(
+        margin: EdgeInsets.all(20),
+        child: Text(widget.type,
+          style: TextStyle(
+              fontSize: 20
+          ),
+        )
+    );
+  }
+
   /* TODO: Refactor, use same function for all inputs. Add validators */
-    Widget _showInputTitle() {
+  Widget _showInputTitle() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: TextFormField(
         maxLines: 1,
         autofocus: false,
         decoration: InputDecoration(
-            hintText: 'Titulo',
-            ),
+          hintText: 'Titulo',
+        ),
         onSaved: (value) => _title = value.trim(),
-        validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
+        validator: (value) =>
+        value.isEmpty
+            ? 'Titulo no puede estar vacio'
+            : null,
       ),
     );
   }
@@ -66,13 +82,14 @@ class _OrderPageState extends State<OrderPage> {
       child: TextFormField(
         autofocus: false,
         decoration: InputDecoration(
-            hintText: 'Descripción',
-            ),
+          hintText: 'Descripción',
+        ),
         onSaved: (value) => _description = value.trim(),
       ),
     );
   }
 
+  /*
   Widget _showInputType() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
@@ -93,6 +110,7 @@ class _OrderPageState extends State<OrderPage> {
       ),
     );
   }
+   */
 
   Widget _showInputClassroom() {
     return Padding(
@@ -102,31 +120,35 @@ class _OrderPageState extends State<OrderPage> {
         keyboardType: TextInputType.number,
         autofocus: false,
         decoration: InputDecoration(
-            hintText: 'Aula',
-            ),
+          hintText: 'Aula',
+        ),
         onSaved: (value) => _classroom = value.trim(),
-        validator: (value) => value.isEmpty ? 'Aula no puede estar vacio' : null,
+        validator: (value) =>
+        value.isEmpty
+            ? 'Aula no puede estar vacio'
+            : null,
       ),
     );
   }
 
-    Widget _showPrimaryButton() {
+  Widget _showPrimaryButton() {
     return Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
           height: 40.0,
           child: RaisedButton(
             elevation: 5.0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0)),
             color: Colors.teal,
             child: Text('Añadir pedido',
-                    style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                style: TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: _onOrderSubmit,
           ),
         ));
   }
 
-    Widget _showBody(){
+  Widget _showBody() {
     return Container(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -134,8 +156,9 @@ class _OrderPageState extends State<OrderPage> {
           child: ListView(
             shrinkWrap: true,
             children: <Widget>[
+              _showOrderTitle(),
               _showInputTitle(),
-              _showInputType(),
+              //_showInputType(),
               _showInputClassroom(),
               _showInputDescription(),
               _showPrimaryButton(),
@@ -147,12 +170,12 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: BarWafi(),
-        body: Stack(
-          children: <Widget>[
-            _showBody(),
-          ],
-        ),
+      appBar: BarWafi(),
+      body: Stack(
+        children: <Widget>[
+          _showBody(),
+        ],
+      ),
       endDrawer: DrawerWafi(
           onLoggedOut: widget.onLoggedOut
       ),

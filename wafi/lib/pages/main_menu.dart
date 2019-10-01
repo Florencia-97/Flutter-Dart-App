@@ -6,6 +6,8 @@ import 'package:wafi/login/authentification.dart';
 import 'package:wafi/pages/available_orders_page.dart';
 import 'package:wafi/pages/order_form_page.dart';
 
+import 'order_type_page.dart';
+
 class ButtonMenu extends StatelessWidget {
     final String text;
     final Function onPressedButton;
@@ -65,8 +67,7 @@ class _MainMenuPage extends State<MainMenuPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const SizedBox(height: 30),
-              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
-                  auth: widget.auth,
+              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderTypePage(
                   onLoggedOut: widget.onLoggedOut
               )));}),
               const SizedBox(height: 30),
