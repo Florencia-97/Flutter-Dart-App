@@ -21,7 +21,6 @@ class DrawerWafi extends StatefulWidget {
 class _DrawerWafi extends State<DrawerWafi> {
 
   String _userEmail = '';
-  int _wafiCredits = 0;
   List<OrderItem> _orders = new List();
   DatabaseReference _userRef;
 
@@ -35,7 +34,6 @@ class _DrawerWafi extends State<DrawerWafi> {
         _userRef.onChildAdded.listen(_onOrderAdded);
       });
     });
-    
   }
 
   _onOrderAdded(Event event) {
@@ -45,45 +43,40 @@ class _DrawerWafi extends State<DrawerWafi> {
   }
 
   Text _buildDrawerHeader() {
-    return Text('$_userEmail : \t\$ ${_wafiCredits.toString()}');
+    return Text(_userEmail);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: _buildDrawerHeader(),
-              decoration: BoxDecoration(
-                  color: Colors.teal
-              ),
-            ),
-            ListTile(
-              title: Text('Gana 1 millón de wafi créditos'),
-              onTap: () {
-                setState(() {
-                  /* TODO: Save in db */
-                  _wafiCredits += 1000000;
-                });
-              },
-            ),
-            ListTile(
-              title: Text('Mis Pedidos'),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(_orders)));
-              },
-            ),
-            ListTile(
-              title: Text('Cerrar sesión'),
-              onTap: () {
-                widget.onLoggedOut();
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-            ),
-          ]
-      ),
+    return SizedBox(
+        width: MediaQuery.of(context).size.width * 0.78,
+        child: Drawer(
+          child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: _buildDrawerHeader(),
+                  decoration: BoxDecoration(
+                      color: Colors.teal
+                  ),
+                ),
+                ListTile(
+                  title: Text('Mis Pedidos'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => OrderList(_orders)));
+                  },
+                ),
+                ListTile(
+                  title: Text('Cerrar sesión'),
+                  onTap: () {
+                    widget.onLoggedOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                ),
+              ]
+          ),
+        )
     );
   }
 }
