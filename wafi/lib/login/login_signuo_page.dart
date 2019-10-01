@@ -101,7 +101,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   // This must not reach prod.
-  FloatingActionButton _showFastFoodLoginButton() {
+  FloatingActionButton _showFastFoodLogInButton() {
     return new FloatingActionButton(
         onPressed: _fastFoodLogin,
         tooltip: 'Fast Food Login',
@@ -141,7 +141,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _showCircularProgress(),
           ],
         ),
-        floatingActionButton: _showFastFoodLoginButton()
+        floatingActionButton: _showFastFoodLogInButton()
     );
   }
 

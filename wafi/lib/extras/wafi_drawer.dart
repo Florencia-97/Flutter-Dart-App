@@ -6,9 +6,9 @@ import 'package:wafi/login/authentification.dart';
 import 'package:wafi/db/data_base_controller.dart';
 
 class DrawerWafi extends StatefulWidget {
-  DrawerWafi({this.auth, this.onLoggedOut});
+  DrawerWafi({this.onLoggedOut});
 
-  final Auth auth;
+  final Auth auth = Auth();
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 

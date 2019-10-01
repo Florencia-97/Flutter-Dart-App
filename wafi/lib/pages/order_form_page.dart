@@ -154,7 +154,6 @@ class _OrderPageState extends State<OrderPage> {
           ],
         ),
       endDrawer: DrawerWafi(
-          auth: widget.auth,
           onLoggedOut: widget.onLoggedOut
       ),
     );
