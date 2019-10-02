@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:wafi/pages/main_menu.dart';
+
 class OkScreen extends StatefulWidget {
     @override
     _OkScreenState createState() => _OkScreenState();
@@ -75,7 +77,7 @@ class _OkScreenState extends State<OkScreen> with SingleTickerProviderStateMixin
                 ),
               ),
               RaisedButton(
-                onPressed: () {Navigator.pop(context);},
+                onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuPage()));},
                 child: Container(
                   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 10.0, bottom: 10.0),
                   child: Text('Ir a mis pedidos',

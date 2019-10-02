@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
+import 'package:wafi/extras/ok_screen.dart';
 import 'package:wafi/extras/bar_app.dart';
 
 class OrderPage extends StatefulWidget {
@@ -41,8 +42,7 @@ class _OrderPageState extends State<OrderPage> {
       form.save();
       widget.db.addOrder(
           _userId, _title, widget.type, _description, int.parse(_classroom));
-      Navigator.pop(context);
-      Navigator.pop(context); /* TODO: Add message of success */
+      Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
   }
 
