@@ -19,11 +19,13 @@ class OrderPage extends StatefulWidget {
 
 class _OrderPageState extends State<OrderPage> {
   final _formKey = GlobalKey<FormState>();
-  final _typeOptions = ['Comedor', 'Fotocopiadora', 'Kiosco'];
+
+  List<Classroom> _classroomsOptions = [];
 
   String _userId;
   String _title;
   String _description;
+  String _floor;
   String _classroom;
 
   @override
@@ -32,6 +34,7 @@ class _OrderPageState extends State<OrderPage> {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         _userId = user.uid;
+        _loadClassrooms();
       });
     });
   }
@@ -85,6 +88,66 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Descripción',
         ),
         onSaved: (value) => _description = value.trim(),
+      ),
+    );
+  }
+
+  void _loadClassrooms() async {
+    List<Classroom> classrooms = await widget.db.getClassrooms();
+
+    setState(() {
+      _classroomsOptions = classrooms;
+    });
+  }
+
+  List<String> getFloors() {
+    return _classroomsOptions.map((c) => c.floor.toString()).toSet().toList();
+  }
+
+  Widget _showInputFloor() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      child: DropdownButtonFormField<String>(
+        value: _floor,
+        items: getFloors().map<DropdownMenuItem<String>>((String floor) {
+
+          return DropdownMenuItem<String>(
+            value: floor,
+            child: Text(floor),
+          );
+        }).toList(),
+        decoration: InputDecoration(
+          hintText: 'Piso',
+        ),
+        onSaved: (value) => _floor = value.trim(),
+        onChanged: (String newValue){ setState(() {_floor = newValue;});},
+        validator: (value) => value.isEmpty ? 'Piso no puede estar vacio' : null,
+      ),
+    );
+  }
+
+  List<Classroom> _getClassrooms() {
+    if (_floor == null) return [];
+    return _classroomsOptions.where((c) => c.floor == int.parse(_floor)).toList();
+  }
+
+  Widget _showInputClassrooms() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      child: DropdownButtonFormField<String>(
+        value: _classroom,
+        items: this._getClassrooms().map<DropdownMenuItem<String>>((Classroom classroom) {
+          return DropdownMenuItem<String>(
+            value: classroom.code,
+            child: Text(classroom.code),
+          );
+        }).toList(),
+        decoration: InputDecoration(
+          hintText: 'Aula',
+        ),
+        onSaved: (value) => _classroom = value.trim(),
+        onChanged: (String newValue){ setState(() {_classroom = newValue;});},
+        validator: (value) => value.isEmpty ? 'Aula no puede estar vacia' : null,
       ),
     );
   }
@@ -159,7 +222,9 @@ class _OrderPageState extends State<OrderPage> {
               _showOrderTitle(),
               _showInputTitle(),
               //_showInputType(),
-              _showInputClassroom(),
+              _showInputFloor(),
+              _showInputClassrooms(),
+              // _showInputClassroom(),
               _showInputDescription(),
               _showPrimaryButton(),
             ],

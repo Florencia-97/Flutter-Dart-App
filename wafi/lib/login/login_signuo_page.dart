@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/login/authentification.dart';
 
 class LoginSignUpPage extends StatefulWidget {
@@ -110,6 +111,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   // This must not reach prod.
   void _fastFoodLogin() {
+
     print('PRESSED FAKE LOGIN !!!!');
     Future<String> uidF = widget.auth.signIn('rnsoutob@gmail.com', '123457');
     uidF.then((uid) {
