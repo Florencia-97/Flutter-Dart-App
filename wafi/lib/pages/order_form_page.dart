@@ -71,10 +71,7 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Titulo',
         ),
         onSaved: (value) => _title = value.trim(),
-        validator: (value) =>
-        value.isEmpty
-            ? 'Titulo no puede estar vacio'
-            : null,
+        validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
       ),
     );
   }
@@ -100,7 +97,7 @@ class _OrderPageState extends State<OrderPage> {
     });
   }
 
-  List<String> getFloors() {
+  List<String> _getFloors() {
     return _classroomsOptions.map((c) => c.floor.toString()).toSet().toList();
   }
 
@@ -109,7 +106,7 @@ class _OrderPageState extends State<OrderPage> {
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _floor,
-        items: getFloors().map<DropdownMenuItem<String>>((String floor) {
+        items: _getFloors().map<DropdownMenuItem<String>>((String floor) {
 
           return DropdownMenuItem<String>(
             value: floor,
@@ -120,7 +117,7 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Piso',
         ),
         onSaved: (value) => _floor = value.trim(),
-        onChanged: (String newValue){ setState(() {_floor = newValue;});},
+        onChanged: (String newValue){ setState(() {_floor = newValue; _classroom = null; });},
         validator: (value) => value.isEmpty ? 'Piso no puede estar vacio' : null,
       ),
     );
@@ -146,7 +143,7 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Aula',
         ),
         onSaved: (value) => _classroom = value.trim(),
-        onChanged: (String newValue){ setState(() {_classroom = newValue;});},
+        onChanged: (String newValue){ setState(() { _classroom = newValue; });},
         validator: (value) => value.isEmpty ? 'Aula no puede estar vacia' : null,
       ),
     );
@@ -186,10 +183,7 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Aula',
         ),
         onSaved: (value) => _classroom = value.trim(),
-        validator: (value) =>
-        value.isEmpty
-            ? 'Aula no puede estar vacio'
-            : null,
+        validator: (value) => value.isEmpty ? 'Aula no puede estar vacio' : null,
       ),
     );
   }
