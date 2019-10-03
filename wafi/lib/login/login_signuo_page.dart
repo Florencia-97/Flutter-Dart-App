@@ -111,11 +111,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   // This must not reach prod.
   void _fastFoodLogin() {
-    // !!!!
-    Future<List<Classroom>> classroomsF = FirebaseController().getClassrooms();
-    classroomsF.then((classrooms) {
-      print("\n\n\n $classrooms \n\n\n");
-    });
 
     print('PRESSED FAKE LOGIN !!!!');
     Future<String> uidF = widget.auth.signIn('rnsoutob@gmail.com', '123457');
