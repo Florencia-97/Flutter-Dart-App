@@ -90,7 +90,7 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   void _loadClassrooms() async {
-    List<Classroom> classrooms = await widget.db.getClassrooms();
+    List<Classroom> classrooms = await widget.db.getClassroomsSnapshot();
 
     setState(() {
       _classroomsOptions = classrooms;

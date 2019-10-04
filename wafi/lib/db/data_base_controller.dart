@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
 
+import 'package:wafi/extras/order_item.dart';
+
 abstract class DataBaseController {
   Future<void> addOrder(String userId, String title, String type, String description, int classroom);
 
@@ -8,7 +10,9 @@ abstract class DataBaseController {
 
   /* TODO: Add getOrders, getOrderById, etc */
 
-  Future<List<Classroom>> getClassrooms();
+  Future<List<Classroom>> getClassroomsSnapshot();
+
+  Stream<List<OrderItem>> getClassroomsStream();
 }
 
 class FirebaseController implements DataBaseController {
@@ -30,7 +34,7 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child("pedidos").child(userId);
   }
 
-  Future<List<Classroom>> getClassrooms() async {
+  Future<List<Classroom>> getClassroomsSnapshot() async {
     DataSnapshot snapshot = await _databaseReference.child("classrooms").once();
 
     Map<String, dynamic> classroomsDynamic = Map<String, dynamic>.from(snapshot.value);
@@ -44,22 +48,43 @@ class FirebaseController implements DataBaseController {
 
     return classrooms;
   }
+
+   Stream<List<OrderItem>> getClassroomsStream() {
+    return _databaseReference.child("pedidos").onValue.map((event) {
+      Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
+      print("map ${ordersDynamic}");
+
+      List<OrderItem> orders = [];
+
+      for (var ordersOfSingleUser in ordersDynamic.values) {
+        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser);
+
+
+        for (var orderDynamic in ordersOfSingleUserDynamic.values) {
+          var classroomMap = Map<String, dynamic>.from(orderDynamic);
+          orders.add(OrderItem.fromMap(classroomMap));
+        }
+      }
+
+      return orders;
+    });
+  }
 }
 
 class Classroom {
-  final String classroomId;
+  final String id;
   final int floor;
   final String code;
 
-  Classroom({this.classroomId, this.floor, this.code});
+  Classroom({this.id, this.floor, this.code});
 
   Classroom.fromSnapshot(DataSnapshot snapshot)
-      : classroomId = snapshot.key,
+      : id = snapshot.key,
         floor = snapshot.value['floor'],
         code = snapshot.value['code'];
 
   Classroom.fromMap(dynamic obj)
-      : classroomId = obj['code'].toString(),
+      : id = obj['code'].toString(),
         floor = obj['floor'],
         code = obj['code'].toString();
 }

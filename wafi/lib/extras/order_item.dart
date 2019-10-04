@@ -15,6 +15,16 @@ class OrderItem extends StatelessWidget {
         description = snapshot.value['descripcion'],
         classroom = snapshot.value['aula'];
 
+    OrderItem.fromMap(dynamic obj)
+        : title = obj['titulo'],
+            type = obj['type'],
+            description = obj['descripcion'],
+            classroom = obj['aula'];
+
+    @override
+    String toString({ DiagnosticLevel minLevel = DiagnosticLevel.debug }) {
+        return "OrderItem(title: $title)";
+    }
 
     @override
     Widget build(BuildContext context) {
