@@ -57,8 +57,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
             return finalList[i];
           },
           separatorBuilder: (BuildContext context,
-              int index) => const Divider(),
-
+              int index) => const SizedBox.shrink(),
         )
     );
 
@@ -95,7 +94,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
           },
         ),
         /*Center(
-          child: Column(
+          child: Column(s
               children: _buildDisplay(),
           )
         ),*/
