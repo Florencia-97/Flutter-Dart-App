@@ -111,15 +111,20 @@ class _OrderPageState extends State<OrderPage> {
             actions: <Widget>[
                Align(
                  alignment: Alignment.bottomLeft,
-                 child: RaisedButton(
-                    elevation: 5.0,
-                    shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(05.0)),
-                  color: Colors.teal,
-                  child: Text('Crear pedido',
-                    style: TextStyle(fontSize: 18.0, color: Colors.white)),
-                  onPressed: _onOrderSubmit,
+                 child: Row(
+                   children: <Widget>[
+                      FlatButton(
+                        child: Text('CANCELAR',
+                          style: TextStyle(fontSize: 16.0, color: Colors.black38)),
+                        onPressed: () => Navigator.pop(context),
+                    ),
+                      FlatButton(
+                        child: Text('CREAR',
+                          style: TextStyle(fontSize: 16.0, color: Colors.black)),
+                        onPressed: _onOrderSubmit,
                   ),
+                  ],
+                 )
               )
             ],
           );
