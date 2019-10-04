@@ -51,7 +51,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
             child: Text(type,
                 style: TextStyle(fontSize: 20.0, color: Colors.blueGrey)),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
-              type: type,
+              orderSource: type,
               onLoggedOut: widget.onLoggedOut))),
           ),
         ));

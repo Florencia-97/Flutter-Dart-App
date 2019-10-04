@@ -23,18 +23,18 @@ class AvailableOrdersPage extends StatefulWidget {
 
 class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
-  Widget _buildAvailableOrder(OrderItem order) {
+  Widget _buildAvailableOrder(RequestedOrder order) {
 
-    final text = "${order.type} => ${order.classroom}";
+    final text = "${order.source} => ${order.classroom}";
     return ButtonOrder(text, () => null);
   }
 
-  List<Widget> _buildAvailableOrders(List<OrderItem> orders) {
+  List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {
 
     return orders.map(_buildAvailableOrder).toList();
   }
 
-  Widget _buildDisplay(List<OrderItem> orders) {
+  Widget _buildDisplay(List<RequestedOrder> orders) {
     var title = Container(
         margin: EdgeInsets.all(20),
         child: Text(
@@ -68,7 +68,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     );
   }
 
-  Stream<List<OrderItem>> _ordersFromAllUsers() {
+  Stream<List<RequestedOrder>> _ordersFromAllUsers() {
 
   }
 
@@ -77,7 +77,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     return Scaffold(
         appBar: BarWafi(),
         body: StreamBuilder(
-          stream: widget.db.getClassroomsStream(),
+          stream: widget.db.getRequestedOrdersStream(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text("No data yet");

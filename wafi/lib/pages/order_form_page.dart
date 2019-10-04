@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/login/authentification.dart';
@@ -6,10 +8,10 @@ import 'package:wafi/extras/ok_screen.dart';
 import 'package:wafi/extras/bar_app.dart';
 
 class OrderPage extends StatefulWidget {
-  OrderPage({this.type, this.onLoggedOut});
+  OrderPage({this.orderSource, this.onLoggedOut});
 
   final Auth auth = Auth();
-  final String type;
+  final String orderSource;
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
@@ -43,8 +45,15 @@ class _OrderPageState extends State<OrderPage> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      widget.db.addOrder(
-          _userId, _title, widget.type, _description, int.parse(_classroom));
+
+      // due to bug
+      if (_title == null) {
+        final fakeTitle = "default ${Random().nextInt(2000)}";
+        widget.db.addRequestedOrder(_userId, fakeTitle, widget.orderSource, _floor, _description, int.parse(_classroom));
+      } else {
+        widget.db.addRequestedOrder(_userId, _title, widget.orderSource, _floor, _description, int.parse(_classroom));
+      }
+
       Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
   }
@@ -52,7 +61,7 @@ class _OrderPageState extends State<OrderPage> {
   Widget _showOrderTitle() {
     return Container(
         margin: EdgeInsets.all(20),
-        child: Text(widget.type,
+        child: Text(widget.orderSource,
           style: TextStyle(
               fontSize: 20
           ),
@@ -70,8 +79,9 @@ class _OrderPageState extends State<OrderPage> {
         decoration: InputDecoration(
           hintText: 'Titulo',
         ),
-        onSaved: (value) => _title = value.trim(),
-        validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
+        onSaved: (value) =>  setState ( () => _title = value.trim() ),
+        // validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
+        validator: (x) => null,
       ),
     );
   }
@@ -101,35 +111,68 @@ class _OrderPageState extends State<OrderPage> {
     return _classroomsOptions.map((c) => c.floor.toString()).toSet().toList();
   }
 
-    void _showDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Seguro?"),
-            content: new Text("De aceptar se creará un pedido a tu nombre"),
-            actions: <Widget>[
-               Align(
-                 alignment: Alignment.bottomLeft,
-                 child: Row(
-                   children: <Widget>[
-                      FlatButton(
-                        child: Text('CANCELAR',
-                          style: TextStyle(fontSize: 16.0, color: Colors.black38)),
-                        onPressed: () => Navigator.pop(context),
-                    ),
-                      FlatButton(
-                        child: Text('CREAR',
-                          style: TextStyle(fontSize: 16.0, color: Colors.black)),
-                        onPressed: _onOrderSubmit,
+  void _showDialog() {
+
+
+    // Only enters here because of a bug
+    if (_title == null || _classroom == null || _floor == null) {
+      if (false) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Bug"),
+                content: new Text(
+                    "No me toma (soy todri) el title y queda en null\n$_title $_classroom $_floor $_description"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('CANCELAR',
+                        style: TextStyle(
+                            fontSize: 16.0, color: Colors.black38)),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                ],
+              );
+            }
+        );
+        return;
+      }
+    }
+
+    if (_title == null) {
+      _title = "default ${Random().nextInt(2000)}";
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Seguro?"),
+          content: new Text("De aceptar se creará un pedido a tu nombre"),
+          actions: <Widget>[
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Row(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text('CANCELAR',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black38)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('CREAR',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black)),
+                      onPressed: _onOrderSubmit,
+                    ),
                   ],
-                 )
-              )
-            ],
-          );
-        },
-      );
+                )
+            )
+          ],
+        );
+      },
+    );
   }
 
   Widget _showInputFloor() {
@@ -138,7 +181,6 @@ class _OrderPageState extends State<OrderPage> {
       child: DropdownButtonFormField<String>(
         value: _floor,
         items: _getFloors().map<DropdownMenuItem<String>>((String floor) {
-
           return DropdownMenuItem<String>(
             value: floor,
             child: Text(floor),
@@ -148,15 +190,24 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Piso',
         ),
         onSaved: (value) => _floor = value.trim(),
-        onChanged: (String newValue){ setState(() {_floor = newValue; _classroom = null; });},
-        validator: (value) => value.isEmpty ? 'Piso no puede estar vacio' : null,
+        onChanged: (String newValue) {
+          setState(() {
+            _floor = newValue;
+            _classroom = null;
+          });
+        },
+        validator: (value) =>
+        value.isEmpty
+            ? 'Piso no puede estar vacio'
+            : null,
       ),
     );
   }
 
   List<Classroom> _getClassrooms() {
     if (_floor == null) return [];
-    return _classroomsOptions.where((c) => c.floor == int.parse(_floor)).toList();
+    return _classroomsOptions.where((c) => c.floor == int.parse(_floor))
+        .toList();
   }
 
   Widget _showInputClassrooms() {
@@ -164,7 +215,8 @@ class _OrderPageState extends State<OrderPage> {
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _classroom,
-        items: this._getClassrooms().map<DropdownMenuItem<String>>((Classroom classroom) {
+        items: this._getClassrooms().map<DropdownMenuItem<String>>((
+            Classroom classroom) {
           return DropdownMenuItem<String>(
             value: classroom.code,
             child: Text(classroom.code),
@@ -174,8 +226,13 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Aula',
         ),
         onSaved: (value) => _classroom = value.trim(),
-        onChanged: (String newValue){ setState(() { _classroom = newValue; });},
-        validator: (value) => value.isEmpty ? 'Aula no puede estar vacia' : null,
+        onChanged: (String newValue) {
+          setState(() {
+            _classroom = newValue;
+          });
+        },
+        validator: (value) =>
+        value.isEmpty ? 'Aula no puede estar vacia' : null,
       ),
     );
   }
@@ -214,7 +271,8 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Aula',
         ),
         onSaved: (value) => _classroom = value.trim(),
-        validator: (value) => value.isEmpty ? 'Aula no puede estar vacio' : null,
+        validator: (value) =>
+        value.isEmpty ? 'Aula no puede estar vacia' : null,
       ),
     );
   }

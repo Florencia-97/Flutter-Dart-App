@@ -4,7 +4,7 @@ import 'package:wafi/extras/order_item.dart';
 class OrderList extends StatefulWidget {
   OrderList(this._orders);
 
-  final List<OrderItem> _orders;
+  final List<RequestedOrder> _orders;
 
   @override
   State createState() => _OrderList();

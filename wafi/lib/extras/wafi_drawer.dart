@@ -21,7 +21,7 @@ class DrawerWafi extends StatefulWidget {
 class _DrawerWafi extends State<DrawerWafi> {
 
   String _userEmail = '';
-  List<OrderItem> _orders = new List();
+  List<RequestedOrder> _orders = new List();
   DatabaseReference _userRef;
 
   @override
@@ -38,7 +38,7 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   _onOrderAdded(Event event) {
     setState(() {
-      _orders.add(OrderItem.fromSnapshot(event.snapshot));
+      _orders.add(RequestedOrder.fromSnapshot(event.snapshot));
     });
   }
 
