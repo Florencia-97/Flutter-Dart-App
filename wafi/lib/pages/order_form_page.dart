@@ -101,8 +101,34 @@ class _OrderPageState extends State<OrderPage> {
     return _classroomsOptions.map((c) => c.floor.toString()).toSet().toList();
   }
 
+    void _showDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Seguro?"),
+            content: new Text("De aceptar se creará un pedido a tu nombre"),
+            actions: <Widget>[
+               Align(
+                 alignment: Alignment.bottomLeft,
+                 child: RaisedButton(
+                    elevation: 5.0,
+                    shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(05.0)),
+                  color: Colors.teal,
+                  child: Text('Crear pedido',
+                    style: TextStyle(fontSize: 18.0, color: Colors.white)),
+                  onPressed: _onOrderSubmit,
+                  ),
+              )
+            ],
+          );
+        },
+      );
+  }
+
   Widget _showInputFloor() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _floor,
@@ -129,7 +155,7 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   Widget _showInputClassrooms() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _classroom,
@@ -189,7 +215,7 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   Widget _showPrimaryButton() {
-    return Padding(
+    return Container(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
           height: 40.0,
@@ -200,7 +226,7 @@ class _OrderPageState extends State<OrderPage> {
             color: Colors.teal,
             child: Text('Añadir pedido',
                 style: TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: _onOrderSubmit,
+            onPressed: _showDialog,
           ),
         ));
   }
