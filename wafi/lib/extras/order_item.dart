@@ -40,6 +40,8 @@ class RequestedOrder extends StatelessWidget {
         return "OrderItem(title: $title)";
     }
 
+    // !!!! replaced
+    /*
     @override
     Widget build(BuildContext context) {
         return ListTile(
@@ -48,6 +50,32 @@ class RequestedOrder extends StatelessWidget {
             leading: source == 'Fotocopiadora' ? Icon(Icons.print) : Icon(
                 Icons.fastfood),
             onTap: () {}
+        );
+    }
+     */
+
+    @override
+    Widget build(BuildContext context) {
+        return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+                Flexible(
+                    child: ListTile(
+                        title: new Text(title),
+                        subtitle: new Text(source),
+                        leading: source == 'Fotocopiadora' ? Icon(Icons.print) : Icon(Icons.fastfood),
+                        onTap: () {}
+                    )
+                ),
+                Container(
+                    child: IconButton(
+                      icon: Icon(Icons.cancel,
+                          color: Colors.blueGrey,
+                      ),
+                      onPressed: () => null, // !!!!
+                    ),
+                ),
+            ]
         );
     }
 }
