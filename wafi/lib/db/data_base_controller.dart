@@ -10,6 +10,8 @@ abstract class DataBaseController {
 
   DatabaseReference getReferenceById(String userId);
 
+  Stream<List<RequestedOrder>> getRequestedOrdersById(String userId);
+
   /* TODO: getOrderById, etc */
 
   Future<List<Classroom>> getClassroomsSnapshot();
@@ -48,6 +50,25 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child(ORDER_COLLECTION).child(userId);
   }
 
+  Stream<List<RequestedOrder>> getRequestedOrdersById(String userId) {
+    Stream<Event> eventS = _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Requested).onValue;
+
+    return eventS.map((event) {
+      Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
+      print("getRequestedOrdersById: $ordersDynamic");
+
+      List<RequestedOrder> orders = [];
+
+      for (var orderDynamic in ordersDynamic.values) {
+        var orderMap = Map<String, dynamic>.from(orderDynamic);
+        print("getRequestedOrdersById ${orderMap}");
+        orders.add(RequestedOrder.fromMap(orderMap));
+      }
+
+      return orders;
+    });
+  }
+
   Future<List<Classroom>> getClassroomsSnapshot() async {
     DataSnapshot snapshot = await _databaseReference.child(CLASSROOM_COLLECTION).once();
 
@@ -74,8 +95,8 @@ class FirebaseController implements DataBaseController {
 
 
         for (var orderDynamic in ordersOfSingleUserDynamic.values) {
-          var classroomMap = Map<String, dynamic>.from(orderDynamic);
-          orders.add(RequestedOrder.fromMap(classroomMap));
+          var orderMap = Map<String, dynamic>.from(orderDynamic);
+          orders.add(RequestedOrder.fromMap(orderMap));
         }
       }
 

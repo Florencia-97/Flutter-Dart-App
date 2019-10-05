@@ -26,7 +26,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
   Widget _buildAvailableOrder(RequestedOrder order) {
 
     final text = "${order.source} => ${order.classroom}";
-    return ButtonOrder(text, () => null);
+    return ButtonOrder (text, () => null);
   }
 
   List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {
@@ -48,6 +48,11 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
     List<Widget> finalList = [title];
     finalList.addAll(availableOrders);
+
+    // The title was above the first request.
+    finalList = availableOrders;
+
+    print("\n\n\n ${finalList.length}");
 
     return Center(
         child: ListView.separated(

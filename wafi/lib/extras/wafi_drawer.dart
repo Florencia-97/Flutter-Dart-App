@@ -30,8 +30,14 @@ class _DrawerWafi extends State<DrawerWafi> {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         _userEmail = user.email;
-        _userRef = widget.db.getReferenceById(user.uid);
-        _userRef.onChildAdded.listen(_onOrderAdded);
+        // _userRef = widget.db.getReferenceById(user.uid);
+        // _userRef.onChildAdded.listen(_onOrderAdded);
+
+        widget.db.getRequestedOrdersById(user.uid).listen((List<RequestedOrder> data) {
+          setState(() {
+            _orders = data;
+          });
+        });
       });
     });
   }
