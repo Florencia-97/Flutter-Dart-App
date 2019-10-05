@@ -59,10 +59,11 @@ class FirebaseController implements DataBaseController {
 
       List<RequestedOrder> orders = [];
 
-      for (var orderDynamic in ordersDynamic.values) {
+      for (var orderId in ordersDynamic.keys) {
+        var orderDynamic = ordersDynamic[orderId];
         var orderMap = Map<String, dynamic>.from(orderDynamic);
         print("getRequestedOrdersById ${orderMap}");
-        orders.add(RequestedOrder.fromMap(orderMap));
+        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
       }
 
       return orders;
@@ -88,15 +89,18 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
       print("map: $ordersDynamic");
+
       List<RequestedOrder> orders = [];
 
-      for (var ordersOfSingleUser in ordersDynamic.values) {
+      for (var userId in ordersDynamic.keys) {
+        var ordersOfSingleUser = ordersDynamic[userId];
         Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatus.Requested]);
 
 
-        for (var orderDynamic in ordersOfSingleUserDynamic.values) {
+        for (var orderId in ordersOfSingleUserDynamic.keys) {
+          var orderDynamic = ordersOfSingleUserDynamic[orderId];
           var orderMap = Map<String, dynamic>.from(orderDynamic);
-          orders.add(RequestedOrder.fromMap(orderMap));
+          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
         }
       }
 

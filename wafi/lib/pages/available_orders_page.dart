@@ -26,7 +26,9 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
   Widget _buildAvailableOrder(RequestedOrder order) {
 
     final text = "${order.source} => ${order.classroom}";
-    return ButtonOrder (text, () => null);
+    return ButtonOrder (text, () => {
+
+    });
   }
 
   List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {

@@ -44,7 +44,7 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   _onOrderAdded(Event event) {
     setState(() {
-      _orders.add(RequestedOrder.fromSnapshot(event.snapshot));
+      // _orders.add(RequestedOrder.fromSnapshot(event.snapshot));
     });
   }
 
