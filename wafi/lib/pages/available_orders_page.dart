@@ -38,9 +38,12 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
         .map(_buildAvailableOrder).toList();
   }
 
-  Widget _buildDisplay(List<RequestedOrder> orders) {
+  Widget _doBuildDisplay(String userId, List<RequestedOrder> orders) {
 
-    var requestedOrders = orders.where((order) => order.status == OrderStatus.Requested).toList();
+    var requestedOrders = orders
+        .where((order) => order.status == OrderStatus.Requested)
+        .where((order) => order.requestUserId != userId)
+        .toList();
 
     var title = Container(
         margin: EdgeInsets.all(20),
@@ -81,8 +84,16 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     );
   }
 
-  Stream<List<RequestedOrder>> _ordersFromAllUsers() {
+  Widget _buildDisplay(List<RequestedOrder> orders) {
 
+    Future<String> userIdF = widget.auth.getCurrentUser().then((user) => user.uid);
+
+    return FutureBuilder(
+        future: userIdF,
+        builder: (context, snapshot) {
+          return _doBuildDisplay(snapshot.data, orders);
+        }
+    );
   }
 
   @override
@@ -93,15 +104,14 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
           stream: widget.db.getRequestedOrdersStream(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("No data yet");
+              return Text("No data yet !!!!");
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return Text("Done");
+              return Text("Done !!!!");
             } else if (snapshot.hasError) {
-              return Text("Error");
+              return Text("Error !!!!");
             } else {
-              var x = snapshot.data;
-              print(x);
-              return _buildDisplay(x);
+              var orders = snapshot.data;
+              return _buildDisplay(orders);
               // return Text("snaphot: ${x.title} + ${x.classroom} + ${x.type}");
             }
           },
