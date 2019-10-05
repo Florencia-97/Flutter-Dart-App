@@ -70,6 +70,7 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   @override
   Widget build(BuildContext context) {
+    int amountOrders = _orders.length;
     return SizedBox(
         width: MediaQuery.of(context).size.width * 0.78,
         child: Drawer(
@@ -83,6 +84,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                   ),
                 ),
                 ListTile(
+                  leading: Text(amountOrders.toString()),
                   title: Text('Mis Pedidos'),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(
