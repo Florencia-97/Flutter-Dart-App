@@ -48,12 +48,29 @@ class _DrawerWafi extends State<DrawerWafi> {
     });
   }
 
-  Text _buildDrawerHeader() {
-    return Text(_userEmail);
+  Column _buildDrawerHeader() {
+    return Column(
+      children: <Widget>[
+        CircleAvatar(
+          radius: 50.0,
+          backgroundColor: Colors.red[200],
+          child: Text(_userEmail.substring(0,1).toUpperCase(),
+            style: TextStyle(fontSize: 40.0, color: Colors.white)
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+          child: Text(_userEmail,
+            style: TextStyle(fontSize: 16.0, color: Colors.white)
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    int amountOrders = _orders.length;
     return SizedBox(
         width: MediaQuery.of(context).size.width * 0.78,
         child: Drawer(
@@ -67,6 +84,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                   ),
                 ),
                 ListTile(
+                  leading: Text(amountOrders.toString()),
                   title: Text('Mis Pedidos'),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(

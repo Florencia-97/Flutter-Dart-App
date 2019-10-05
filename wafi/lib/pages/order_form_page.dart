@@ -58,21 +58,45 @@ class _OrderPageState extends State<OrderPage> {
     }
   }
 
+  IconData _iconTitle(String titleName){
+    switch (titleName){
+      case 'FOTOCOPIADORA':
+        return Icons.local_printshop;
+      case 'COMEDOR':
+        return Icons.fastfood;
+      case 'KIOSCO':
+        return Icons.fastfood;
+      default:
+        return Icons.local_drink;
+    }
+  }
+
   Widget _showOrderTitle() {
+    String _titleName = widget.orderSource.toUpperCase();
     return Container(
         margin: EdgeInsets.all(20),
-        child: Text(widget.orderSource,
-          style: TextStyle(
-              fontSize: 20
-          ),
-        )
+        color: Colors.grey[200],
+        child: Row(
+          children: <Widget>[
+            Container( 
+              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
+              child:Icon(_iconTitle(_titleName)),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(30.0, 10.0, 0.0, 10.0),
+              child: Text(_titleName,
+                style: TextStyle( fontSize: 18,)
+              ),
+            ),
+          ],
+        ),
     );
   }
 
   /* TODO: Refactor, use same function for all inputs. Add validators */
   Widget _showInputTitle() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(25.0, 30.0, 25.0, 0.0),
       child: TextFormField(
         maxLines: 1,
         autofocus: false,
@@ -87,8 +111,8 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   Widget _showInputDescription() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
       child: TextFormField(
         autofocus: false,
         decoration: InputDecoration(
@@ -112,7 +136,6 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   void _showDialog() {
-
 
     // Only enters here because of a bug
     if (_title == null || _classroom == null || _floor == null) {
@@ -177,7 +200,7 @@ class _OrderPageState extends State<OrderPage> {
 
   Widget _showInputFloor() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _floor,
         items: _getFloors().map<DropdownMenuItem<String>>((String floor) {
@@ -212,7 +235,7 @@ class _OrderPageState extends State<OrderPage> {
 
   Widget _showInputClassrooms() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _classroom,
         items: this._getClassrooms().map<DropdownMenuItem<String>>((
@@ -237,49 +260,9 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  /*
-  Widget _showInputType() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-      child: DropdownButtonFormField<String>(
-        value: _type,
-        items: this._typeOptions.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-            hintText: 'Tipo de pedido',
-            ),
-        onSaved: (value) => _type = value.trim(),
-        onChanged: (String newValue){ setState(() {_type = newValue;});},
-        validator: (value) => value.isEmpty ? 'Tipo no puede estar vacio' : null,
-      ),
-    );
-  }
-   */
-
-  Widget _showInputClassroom() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-      child: TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.number,
-        autofocus: false,
-        decoration: InputDecoration(
-          hintText: 'Aula',
-        ),
-        onSaved: (value) => _classroom = value.trim(),
-        validator: (value) =>
-        value.isEmpty ? 'Aula no puede estar vacia' : null,
-      ),
-    );
-  }
-
   Widget _showPrimaryButton() {
     return Container(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(25.0, 45.0, 25.0, 0.0),
         child: SizedBox(
           height: 40.0,
           child: RaisedButton(
@@ -296,7 +279,7 @@ class _OrderPageState extends State<OrderPage> {
 
   Widget _showBody() {
     return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 16.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -304,10 +287,8 @@ class _OrderPageState extends State<OrderPage> {
             children: <Widget>[
               _showOrderTitle(),
               _showInputTitle(),
-              //_showInputType(),
               _showInputFloor(),
               _showInputClassrooms(),
-              // _showInputClassroom(),
               _showInputDescription(),
               _showPrimaryButton(),
             ],
