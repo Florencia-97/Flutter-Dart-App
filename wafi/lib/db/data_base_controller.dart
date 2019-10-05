@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:async';
 
 import 'package:wafi/extras/order_item.dart';
@@ -53,12 +54,12 @@ class FirebaseController implements DataBaseController {
 
     var order = {
       "requestedOrderId": requestedOrder.id,
-      "requestedUserId": requestedOrder.requestUserId,
+      "requestedUserId": requestedOrder.requesterUserId,
       "status": OrderStatus.Taken
     };
 
     // !!!! transactional
-    _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requestUserId)
+    _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
         .child(OrderStatus.Requested).child(requestedOrder.id)
         .update({"status": OrderStatus.Taken});
     return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Taken).push().set(order);
@@ -81,7 +82,7 @@ class FirebaseController implements DataBaseController {
         var orderDynamic = ordersDynamic[orderId];
         var orderMap = Map<String, dynamic>.from(orderDynamic);
         print("getRequestedOrdersById ${orderMap}");
-        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap, _cancelRequestedOrder(orderId, userId)));
       }
 
       return orders;
@@ -118,12 +119,20 @@ class FirebaseController implements DataBaseController {
         for (var orderId in ordersOfSingleUserDynamic.keys) {
           var orderDynamic = ordersOfSingleUserDynamic[orderId];
           var orderMap = Map<String, dynamic>.from(orderDynamic);
-          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap, _cancelRequestedOrder(orderId, userId)));
         }
       }
 
       return orders;
     });
+  }
+
+  VoidCallback _cancelRequestedOrder(String requestedOrderId, String userId) {
+    return () {
+      return _databaseReference.child(ORDER_COLLECTION).child(userId)
+          .child(OrderStatus.Requested).child(requestedOrderId)
+          .update({"status": OrderStatus.Cancelled});
+    };
   }
 }
 

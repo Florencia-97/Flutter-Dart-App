@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 class RequestedOrder extends StatelessWidget {
 
     final String id;
-    final String requestUserId;
+    final String requesterUserId;
     final String title;
     final String source;
     final String floor;
     final int classroom;
     final String description;
     final String status;
+    final VoidCallback onCancelled;
 
+    /*
     RequestedOrder(this.id, this.requestUserId, this.title, this.source, this.floor, this.classroom,
         this.description, this.status);
+     */
 
     /*
     RequestedOrder.fromSnapshot(String id, String requestUserId, DataSnapshot snapshot)
@@ -24,15 +27,16 @@ class RequestedOrder extends StatelessWidget {
             description = snapshot.value['description'];
 */
 
-    RequestedOrder.fromMap(String id, String requestUserId, dynamic obj):
+    RequestedOrder.fromMap(String id, String requestUserId, dynamic obj, Function _cancelRequestedOrder):
         this.id = id,
-        this.requestUserId = requestUserId,
+        this.requesterUserId = requestUserId,
         title = obj['title'],
         source = obj['source'],
         floor = obj['floor'],
         classroom = obj['classroom'],
         description = obj['description'],
-        status = obj['status'];
+        status = obj['status'],
+        onCancelled = _cancelRequestedOrder;
 
 
     @override
@@ -72,7 +76,7 @@ class RequestedOrder extends StatelessWidget {
                       icon: Icon(Icons.cancel,
                           color: Colors.blueGrey,
                       ),
-                      onPressed: () => null, // !!!!
+                      onPressed: onCancelled, // !!!!
                     ),
                 ),
             ]

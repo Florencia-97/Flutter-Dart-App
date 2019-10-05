@@ -21,6 +21,7 @@ class DrawerWafi extends StatefulWidget {
 class _DrawerWafi extends State<DrawerWafi> {
 
   String _userEmail = '';
+  String _userId = "";
   List<RequestedOrder> _orders = new List();
   DatabaseReference _userRef;
 
@@ -30,10 +31,14 @@ class _DrawerWafi extends State<DrawerWafi> {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         _userEmail = user.email;
+        _userId = user.uid;
         // _userRef = widget.db.getReferenceById(user.uid);
         // _userRef.onChildAdded.listen(_onOrderAdded);
 
-        widget.db.getRequestedOrdersById(user.uid).listen((List<RequestedOrder> data) {
+        // unused
+        Stream<List<RequestedOrder>> notCancelledRequestedOrders = widget.db.getRequestedOrdersById(user.uid).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatus.Cancelled).toList());
+
+        notCancelledRequestedOrders.listen((List<RequestedOrder> data) {
           setState(() {
             _orders = data;
           });
@@ -48,13 +53,21 @@ class _DrawerWafi extends State<DrawerWafi> {
     });
   }
 
+  Future<Stream<List<RequestedOrder>>> _getRequestedOrders() {
+    return widget.auth.getCurrentUser().then((user) {
+      return widget.db.getRequestedOrdersById(user.uid)
+          .map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatus.Cancelled).toList());
+    });
+  }
+
   Column _buildDrawerHeader() {
     return Column(
       children: <Widget>[
         CircleAvatar(
           radius: 50.0,
           backgroundColor: Colors.red[200],
-          child: Text(_userEmail.substring(0,1).toUpperCase(),
+          // This fails sometimes, what is it doing? !!!! Value not in range: 1
+          child: Text(_userEmail != "" ? _userEmail.substring(0,1).toUpperCase() : "",
             style: TextStyle(fontSize: 40.0, color: Colors.white)
           ),
         ),
@@ -70,7 +83,6 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   @override
   Widget build(BuildContext context) {
-    int amountOrders = _orders.length;
     return SizedBox(
         width: MediaQuery.of(context).size.width * 0.78,
         child: Drawer(
@@ -83,12 +95,43 @@ class _DrawerWafi extends State<DrawerWafi> {
                       color: Colors.teal
                   ),
                 ),
-                ListTile(
-                  leading: Text(amountOrders.toString()),
-                  title: Text('Mis Pedidos'),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => OrderList(_orders)));
+                FutureBuilder(
+                  future: _getRequestedOrders(),
+                  builder: (context, snapshotFuture) {
+
+                    if (snapshotFuture.hasData) {
+                      Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
+
+                      return StreamBuilder(
+                          stream: requestedOdersS,
+                          builder: (context, snapshotStream) {
+                            if (snapshotStream.hasData) {
+                              List<RequestedOrder> requestedOrders = snapshotStream.data;
+
+                              return ListTile(
+                                leading: Text(
+                                    requestedOrders.length.toString()),
+                                title: Text('Mis Pedidos'),
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) => OrderList(_userId, requestedOdersS)));
+                                },
+                              );
+                            } else {
+                              return Text("?"); // !!!! complete with something else, like nullifying de button
+                            }
+                          }
+                      );
+                    } else {
+                      return ListTile(
+                        leading: Text(
+                            0.toString()),
+                        title: Text('Mis Pedidos'),
+                        onTap: () {
+                          () => null;
+                        },
+                      );
+                    }
                   },
                 ),
                 ListTile(

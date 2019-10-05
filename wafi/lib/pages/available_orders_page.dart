@@ -42,7 +42,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
     var requestedOrders = orders
         .where((order) => order.status == OrderStatus.Requested)
-        .where((order) => order.requestUserId != userId)
+        .where((order) => order.requesterUserId != userId)
         .toList();
 
     var title = Container(
