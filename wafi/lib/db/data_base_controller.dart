@@ -6,7 +6,10 @@ import 'dart:async';
 import 'package:wafi/extras/order_item.dart';
 
 abstract class DataBaseController {
+
   Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, int classroom);
+
+  Future<void> addTakenOrder(String userId, RequestedOrder requestedOrder);
 
   DatabaseReference getReferenceById(String userId);
 
@@ -44,6 +47,21 @@ class FirebaseController implements DataBaseController {
     };
 
     return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Requested).push().set(order);
+  }
+
+  Future<void> addTakenOrder(String userId, RequestedOrder requestedOrder) {
+
+    var order = {
+      "requestedOrderId": requestedOrder.id,
+      "requestedUserId": requestedOrder.requestUserId,
+      "status": OrderStatus.Taken
+    };
+
+    // !!!! transactional
+    _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requestUserId)
+        .child(OrderStatus.Requested).child(requestedOrder.id)
+        .update({"status": OrderStatus.Taken});
+    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Taken).push().set(order);
   }
 
   DatabaseReference getReferenceById(String userId) {

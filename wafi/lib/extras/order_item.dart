@@ -10,9 +10,10 @@ class RequestedOrder extends StatelessWidget {
     final String floor;
     final int classroom;
     final String description;
+    final String status;
 
     RequestedOrder(this.id, this.requestUserId, this.title, this.source, this.floor, this.classroom,
-        this.description);
+        this.description, this.status);
 
     /*
     RequestedOrder.fromSnapshot(String id, String requestUserId, DataSnapshot snapshot)
@@ -30,7 +31,8 @@ class RequestedOrder extends StatelessWidget {
         source = obj['source'],
         floor = obj['floor'],
         classroom = obj['classroom'],
-        description = obj['description'];
+        description = obj['description'],
+        status = obj['status'];
 
 
     @override

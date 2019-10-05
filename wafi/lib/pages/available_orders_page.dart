@@ -26,17 +26,22 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
   Widget _buildAvailableOrder(RequestedOrder order) {
 
     final text = "${order.source} => ${order.classroom}";
-    return ButtonOrder (text, () => {
-
+    return ButtonOrder (text, () async {
+      var user = await widget.auth.getCurrentUser();
+      widget.db.addTakenOrder(user.uid, order);
     });
   }
 
   List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {
 
-    return orders.map(_buildAvailableOrder).toList();
+    return orders.where((order) => order.status == OrderStatus.Requested)
+        .map(_buildAvailableOrder).toList();
   }
 
   Widget _buildDisplay(List<RequestedOrder> orders) {
+
+    var requestedOrders = orders.where((order) => order.status == OrderStatus.Requested).toList();
+
     var title = Container(
         margin: EdgeInsets.all(20),
         child: Text(
@@ -46,7 +51,8 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
           ),
         )
     );
-    var availableOrders = _buildAvailableOrders(orders);
+
+    var availableOrders = _buildAvailableOrders(requestedOrders);
 
     List<Widget> finalList = [title];
     finalList.addAll(availableOrders);
@@ -56,15 +62,15 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
     print("\n\n\n ${finalList.length}");
 
+
     return Center(
         child: ListView.separated(
-          itemCount: orders.length,
+          itemCount: requestedOrders.length,
           padding: const EdgeInsets.all(16.0),
           itemBuilder: (context, i) {
             return finalList[i];
           },
-          separatorBuilder: (BuildContext context,
-              int index) => const SizedBox.shrink(),
+          separatorBuilder: (BuildContext context, int index) => const SizedBox.shrink(),
         )
     );
 
