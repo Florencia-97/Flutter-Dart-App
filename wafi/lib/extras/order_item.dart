@@ -65,6 +65,20 @@ class OrderSource {
 
 
     static OrderSource fromName(String name) {
+        var orderSourceAsList = OrderSources.validSources
+            .where((validOrderSource) => validOrderSource.name == name)
+            .toList();
+
+        if (orderSourceAsList.isEmpty) {
+            // This is here because of change of names.
+            return OrderSource("deprecated", "$name (!!!!)", Icons.android);
+        } else {
+            return orderSourceAsList[0];
+        }
+
+
+
+
         switch (name) {
             case "photocopier":
                 return OrderSources.Photocopier;
