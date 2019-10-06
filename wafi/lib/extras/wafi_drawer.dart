@@ -114,7 +114,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                                 title: Text('Mis Pedidos'),
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => OrderList(_userId, requestedOdersS)));
+                                      builder: (context) => OrderList(_userId)));
                                 },
                               );
                             } else {

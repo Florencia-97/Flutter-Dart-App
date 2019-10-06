@@ -3,9 +3,9 @@ import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/order_item.dart';
 
 class OrderList extends StatefulWidget {
-  OrderList(this.userId, this._requestedOrdersS);
+  OrderList(this.userId);
 
-  final Stream<List<RequestedOrder>> _requestedOrdersS;
+  // final Stream<List<RequestedOrder>> _requestedOrdersS;
   final String userId;
 
   @override
@@ -17,7 +17,7 @@ class _OrderList extends State<OrderList> {
 
   @override
   void initState() {
-    widget._requestedOrdersS.listen((data) => print("\n\n\n\n\n !!!! \n\n\n ${data}\n\n\n\n\n"));
+    // widget._requestedOrdersS.listen((data) => print("\n\n\n\n\n !!!! \n\n\n ${data}\n\n\n\n\n"));
   }
 
   Widget _buildOrders(List<RequestedOrder> orders) {

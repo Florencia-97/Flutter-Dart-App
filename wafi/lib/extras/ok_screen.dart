@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:wafi/extras/order_list.dart';
+import 'package:wafi/login/authentification.dart';
 import 'dart:math';
 
 import 'package:wafi/pages/main_menu.dart';
 
 class OkScreen extends StatefulWidget {
-    @override
-    _OkScreenState createState() => _OkScreenState();
+
+  final Auth auth = Auth();
+
+  @override
+  _OkScreenState createState() => _OkScreenState();
 }
 
 class _OkScreenState extends State<OkScreen> with SingleTickerProviderStateMixin{
@@ -77,7 +82,12 @@ class _OkScreenState extends State<OkScreen> with SingleTickerProviderStateMixin
                 ),
               ),
               RaisedButton(
-                onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuPage()));},
+                onPressed: () {
+                  widget.auth.getCurrentUser().then((user) {
+                    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(user.uid)));
+                  });
+                }, // !!!!Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuPage())),
                 child: Container(
                   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 10.0, bottom: 10.0),
                   child: Text('Ir a mis pedidos',
