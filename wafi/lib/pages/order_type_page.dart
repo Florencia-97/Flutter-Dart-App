@@ -38,10 +38,10 @@ class _OrderTypePageState extends State<OrderTypePage> {
 
   List<Widget> _showTypeButtons() {
 
-    return OrderSources.validSources.map((type) => _showTypeButton(type)).toList();
+    return OrderSources.validSources.map((source) => _showOrderSourceButton(source)).toList();
   }
 
-  Widget _showTypeButton(String orderSource) {
+  Widget _showOrderSourceButton(OrderSource orderSource) {
     return Container(
         // color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
         padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20), //EdgeInsets.fromLTRB(20.0, 45.0, 0.0, 0.0),
@@ -51,10 +51,10 @@ class _OrderTypePageState extends State<OrderTypePage> {
             elevation: 5.0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             color: Colors.white,
-            child: Text(orderSource,
+            child: Text(orderSource.viewName,
                 style: TextStyle(fontSize: 20.0, color: Colors.blueGrey)),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
-              orderSource: orderSource,
+              orderSourceName: orderSource.name,
               onLoggedOut: widget.onLoggedOut))),
           ),
         ));

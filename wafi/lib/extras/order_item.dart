@@ -6,7 +6,7 @@ class RequestedOrder {
     final String id;
     final String requesterUserId;
     final String title;
-    final String source;
+    final OrderSource source;
     final String floor;
     final int classroom;
     final String description;
@@ -30,7 +30,7 @@ class RequestedOrder {
         this.id = id,
         this.requesterUserId = requestUserId,
         title = obj['title'],
-        source = obj['source'],
+        source = OrderSource.fromName(obj['source']),
         floor = obj['floor'],
         classroom = obj['classroom'],
         description = obj['description'],
@@ -46,11 +46,35 @@ class RequestedOrder {
 
 class OrderSources {
 
-    static const String Photocopier = "photocopier";
-    static const String Kiosk = "kiosk";
-    static const String Buffet = "buffet";
+    static const OrderSource Photocopier = OrderSource("photocopier", "Fotocopiadora", Icons.print);
+    static const OrderSource Kiosk = OrderSource("kiosk", "Kiosko", Icons.fastfood);
+    static const OrderSource Buffet = OrderSource("buffet", "Comedor", Icons.fastfood);
 
-    static const List<String> validSources = [Photocopier, Kiosk, Buffet];
+    static const List<OrderSource> validSources = [Photocopier, Kiosk, Buffet];
 
     static get values => validSources;
+}
+
+class OrderSource {
+
+    final String name;
+    final String viewName;
+    final IconData icon;
+
+    const OrderSource(this.name, this.viewName, this.icon);
+
+
+    static OrderSource fromName(String name) {
+        switch (name) {
+            case "photocopier":
+                return OrderSources.Photocopier;
+            case "kiosk":
+                return OrderSources.Kiosk;
+            case "buffet":
+                return OrderSources.Buffet;
+            default:
+                // This is here because of change of names.
+                return OrderSource("deprecated", "$name (!!!!)", Icons.android);
+        }
+    }
 }

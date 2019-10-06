@@ -9,10 +9,10 @@ import 'package:wafi/extras/ok_screen.dart';
 import 'package:wafi/extras/bar_app.dart';
 
 class OrderPage extends StatefulWidget {
-  OrderPage({this.orderSource, this.onLoggedOut});
+  OrderPage({this.orderSourceName, this.onLoggedOut});
 
   final Auth auth = Auth();
-  final String orderSource;
+  final String orderSourceName;
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
@@ -50,30 +50,21 @@ class _OrderPageState extends State<OrderPage> {
       // due to bug
       if (_title == null) {
         final fakeTitle = "default ${Random().nextInt(2000)}";
-        widget.db.addRequestedOrder(_userId, fakeTitle, widget.orderSource, _floor, _description, int.parse(_classroom));
+        widget.db.addRequestedOrder(_userId, fakeTitle, widget.orderSourceName, _floor, _description, int.parse(_classroom));
       } else {
-        widget.db.addRequestedOrder(_userId, _title, widget.orderSource, _floor, _description, int.parse(_classroom));
+        widget.db.addRequestedOrder(_userId, _title, widget.orderSourceName, _floor, _description, int.parse(_classroom));
       }
 
       Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
   }
 
-  IconData _iconTitle(String titleName){
-    switch (titleName){
-      case OrderSources.Photocopier:
-        return Icons.local_printshop;
-      case OrderSources.Buffet:
-        return Icons.fastfood;
-      case OrderSources.Kiosk:
-        return Icons.fastfood;
-      default:
-        return Icons.local_drink;
-    }
+  IconData _orderSourceIcon(String orderSourceName){
+    return OrderSource.fromName(orderSourceName).icon;
   }
 
   Widget _showOrderTitle() {
-    String _titleName = widget.orderSource.toUpperCase();
+    String _titleName = widget.orderSourceName.toUpperCase();
     return Container(
         margin: EdgeInsets.all(20),
         color: Colors.grey[200],
@@ -81,7 +72,7 @@ class _OrderPageState extends State<OrderPage> {
           children: <Widget>[
             Container( 
               padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
-              child:Icon(_iconTitle(_titleName)),
+              child:Icon(_orderSourceIcon(widget.orderSourceName)),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(30.0, 10.0, 0.0, 10.0),

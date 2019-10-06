@@ -107,10 +107,12 @@ class RequestedOrderFromOrderList extends StatelessWidget {
   }
 
   Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
-    return requestedOrder.source == OrderSources.Photocopier ? Icon(Icons.print) : Icon(Icons.fastfood);
+    return Icon(requestedOrder.source.icon); requestedOrder.source == OrderSources.Photocopier ? Icon(Icons.print) : Icon(Icons.fastfood);
   }
 
+  /*
   String _sourceToView(String orderSource){
+    return orderSource.
     switch (orderSource){
       case OrderSources.Photocopier:
         return "Fotocopiadora";
@@ -122,6 +124,7 @@ class RequestedOrderFromOrderList extends StatelessWidget {
         return "$orderSource (!!!!)";
     }
   }
+   */
 
 
   @override
@@ -132,7 +135,7 @@ class RequestedOrderFromOrderList extends StatelessWidget {
           Flexible(
               child: ListTile(
                   title: new Text(requestedOrder.title),
-                  subtitle: new Text(_sourceToView(requestedOrder.source)),
+                  subtitle: new Text(requestedOrder.source.viewName),
                   leading: _getOrderSourceIcon(requestedOrder),
                   onTap: () {}
               )

@@ -38,11 +38,13 @@ class _DrawerWafi extends State<DrawerWafi> {
         // unused
         Stream<List<RequestedOrder>> notCancelledRequestedOrders = widget.db.getRequestedOrdersById(user.uid).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList());
 
+        /*
         notCancelledRequestedOrders.listen((List<RequestedOrder> data) {
           setState(() {
             _orders = data;
           });
         });
+         */
       });
     });
   }
