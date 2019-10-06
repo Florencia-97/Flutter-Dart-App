@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class RequestedOrder extends StatelessWidget {
+class RequestedOrder {
 
     final String id;
     final String requesterUserId;
@@ -11,7 +11,6 @@ class RequestedOrder extends StatelessWidget {
     final int classroom;
     final String description;
     final String status;
-    final VoidCallback onCancelled;
 
     /*
     RequestedOrder(this.id, this.requestUserId, this.title, this.source, this.floor, this.classroom,
@@ -27,7 +26,7 @@ class RequestedOrder extends StatelessWidget {
             description = snapshot.value['description'];
 */
 
-    RequestedOrder.fromMap(String id, String requestUserId, dynamic obj, Function _cancelRequestedOrder):
+    RequestedOrder.fromMap(String id, String requestUserId, dynamic obj):
         this.id = id,
         this.requesterUserId = requestUserId,
         title = obj['title'],
@@ -35,51 +34,11 @@ class RequestedOrder extends StatelessWidget {
         floor = obj['floor'],
         classroom = obj['classroom'],
         description = obj['description'],
-        status = obj['status'],
-        onCancelled = _cancelRequestedOrder;
+        status = obj['status'];
 
 
     @override
     String toString({ DiagnosticLevel minLevel = DiagnosticLevel.debug }) {
         return "OrderItem(title: $title)";
-    }
-
-    // !!!! replaced
-    /*
-    @override
-    Widget build(BuildContext context) {
-        return ListTile(
-            title: new Text(title),
-            subtitle: new Text(source),
-            leading: source == 'Fotocopiadora' ? Icon(Icons.print) : Icon(
-                Icons.fastfood),
-            onTap: () {}
-        );
-    }
-     */
-
-    @override
-    Widget build(BuildContext context) {
-        return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-                Flexible(
-                    child: ListTile(
-                        title: new Text(title),
-                        subtitle: new Text(source),
-                        leading: source == 'Fotocopiadora' ? Icon(Icons.print) : Icon(Icons.fastfood),
-                        onTap: () {}
-                    )
-                ),
-                Container(
-                    child: IconButton(
-                      icon: Icon(Icons.cancel,
-                          color: Colors.blueGrey,
-                      ),
-                      onPressed: onCancelled, // !!!!
-                    ),
-                ),
-            ]
-        );
     }
 }

@@ -16,7 +16,9 @@ abstract class DataBaseController {
 
   Stream<List<RequestedOrder>> getRequestedOrdersById(String userId);
 
-  /* TODO: getOrderById, etc */
+  Future<void> cancelRequestedOrder(String requestedOrderId, String userId);
+
+    /* TODO: getOrderById, etc */
 
   Future<List<Classroom>> getClassroomsSnapshot();
 
@@ -82,7 +84,7 @@ class FirebaseController implements DataBaseController {
         var orderDynamic = ordersDynamic[orderId];
         var orderMap = Map<String, dynamic>.from(orderDynamic);
         print("getRequestedOrdersById ${orderMap}");
-        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap, _cancelRequestedOrder(orderId, userId)));
+        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
       }
 
       return orders;
@@ -119,7 +121,7 @@ class FirebaseController implements DataBaseController {
         for (var orderId in ordersOfSingleUserDynamic.keys) {
           var orderDynamic = ordersOfSingleUserDynamic[orderId];
           var orderMap = Map<String, dynamic>.from(orderDynamic);
-          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap, _cancelRequestedOrder(orderId, userId)));
+          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
         }
       }
 
@@ -127,12 +129,10 @@ class FirebaseController implements DataBaseController {
     });
   }
 
-  VoidCallback _cancelRequestedOrder(String requestedOrderId, String userId) {
-    return () {
-      return _databaseReference.child(ORDER_COLLECTION).child(userId)
-          .child(OrderStatus.Requested).child(requestedOrderId)
-          .update({"status": OrderStatus.Cancelled});
-    };
+  Future<void> cancelRequestedOrder(String requestedOrderId, String userId) {
+    return _databaseReference.child(ORDER_COLLECTION).child(userId)
+        .child(OrderStatus.Requested).child(requestedOrderId)
+        .update({"status": OrderStatus.Cancelled});
   }
 }
 
