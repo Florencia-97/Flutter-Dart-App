@@ -1,14 +1,10 @@
-import 'dart:math';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
-import 'package:wafi/extras/bar_app.dart';
 import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
-import 'package:wafi/pages/main_menu.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/helpers.dart';
 
 class AvailableOrdersPage extends StatefulWidget {
@@ -25,8 +21,6 @@ class AvailableOrdersPage extends StatefulWidget {
 class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
   Widget _buildAvailableOrder(RequestedOrder order) {
-    //print("Order source is ${order.source}");
-    //final text = "${order.source} => ${order.classroom}";
     return ButtonOrder (order, () async {
       var user = await widget.auth.getCurrentUser();
       widget.db.addTakenOrder(user.uid, order);
@@ -77,12 +71,6 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
           separatorBuilder: (BuildContext context, int index) => const SizedBox.shrink(),
         )
     );
-
-    return Center(
-        child: Column(
-          children: finalList,
-        )
-    );
   }
 
   Widget _buildDisplay(List<RequestedOrder> orders) {
@@ -100,12 +88,17 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: BarWafi(),
+        appBar: AppBar(
+          title: Text('Tomar pedido'),
+        ),
         body: StreamBuilder(
           stream: widget.db.getRequestedOrdersStream(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("No data yet !!!!");
+              return SpinKitDoubleBounce (
+                  color: Colors.red[200],
+                  size: 50.0,
+                );
             } else if (snapshot.connectionState == ConnectionState.done) {
               return Text("Done !!!!");
             } else if (snapshot.hasError) {
@@ -113,22 +106,15 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
             } else {
               var orders = snapshot.data;
               return _buildDisplay(orders);
-              // return Text("snaphot: ${x.title} + ${x.classroom} + ${x.type}");
             }
           },
         ),
-        /*Center(
-          child: Column(s
-              children: _buildDisplay(),
-          )
-        ),*/
       endDrawer: DrawerWafi(onLoggedOut: widget.onLoggedOut),
     );
   }
 }
 
 class ButtonOrder extends StatelessWidget {
-  // final String text;
   final RequestedOrder order;
   final Function onPressedButton;
 
