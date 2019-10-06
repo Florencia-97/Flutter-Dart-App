@@ -6,6 +6,7 @@ import 'package:wafi/login/authentification.dart';
 class OrderList extends StatefulWidget {
   OrderList(this.userId);
 
+  // !!!! remove this
   // final Stream<List<RequestedOrder>> _requestedOrdersS;
   final String userId;
   final Auth auth = Auth();
@@ -17,11 +18,6 @@ class OrderList extends StatefulWidget {
 
 
 class _OrderList extends State<OrderList> {
-
-  @override
-  void initState() {
-    // widget._requestedOrdersS.listen((data) => print("\n\n\n\n\n !!!! \n\n\n ${data}\n\n\n\n\n"));
-  }
 
   Widget _requestedOrderToWidget(RequestedOrder requestedOrder) {
 
@@ -48,7 +44,7 @@ class _OrderList extends State<OrderList> {
         title: Text('Mis Pedidos'),
       ),
       body: StreamBuilder(
-          stream: FirebaseController().getRequestedOrdersById(widget.userId).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatus.Cancelled).toList()),
+          stream: FirebaseController().getRequestedOrdersById(widget.userId).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text("No data yet !!!!");
@@ -110,6 +106,23 @@ class RequestedOrderFromOrderList extends StatelessWidget {
     );
   }
 
+  Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
+    return requestedOrder.source == OrderSources.Photocopier ? Icon(Icons.print) : Icon(Icons.fastfood);
+  }
+
+  String _sourceToView(String orderSource){
+    switch (orderSource){
+      case OrderSources.Photocopier:
+        return "Fotocopiadora";
+      case OrderSources.Buffet:
+        return "Comedor";
+      case OrderSources.Kiosk:
+        return "Kiosko";
+      default:
+        return "$orderSource (!!!!)";
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +132,8 @@ class RequestedOrderFromOrderList extends StatelessWidget {
           Flexible(
               child: ListTile(
                   title: new Text(requestedOrder.title),
-                  subtitle: new Text(requestedOrder.source),
-                  leading: requestedOrder.source == 'Fotocopiadora' ? Icon(Icons.print) : Icon(Icons.fastfood),
+                  subtitle: new Text(_sourceToView(requestedOrder.source)),
+                  leading: _getOrderSourceIcon(requestedOrder),
                   onTap: () {}
               )
           ),

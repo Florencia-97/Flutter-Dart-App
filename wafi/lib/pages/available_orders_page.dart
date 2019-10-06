@@ -34,14 +34,14 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
   List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {
 
-    return orders.where((order) => order.status == OrderStatus.Requested)
+    return orders.where((order) => order.status == OrderStatuses.Requested)
         .map(_buildAvailableOrder).toList();
   }
 
   Widget _doBuildDisplay(String userId, List<RequestedOrder> orders) {
 
     var requestedOrders = orders
-        .where((order) => order.status == OrderStatus.Requested)
+        .where((order) => order.status == OrderStatuses.Requested)
         .where((order) => order.requesterUserId != userId)
         .toList();
 

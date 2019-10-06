@@ -42,3 +42,15 @@ class RequestedOrder {
         return "OrderItem(title: $title)";
     }
 }
+
+
+class OrderSources {
+
+    static const String Photocopier = "photocopier";
+    static const String Kiosk = "kiosk";
+    static const String Buffet = "buffet";
+
+    static const List<String> validSources = [Photocopier, Kiosk, Buffet];
+
+    static get values => validSources;
+}

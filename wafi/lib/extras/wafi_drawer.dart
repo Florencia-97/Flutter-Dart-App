@@ -36,7 +36,7 @@ class _DrawerWafi extends State<DrawerWafi> {
         // _userRef.onChildAdded.listen(_onOrderAdded);
 
         // unused
-        Stream<List<RequestedOrder>> notCancelledRequestedOrders = widget.db.getRequestedOrdersById(user.uid).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatus.Cancelled).toList());
+        Stream<List<RequestedOrder>> notCancelledRequestedOrders = widget.db.getRequestedOrdersById(user.uid).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList());
 
         notCancelledRequestedOrders.listen((List<RequestedOrder> data) {
           setState(() {
@@ -56,7 +56,7 @@ class _DrawerWafi extends State<DrawerWafi> {
   Future<Stream<List<RequestedOrder>>> _getRequestedOrders() {
     return widget.auth.getCurrentUser().then((user) {
       return widget.db.getRequestedOrdersById(user.uid)
-          .map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatus.Cancelled).toList());
+          .map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList());
     });
   }
 

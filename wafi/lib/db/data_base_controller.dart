@@ -46,10 +46,10 @@ class FirebaseController implements DataBaseController {
       "floor": floor,
       "classroom": classroom,
       "description": description,
-      "status": OrderStatus.Requested
+      "status": OrderStatuses.Requested
     };
 
-    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Requested).push().set(order);
+    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Requested).push().set(order);
   }
 
   Future<void> addTakenOrder(String userId, RequestedOrder requestedOrder) {
@@ -57,14 +57,14 @@ class FirebaseController implements DataBaseController {
     var order = {
       "requestedOrderId": requestedOrder.id,
       "requestedUserId": requestedOrder.requesterUserId,
-      "status": OrderStatus.Taken
+      "status": OrderStatuses.Taken
     };
 
     // !!!! transactional
     _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
-        .child(OrderStatus.Requested).child(requestedOrder.id)
-        .update({"status": OrderStatus.Taken});
-    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Taken).push().set(order);
+        .child(OrderStatuses.Requested).child(requestedOrder.id)
+        .update({"status": OrderStatuses.Taken});
+    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).push().set(order);
   }
 
   DatabaseReference getReferenceById(String userId) {
@@ -72,7 +72,7 @@ class FirebaseController implements DataBaseController {
   }
 
   Stream<List<RequestedOrder>> getRequestedOrdersById(String userId) {
-    Stream<Event> eventS = _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatus.Requested).onValue;
+    Stream<Event> eventS = _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Requested).onValue;
 
     return eventS.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
@@ -115,7 +115,7 @@ class FirebaseController implements DataBaseController {
 
       for (var userId in ordersDynamic.keys) {
         var ordersOfSingleUser = ordersDynamic[userId];
-        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatus.Requested]);
+        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
 
 
         for (var orderId in ordersOfSingleUserDynamic.keys) {
@@ -131,8 +131,8 @@ class FirebaseController implements DataBaseController {
 
   Future<void> cancelRequestedOrder(String requestedOrderId, String userId) {
     return _databaseReference.child(ORDER_COLLECTION).child(userId)
-        .child(OrderStatus.Requested).child(requestedOrderId)
-        .update({"status": OrderStatus.Cancelled});
+        .child(OrderStatuses.Requested).child(requestedOrderId)
+        .update({"status": OrderStatuses.Cancelled});
   }
 }
 
@@ -154,11 +154,11 @@ class Classroom {
         code = obj['code'].toString();
 }
 
-class OrderStatus {
-  static const Requested = "requested";
-  static const Taken = "taken";
-  static const Cancelled = "cancelled";
-  static const Resolved = "resolved";
+class OrderStatuses {
+  static const String Requested = "requested";
+  static const String Taken = "taken";
+  static const String Cancelled = "cancelled";
+  static const String Resolved = "resolved";
 
   static get values => [Requested, Taken, Cancelled, Resolved];
 }

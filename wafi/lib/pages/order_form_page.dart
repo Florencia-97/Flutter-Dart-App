@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/extras/ok_screen.dart';
@@ -60,11 +61,11 @@ class _OrderPageState extends State<OrderPage> {
 
   IconData _iconTitle(String titleName){
     switch (titleName){
-      case 'FOTOCOPIADORA':
+      case OrderSources.Photocopier:
         return Icons.local_printshop;
-      case 'COMEDOR':
+      case OrderSources.Buffet:
         return Icons.fastfood;
-      case 'KIOSCO':
+      case OrderSources.Kiosk:
         return Icons.fastfood;
       default:
         return Icons.local_drink;

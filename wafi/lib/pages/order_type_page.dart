@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/bar_app.dart';
+import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/pages/order_form_page.dart';
@@ -21,7 +22,9 @@ class OrderTypePage extends StatefulWidget {
 }
 
 class _OrderTypePageState extends State<OrderTypePage> {
-  final _typeOptions = ['Comedor', 'Fotocopiadora', 'Kiosco'];
+
+  // !!!!
+  // final _typeOptions = ['Comedor', 'Fotocopiadora', 'Kiosco'];
 
   @override
   void initState() {
@@ -35,10 +38,10 @@ class _OrderTypePageState extends State<OrderTypePage> {
 
   List<Widget> _showTypeButtons() {
 
-    return _typeOptions.map((type) => _showTypeButton(type)).toList();
+    return OrderSources.validSources.map((type) => _showTypeButton(type)).toList();
   }
 
-  Widget _showTypeButton(String type) {
+  Widget _showTypeButton(String orderSource) {
     return Container(
         // color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
         padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20), //EdgeInsets.fromLTRB(20.0, 45.0, 0.0, 0.0),
@@ -48,10 +51,10 @@ class _OrderTypePageState extends State<OrderTypePage> {
             elevation: 5.0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             color: Colors.white,
-            child: Text(type,
+            child: Text(orderSource,
                 style: TextStyle(fontSize: 20.0, color: Colors.blueGrey)),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
-              orderSource: type,
+              orderSource: orderSource,
               onLoggedOut: widget.onLoggedOut))),
           ),
         ));
