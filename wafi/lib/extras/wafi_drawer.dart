@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/extras/order_item.dart';
-import 'package:wafi/extras/order_list.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/pages/my_orders_page.dart';
@@ -84,6 +84,17 @@ class _DrawerWafi extends State<DrawerWafi> {
     );
   }
 
+  ListTile _listDrawerTile(String leading, String title){
+    return ListTile(
+      leading: Text(leading),
+      title: Text(title),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => MyOrders(_userId)));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -110,19 +121,9 @@ class _DrawerWafi extends State<DrawerWafi> {
                           builder: (context, snapshotStream) {
                             if (snapshotStream.hasData) {
                               List<RequestedOrder> requestedOrders = snapshotStream.data;
-
-                              return ListTile(
-                                leading: Text(
-                                    requestedOrders.length.toString()),
-                                title: Text('Mis Pedidos'),
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => MyOrders(_userId)));
-                                },
-                              );
-                            } else {
-                              return Text("?"); // !!!! complete with something else, like nullifying de button
-                            }
+                              return _listDrawerTile(requestedOrders.length.toString(), 'Mis Pedidos');
+                            } 
+                            return _listDrawerTile('-', 'Mis Pedidos');
                           }
                       );
                     } else {
@@ -130,9 +131,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                         leading: Text(
                             0.toString()),
                         title: Text('Mis Pedidos'),
-                        onTap: () {
-                          () => null;
-                        },
+                        onTap: null,
                       );
                     }
                   },
