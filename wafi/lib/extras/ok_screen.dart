@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wafi/extras/order_list.dart';
 import 'package:wafi/login/authentification.dart';
 import 'dart:math';
 
-import 'package:wafi/pages/main_menu.dart';
+import 'package:wafi/pages/my_orders_page.dart';
 
 class OkScreen extends StatefulWidget {
 
@@ -85,7 +84,7 @@ class _OkScreenState extends State<OkScreen> with SingleTickerProviderStateMixin
                 onPressed: () {
                   widget.auth.getCurrentUser().then((user) {
                     Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => OrderList(user.uid)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(user.uid)));
                   });
                 }, // !!!!Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuPage())),
                 child: Container(

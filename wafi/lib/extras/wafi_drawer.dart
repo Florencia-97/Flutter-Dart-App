@@ -4,6 +4,7 @@ import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/order_list.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/pages/my_orders_page.dart';
 
 class DrawerWafi extends StatefulWidget {
   DrawerWafi({this.onLoggedOut});
@@ -116,7 +117,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                                 title: Text('Mis Pedidos'),
                                 onTap: () {
                                   Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => OrderList(_userId)));
+                                      builder: (context) => MyOrders(_userId)));
                                 },
                               );
                             } else {

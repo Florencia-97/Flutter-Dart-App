@@ -4,11 +4,12 @@ import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/login/authentification.dart';
 
 class OrderList extends StatefulWidget {
-  OrderList(this.userId);
+  OrderList(this.userId, this.filterCondition);
 
   // !!!! remove this
   // final Stream<List<RequestedOrder>> _requestedOrdersS;
   final String userId;
+  final filterCondition;
   final Auth auth = Auth();
   final FirebaseController db = FirebaseController();
 
@@ -40,11 +41,12 @@ class _OrderList extends State<OrderList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Mis Pedidos'),
-      ),
       body: StreamBuilder(
-          stream: FirebaseController().getRequestedOrdersById(widget.userId).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList()),
+          stream: FirebaseController()
+          .getRequestedOrdersById(widget.userId)
+          .map((requestedOrders) => requestedOrders
+          .where((ro) => ro.status != OrderStatuses.Cancelled)
+          .where((ro) => widget.filterCondition(ro)).toList()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text("No data yet !!!!");

@@ -9,6 +9,7 @@ import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/pages/main_menu.dart';
+import 'package:wafi/helpers.dart';
 
 class AvailableOrdersPage extends StatefulWidget {
   AvailableOrdersPage({this.auth, this.onLoggedOut});
@@ -24,9 +25,9 @@ class AvailableOrdersPage extends StatefulWidget {
 class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
   Widget _buildAvailableOrder(RequestedOrder order) {
-
-    final text = "${order.source} => ${order.classroom}";
-    return ButtonOrder (text, () async {
+    //print("Order source is ${order.source}");
+    //final text = "${order.source} => ${order.classroom}";
+    return ButtonOrder (order, () async {
       var user = await widget.auth.getCurrentUser();
       widget.db.addTakenOrder(user.uid, order);
     });
@@ -127,10 +128,11 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 }
 
 class ButtonOrder extends StatelessWidget {
-  final String text;
+  // final String text;
+  final RequestedOrder order;
   final Function onPressedButton;
 
-  ButtonOrder(this.text, this.onPressedButton);
+  ButtonOrder(this.order, this.onPressedButton);
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +141,11 @@ class ButtonOrder extends StatelessWidget {
       child: RaisedButton(
         color: Colors.white,
         onPressed: onPressedButton,
-        child: Text(text),
+        child: ListTile(
+                  title: new Text(order.title),
+                  subtitle: new Text(order.source.viewName),
+                  leading: getOrderSourceIcon(order),
+              )
       ),
     );
   }
