@@ -7,12 +7,16 @@ exports.sendOrderTakenNotification = functions.database.ref('/order/{userUid}/ta
     .onWrite(async (change, context) => {
       const userUid = context.params.userUid;
       const orderId = context.params.orderId;
+      const requesterId = change.after._data.requestedUserId;
+      //console.log(change.after._data.requestedUserId);
 
-      console.log('New order taken ID:', orderId, 'from user:', userUid);
+      console.log('New order taken ID:', orderId, 'by user:', userUid, 'for user:', requesterId );
 
       // Get the list of device notification tokens.
+      //const requesterId = admin.database().ref()
+
       const getDeviceTokensPromise = admin.database()
-          .ref(`/users/${userUid}/notificationToken`).once('value');
+          .ref(`/users/${requesterId}/notificationToken`).once('value');
 
       // podria estar bueno tener el id del usuario que tomo el pedido
       //const getFollowerProfilePromise = admin.auth().getUser(userCapoId);
