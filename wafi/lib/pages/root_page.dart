@@ -32,8 +32,10 @@ class _RootPageState extends State<RootPage> {
   void initState() {
     super.initState();
     widget.fM.configure(onLaunch: (Map<String, dynamic> msg) {
+      showNotification(msg);
       print(" onLaunch called ${msg}");
     }, onResume: (Map<String, dynamic> msg) {
+      showNotification(msg);
       print( " onResume called ${msg}");
     }, onMessage: (Map<String, dynamic> msg) {
       showNotification(msg);
@@ -72,12 +74,12 @@ class _RootPageState extends State<RootPage> {
       "Dont know 2",
       "Dont know 3",
     );
-    print('msg es');
-    print(msg);
+    //print('msg es');
+    print(msg["notification"]["body"]);
     var iOS = new IOSNotificationDetails();
     var platform = new NotificationDetails(android, iOS);
     await widget.fLNP.show(
-        0, "Tu pedido fue tomado!", "info sobre que pedido", platform);
+        0, msg["notification"]["title"], msg["notification"]["body"], platform);
   }
 
   void _onLoggedIn() {

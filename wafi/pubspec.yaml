@@ -28,6 +28,7 @@ dependencies:
   firebase_database: ^3.0.3
   firebase_messaging: 
   flutter_local_notifications:
+  flutter_spinkit: ^2.1.0
 
 dev_dependencies:
   flutter_test:
