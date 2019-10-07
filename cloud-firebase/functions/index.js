@@ -8,12 +8,14 @@ exports.sendOrderTakenNotification = functions.database.ref('/order/{userUid}/ta
       const userUid = context.params.userUid;
       const orderId = context.params.orderId;
       const requesterId = change.after._data.requestedUserId;
-      //console.log(change.after._data.requestedUserId);
+      const realOrderId = change.after._data.requestedOrderId;
 
-      console.log('New order taken ID:', orderId, 'by user:', userUid, 'for user:', requesterId );
+      console.log('New order taken ID:', realOrderId, 'by user:', userUid, 'for user:', requesterId );
 
-      // Get the list of device notification tokens.
-      //const requesterId = admin.database().ref()
+
+      let snapshot = await admin.database().ref(`/order/${requesterId}/requested`).once('value');
+      const orderData = snapshot.child(realOrderId).val();
+      console.log(orderData);
 
       const getDeviceTokensPromise = admin.database()
           .ref(`/users/${requesterId}/notificationToken`).once('value');
@@ -42,7 +44,7 @@ exports.sendOrderTakenNotification = functions.database.ref('/order/{userUid}/ta
       const payload = {
         notification: {
           title: 'Alguien tomo tu pedido!',
-          //body: `${follower.displayName} is now following you.`,
+          body: `El pedido: "${orderData.title}" al aula: ${orderData.classroom} esta en curso.`,
           //icon: follower.photoURL
         }
       };
