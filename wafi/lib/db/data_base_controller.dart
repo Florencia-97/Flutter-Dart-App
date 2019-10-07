@@ -23,6 +23,8 @@ abstract class DataBaseController {
   Future<List<Classroom>> getClassroomsSnapshot();
 
   Stream<List<RequestedOrder>> getRequestedOrdersStream();
+
+  Future<void> setToken(String userId, String token);
 }
 
 class FirebaseController implements DataBaseController {
@@ -76,14 +78,14 @@ class FirebaseController implements DataBaseController {
 
     return eventS.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      print("getRequestedOrdersById: $ordersDynamic");
+      //print("getRequestedOrdersById: $ordersDynamic");
 
       List<RequestedOrder> orders = [];
 
       for (var orderId in ordersDynamic.keys) {
         var orderDynamic = ordersDynamic[orderId];
         var orderMap = Map<String, dynamic>.from(orderDynamic);
-        print("getRequestedOrdersById ${orderMap}");
+        //print("getRequestedOrdersById ${orderMap}");
         orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
       }
 
@@ -109,7 +111,7 @@ class FirebaseController implements DataBaseController {
    Stream<List<RequestedOrder>> getRequestedOrdersStream() {
     return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      print("map: $ordersDynamic");
+      //print("map: $ordersDynamic");
 
       List<RequestedOrder> orders = [];
 
@@ -133,6 +135,10 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child(ORDER_COLLECTION).child(userId)
         .child(OrderStatuses.Requested).child(requestedOrderId)
         .update({"status": OrderStatuses.Cancelled});
+  }
+
+  Future<void> setToken(String userId, String token) {
+    return _databaseReference.child('users/${userId}/notificationToken/${token}').set({"token": token});
   }
 }
 
