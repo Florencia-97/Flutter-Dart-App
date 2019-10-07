@@ -20,11 +20,63 @@ class AvailableOrdersPage extends StatefulWidget {
 
 class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
 
+  Text _createText(String text){
+    return Text(text,
+      style: TextStyle(
+        fontSize: 18, 
+      ),
+    );
+  }
+
+  void _acceptOrder(RequestedOrder order){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pedido de ${order.source.viewName}',
+                    style: TextStyle(fontSize: 20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                _createText('Compra: ${order.title}'),
+                _createText('Aula: ${order.classroom}'),
+                _createText('Descripción: ${order.description}'),
+            ],
+          ),
+          actions: <Widget>[
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Row(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text('IGNORAR',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black38)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('TOMAR',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black)),
+                      onPressed: () async {
+                        var user = await widget.auth.getCurrentUser();
+                        widget.db.addTakenOrder(user.uid, order);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+            )
+          ],
+        );
+      }
+    );
+  }
+
   Widget _buildAvailableOrder(RequestedOrder order) {
-    return ButtonOrder (order, () async {
-      var user = await widget.auth.getCurrentUser();
-      widget.db.addTakenOrder(user.uid, order);
-    });
+    return ButtonOrder (order, () { _acceptOrder(order);});
   }
 
   List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {
@@ -128,15 +180,11 @@ class ButtonOrder extends StatelessWidget {
         color: Colors.white,
         onPressed: onPressedButton,
         child: ListTile(
-                  title: new Text(order.title),
-                  subtitle: new Text(order.source.viewName),
-                  leading: getOrderSourceIcon(order),
-              )
+            title: Text(order.title),
+            subtitle: Text(order.source.viewName),
+            leading: getOrderSourceIcon(order),
+            )
       ),
     );
   }
-}
-
-class OrderItemsFetcher {
-
 }
