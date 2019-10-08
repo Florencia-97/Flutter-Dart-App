@@ -47,12 +47,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       try {
         if (_formMode == FormMode.LOGIN) {
           userId = await widget.auth.signIn(_email, _password);
-          print('Signed in: $userId');
+          //print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
           widget.auth.sendEmailVerification();
           _showVerifyEmailSentDialog();
-          print('Signed up user: $userId');
+          //print('Signed up user: $userId');
         }
         setState(() {
           _isLoading = false;
@@ -63,7 +63,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         }
 
       } catch (e) {
-        print('Error: $e');
+        //print('Error: $e');
         setState(() {
           _isLoading = false;
           if (_isIos) {
@@ -84,7 +84,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   void _changeFormToSignUp() {
-    print('holaaaaa');
+    //print('holaaaaa');
     _formKey.currentState.reset();
     _errorMessage = "";
     setState(() {
@@ -112,11 +112,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   // This must not reach prod.
   void _fastFoodLogin() {
 
-    print('PRESSED FAKE LOGIN !!!!');
+    //print('PRESSED FAKE LOGIN !!!!');
     Future<String> uidF = widget.auth.signIn('rnsoutob@gmail.com', '123457');
     uidF.then((uid) {
       if (uid == null) {
-        print('IN FAKE LOGIN, UID WAS NULL');
+        //print('IN FAKE LOGIN, UID WAS NULL');
         return;
       }
       widget.onSignedIn();
