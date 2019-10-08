@@ -79,6 +79,23 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     return ButtonOrder (order, () { _acceptOrder(order);});
   }
 
+  Widget _noOrdersAvailable(){
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Icon(Icons.query_builder,
+            size: 100.0,),
+          Padding(padding: EdgeInsets.only(top: 40.0)),
+          Text('Sin pedidos para tomar',
+            style: TextStyle(
+              fontSize: 18),
+          ),
+        ],)
+    );
+  }
+
   List<Widget> _buildAvailableOrders(List<RequestedOrder> orders) {
 
     return orders.where((order) => order.status == OrderStatuses.Requested)
@@ -110,8 +127,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     // The title was above the first request.
     finalList = availableOrders;
 
-    //print("\n\n\n ${finalList.length}");
-
+    if (finalList.length == 0) return _noOrdersAvailable();
 
     return Center(
         child: ListView.separated(
