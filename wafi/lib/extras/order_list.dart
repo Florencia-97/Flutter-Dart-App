@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/order_item.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/login/authentification.dart';
 
 class OrderList extends StatefulWidget {
@@ -49,7 +50,10 @@ class _OrderList extends State<OrderList> {
           .where((ro) => widget.filterCondition(ro)).toList()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("No data yet !!!!");
+              return SpinKitDoubleBounce (
+                  color: Colors.red[200],
+                  size: 50.0,
+                );
             } else if (snapshot.connectionState == ConnectionState.done) {
               return Text("Done !!!!");
             } else if (snapshot.hasError) {
