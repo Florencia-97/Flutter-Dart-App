@@ -100,7 +100,9 @@ class _DrawerWafi extends State<DrawerWafi> {
     return SizedBox(
         width: MediaQuery.of(context).size.width * 0.78,
         child: Drawer(
-          child: ListView(
+          child: Column(children: <Widget>[
+            Expanded(
+              child: ListView(
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
@@ -136,16 +138,23 @@ class _DrawerWafi extends State<DrawerWafi> {
                     }
                   },
                 ),
-                ListTile(
+                ]
+              ),
+            ),
+            Container(
+              color: Colors.grey[100],
+              child: ListTile(
+                  leading: Icon(Icons.power_settings_new),
                   title: Text('Cerrar sesión'),
                   onTap: () {
                     widget.onLoggedOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                 ),
-              ]
-          ),
+              )
+          ],
         )
+      )
     );
   }
 }
