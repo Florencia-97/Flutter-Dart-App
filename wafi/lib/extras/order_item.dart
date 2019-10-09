@@ -5,6 +5,7 @@ class RequestedOrder {
 
     final String id;
     final String requesterUserId;
+    final String requestedUserId;
     final String title;
     final OrderSource source;
     final String floor;
@@ -26,9 +27,10 @@ class RequestedOrder {
             description = snapshot.value['description'];
 */
 
-    RequestedOrder.fromMap(String id, String requestUserId, dynamic obj):
+    RequestedOrder.fromMap(String id, String requestUserId, dynamic obj,[String requestedUserId]):
         this.id = id,
         this.requesterUserId = requestUserId,
+        this.requestedUserId = requestedUserId,
         title = obj['title'],
         source = OrderSource.fromName(obj['source']),
         floor = obj['floor'],

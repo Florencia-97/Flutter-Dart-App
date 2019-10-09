@@ -65,10 +65,9 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   Future<Stream<List<RequestedOrder>>> _getOrdersTaken() {
     return widget.auth.getCurrentUser().then((user) {
-      return widget.db.getRequestedOrdersStream()
+      return widget.db.getTakenOrdersById(user.uid)
           .map((requestedOrders) => requestedOrders
-          .where((ro) => ro.status == OrderStatuses.Taken)
-          .where((ro) => ro.requesterUserId == user.uid)
+          //.where((ro) => ro.status == OrderStatuses.Taken)
           .toList());
     });
   }

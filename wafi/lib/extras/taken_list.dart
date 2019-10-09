@@ -37,10 +37,10 @@ class _TakenList extends State<TakenList> {
     return Scaffold(
       body: StreamBuilder(
           stream: FirebaseController()
-          .getRequestedOrdersStream()
+          .getTakenOrdersById(widget.userId)
           .map((requestedOrders) => requestedOrders
-          .where((ro) => ro.status == OrderStatuses.Taken)
-          .where((ro) => ro.requesterUserId == widget.userId)
+          //.where((ro) => ro.status == OrderStatuses.Taken)
+          //.where((ro) => ro.requestedUserId == widget.userId)
           .toList()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
