@@ -23,7 +23,9 @@ abstract class DataBaseController {
 
   Stream<List<RequestedOrder>> getRequestedOrdersStream();
 
-  Stream<List<RequestedOrder>> getTakenOrdersById(String userId);
+  Future<Stream<List<RequestedOrder>>> getTakenOrdersStream(String userId);
+
+  Future<List<String>> getTakenOrdersById(String userId);
 
   Future<void> setToken(String userId, String token);
 }
@@ -112,7 +114,6 @@ class FirebaseController implements DataBaseController {
    Stream<List<RequestedOrder>> getRequestedOrdersStream() {
     return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      //print("map: $ordersDynamic");
 
       List<RequestedOrder> orders = [];
 
@@ -154,52 +155,43 @@ class FirebaseController implements DataBaseController {
     return orderSearch;
   }
 
-  Stream<List<RequestedOrder>> getTakenOrdersById(String userId) {
-    Stream<Event> eventS = _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).onValue;
+  Future<Stream<List<RequestedOrder>>> getTakenOrdersStream(String userId) async{
+      List<String> ordersTakenByUser = await getTakenOrdersById(userId);
 
-    return eventS.map((event) {
-      Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      List<RequestedOrder> orders = [];
+      return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
+        Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
-      for (var orderTakenId in ordersDynamic.keys) {
-        var orderDynamic = ordersDynamic[orderTakenId];
-        var orderTakenMap = Map<String, dynamic>.from(orderDynamic);
-        String orderId =  orderTakenMap['requestedOrderId'];
-        Map<String, dynamic> orderMap = _getorderMapById(orderId);
-        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
-      }
+        List<RequestedOrder> orders = [];
+
+        for (var userId in ordersDynamic.keys) {
+          var ordersOfSingleUser = ordersDynamic[userId];
+          Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
+
+          for (var orderId in ordersOfSingleUserDynamic.keys) {
+            if(ordersTakenByUser.contains(orderId) == false) continue;
+            var orderDynamic = ordersOfSingleUserDynamic[orderId];
+            var orderMap = Map<String, dynamic>.from(orderDynamic);
+            orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+          }
+        }
       return orders;
     });
   }
 
-  // Stream<List<RequestedOrder>> getTakenOrders() {
-  //   return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
-  //     Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
+  Future<List<String>> getTakenOrdersById(String userId) async{
+    DataSnapshot snapshot = await _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).once();
+    Map<String, dynamic> ordersTaken = Map<String, dynamic>.from(snapshot.value);
 
-  //     List<RequestedOrder> orders = [];
-  //     for (var userId in ordersDynamic.keys) {
-  //       print(' User: $userId');
-  //       var ordersOfSingleUser = ordersDynamic[userId];
-  //       Map<String, dynamic> orderstakenOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Taken]);
-  //       Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
-  //       print(' Take: $orderstakenOfSingleUserDynamic');
-  //       print(' Comun: $ordersOfSingleUserDynamic');
-  //       for (var orderTakenId in orderstakenOfSingleUserDynamic.keys) {
-  //         var orderTakenDynamic = orderstakenOfSingleUserDynamic[orderTakenId];
-  //         var orderTakenMap = Map<String, dynamic>.from(orderTakenDynamic);
-  //         print(orderTakenMap);
-  //         String orderId = orderTakenMap['requestedOrderId'];
-  //         print(orderId);
-  //         if(ordersOfSingleUserDynamic.containsKey(orderId) == false) continue;
-  //         var orderDynamic = ordersOfSingleUserDynamic[orderId];
-  //         var orderMap = Map<String, dynamic>.from(orderDynamic);
-  //         orders.add(RequestedOrder.fromMap(orderId, userId, orderMap, orderTakenMap['requestedUserId']));
-  //       }
-  //     }
-  //     print(orders);
-  //     return orders;
-  //   });
-  // }
+    List<String> listOrdersId = [];
+
+    for (var ordersDynamic in ordersTaken.values){
+      print(ordersDynamic);
+      var order = Map<String, dynamic>.from(ordersDynamic);
+      print(order);
+      listOrdersId.add(order['requestedOrderId']);
+    }
+    return listOrdersId;
+  }
 
   Future<void> cancelRequestedOrder(String requestedOrderId, String userId) {
     return _databaseReference.child(ORDER_COLLECTION).child(userId)

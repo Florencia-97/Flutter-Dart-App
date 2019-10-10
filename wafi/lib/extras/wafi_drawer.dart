@@ -63,13 +63,12 @@ class _DrawerWafi extends State<DrawerWafi> {
     });
   }
 
-  Future<Stream<List<RequestedOrder>>> _getOrdersTaken() {
-    return widget.auth.getCurrentUser().then((user) {
-      return widget.db.getTakenOrdersById(user.uid)
-          .map((requestedOrders) => requestedOrders
-          //.where((ro) => ro.status == OrderStatuses.Taken)
-          .toList());
-    });
+  Future<Stream<List<RequestedOrder>>> _getOrdersTaken() async {
+    var user = await widget.auth.getCurrentUser();
+    print(user);
+    dynamic orders = await widget.db.getTakenOrdersStream(user.uid);
+    print('Orders: $orders');
+    return orders;
   }
 
   Column _buildDrawerHeader() {

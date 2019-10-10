@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/order_item.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/login/authentification.dart';
 
 class TakenList extends StatefulWidget {
@@ -18,7 +17,7 @@ class TakenList extends StatefulWidget {
 class _TakenList extends State<TakenList> {
 
   Widget _ordersTakenToWidget(RequestedOrder requestedOrder) {
-    return RequestedOrderFromOrderList(requestedOrder);
+    return TakenOrderFromOrderList(requestedOrder);
   }
 
   Widget _buildOrdersTaken(List<RequestedOrder> orders) {
@@ -32,41 +31,47 @@ class _TakenList extends State<TakenList> {
       );
   }
 
+  FutureBuilder _myOrders(){
+    return FutureBuilder(
+      future: widget.db.getTakenOrdersStream(widget.userId),
+      builder: (contex, snapshotFuture) {
+        if (snapshotFuture.hasData) {
+            Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
+            return StreamBuilder(
+              stream: requestedOdersS,
+              builder: (context, snapshotStream) {
+              if (snapshotStream.hasData) {
+                List<RequestedOrder> requestedOrders = snapshotStream.data;
+                return _buildOrdersTaken(requestedOrders);
+              } 
+                  return Text('No elements');
+              }
+            );
+        } else { // Modifie
+            return ListTile(
+              leading: Text(
+                0.toString()),
+                title: Text('Nada'),
+                onTap: null,
+                );
+          }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-          stream: FirebaseController()
-          .getTakenOrdersById(widget.userId)
-          .map((requestedOrders) => requestedOrders
-          //.where((ro) => ro.status == OrderStatuses.Taken)
-          //.where((ro) => ro.requestedUserId == widget.userId)
-          .toList()),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return SpinKitDoubleBounce (
-                  color: Colors.red[200],
-                  size: 50.0,
-                );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return Text("Done !!!!");
-            } else if (snapshot.hasError) {
-              return Text("Error !!!!");
-            } else {
-              var requestedOrders = snapshot.data;
-              return _buildOrdersTaken(requestedOrders);
-            }
-        }
-      ),
+      body: _myOrders()
     );
   }
 }
 
-class RequestedOrderFromOrderList extends StatelessWidget {
+class TakenOrderFromOrderList extends StatelessWidget {
 
-  final RequestedOrder requestedOrder;
+  final RequestedOrder takenOrder;
 
-  RequestedOrderFromOrderList(this.requestedOrder);
+  TakenOrderFromOrderList(this.takenOrder);
 
   Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
     return Icon(requestedOrder.source.icon);
@@ -79,19 +84,11 @@ class RequestedOrderFromOrderList extends StatelessWidget {
         children: <Widget>[
           Flexible(
               child: ListTile(
-                  title: new Text(requestedOrder.title),
-                  subtitle: new Text(requestedOrder.source.viewName),
-                  leading: _getOrderSourceIcon(requestedOrder),
-                  onTap: () {}
+                  title: new Text(takenOrder.title),
+                  subtitle: new Text(takenOrder.source.viewName),
+                  leading: _getOrderSourceIcon(takenOrder),
+                  onTap: () {} //Nothing here yes!
               )
-          ),
-          Container(
-            child: IconButton(
-              icon: Icon(Icons.cancel,
-                color: Colors.blueGrey,
-              ),
-              onPressed: () => null,
-            ),
           ),
         ]
     );
