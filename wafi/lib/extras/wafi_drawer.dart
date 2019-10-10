@@ -1,10 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/extras/order_item.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/pages/my_orders_page.dart';
+import 'package:wafi/pages/my_taken_orders_page.dart';
 
 class DrawerWafi extends StatefulWidget {
   DrawerWafi({this.onLoggedOut});
@@ -63,6 +63,14 @@ class _DrawerWafi extends State<DrawerWafi> {
     });
   }
 
+  Future<Stream<List<RequestedOrder>>> _getOrdersTaken() async {
+    var user = await widget.auth.getCurrentUser();
+    print(user);
+    dynamic orders = await widget.db.getTakenOrdersStream(user.uid);
+    print('Orders: $orders');
+    return orders;
+  }
+
   Column _buildDrawerHeader() {
     return Column(
       children: <Widget>[
@@ -84,13 +92,82 @@ class _DrawerWafi extends State<DrawerWafi> {
     );
   }
 
-  ListTile _listDrawerTile(String leading, String title){
+  // Refactor, use only one function!
+  ListTile _listDrawerTileOrders(String leading, String title){
     return ListTile(
       leading: Text(leading),
       title: Text(title),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
           builder: (context) => MyOrders(_userId)));
+      },
+    );
+  }
+
+  ListTile _listDrawerTileTaken(String leading, String title){
+    return ListTile(
+      leading: Text(leading),
+      title: Text(title),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => MyTakenOrders(_userId)));
+      },
+    );
+  }
+
+  //Refactor join functions!!! 
+  FutureBuilder _myOrdersTaken(){
+    return FutureBuilder(
+      future: _getOrdersTaken(),
+      builder: (contex, snapshotFuture) {
+        if (snapshotFuture.hasData) {
+            Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
+            return StreamBuilder(
+              stream: requestedOdersS,
+              builder: (context, snapshotStream) {
+              if (snapshotStream.hasData) {
+                List<RequestedOrder> requestedOrders = snapshotStream.data;
+                  return _listDrawerTileTaken(requestedOrders.length.toString(), 'Pedidos Tomados');
+              } 
+                  return _listDrawerTileTaken('-', 'Pedidos Tomados');
+              }
+            );
+        } else {
+            return ListTile(
+              leading: Text(
+                0.toString()),
+                title: Text('Pedidos Tomados'),
+                onTap: null,
+                );
+          }
+      },
+    );
+  }
+
+  FutureBuilder _myOrders(){
+    return FutureBuilder(
+      future: _getRequestedOrders(),
+      builder: (contex, snapshotFuture) {
+        if (snapshotFuture.hasData) {
+            Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
+            return StreamBuilder(
+              stream: requestedOdersS,
+              builder: (context, snapshotStream) {
+              if (snapshotStream.hasData) {
+                List<RequestedOrder> requestedOrders = snapshotStream.data;
+                  return _listDrawerTileOrders(requestedOrders.length.toString(), 'Mis Pedidos');
+              } 
+                  return _listDrawerTileOrders('-', 'Mis Pedidos');
+              }
+            );
+        } else {
+            return ListTile(
+              leading: Text(
+                0.toString()),
+                title: Text('Mis Pedidos'),
+                onTap: null,
+                );
+          }
       },
     );
   }
@@ -111,33 +188,8 @@ class _DrawerWafi extends State<DrawerWafi> {
                       color: Colors.teal
                   ),
                 ),
-                FutureBuilder(
-                  future: _getRequestedOrders(),
-                  builder: (context, snapshotFuture) {
-
-                    if (snapshotFuture.hasData) {
-                      Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
-
-                      return StreamBuilder(
-                          stream: requestedOdersS,
-                          builder: (context, snapshotStream) {
-                            if (snapshotStream.hasData) {
-                              List<RequestedOrder> requestedOrders = snapshotStream.data;
-                              return _listDrawerTile(requestedOrders.length.toString(), 'Mis Pedidos');
-                            } 
-                            return _listDrawerTile('-', 'Mis Pedidos');
-                          }
-                      );
-                    } else {
-                      return ListTile(
-                        leading: Text(
-                            0.toString()),
-                        title: Text('Mis Pedidos'),
-                        onTap: null,
-                      );
-                    }
-                  },
-                ),
+                _myOrders(),
+                _myOrdersTaken(),
                 ]
               ),
             ),
