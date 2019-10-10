@@ -81,14 +81,12 @@ class FirebaseController implements DataBaseController {
 
     return eventS.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      //print("getRequestedOrdersById: $ordersDynamic");
 
       List<RequestedOrder> orders = [];
 
       for (var orderId in ordersDynamic.keys) {
         var orderDynamic = ordersDynamic[orderId];
         var orderMap = Map<String, dynamic>.from(orderDynamic);
-        //print("getRequestedOrdersById ${orderMap}");
         orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
       }
 
@@ -133,28 +131,6 @@ class FirebaseController implements DataBaseController {
     });
   }
 
-  Map<String, dynamic> _getorderMapById(String orderTakenId){
-    Stream<Event> eventS = _databaseReference.child(ORDER_COLLECTION).onValue;
-    Map<String, dynamic> orderSearch;
-
-    eventS.map((event) {
-      Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      for (var userId in ordersDynamic.keys) {
-        print(userId);
-        var ordersOfSingleUser = ordersDynamic[userId];
-        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
-
-        for (var orderId in ordersOfSingleUserDynamic.keys) {
-          var orderDynamic = ordersDynamic[orderId];
-          if(orderId != orderTakenId) continue;
-          orderSearch = Map<String, dynamic>.from(orderDynamic);
-        }
-      }
-    }
-    );
-    return orderSearch;
-  }
-
   Future<Stream<List<RequestedOrder>>> getTakenOrdersStream(String userId) async{
       List<String> ordersTakenByUser = await getTakenOrdersById(userId);
 
@@ -185,9 +161,7 @@ class FirebaseController implements DataBaseController {
     List<String> listOrdersId = [];
 
     for (var ordersDynamic in ordersTaken.values){
-      print(ordersDynamic);
       var order = Map<String, dynamic>.from(ordersDynamic);
-      print(order);
       listOrdersId.add(order['requestedOrderId']);
     }
     return listOrdersId;
@@ -197,6 +171,12 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child(ORDER_COLLECTION).child(userId)
         .child(OrderStatuses.Requested).child(requestedOrderId)
         .update({"status": OrderStatuses.Cancelled});
+  }
+
+  Future<void> finishRequestedOrder(String requestedOrderId, String userId) {
+    return _databaseReference.child(ORDER_COLLECTION).child(userId)
+        .child(OrderStatuses.Requested).child(requestedOrderId)
+        .update({"status": OrderStatuses.Resolved});
   }
 
   Future<void> setToken(String userId, String token) {

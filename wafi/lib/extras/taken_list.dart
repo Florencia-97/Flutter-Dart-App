@@ -17,7 +17,7 @@ class TakenList extends StatefulWidget {
 class _TakenList extends State<TakenList> {
 
   Widget _ordersTakenToWidget(RequestedOrder requestedOrder) {
-    return TakenOrderFromOrderList(requestedOrder);
+    return TakenOrderFromOrderList(requestedOrder, widget.db);
   }
 
   Widget _buildOrdersTaken(List<RequestedOrder> orders) {
@@ -31,9 +31,17 @@ class _TakenList extends State<TakenList> {
       );
   }
 
+  Future<Stream<List<RequestedOrder>>> _getOrdersTaken() async {
+    var takenOrders =  await widget.db.getTakenOrdersStream(widget.userId);
+    return takenOrders.map((requestedOrders) => requestedOrders
+      .where((ro) => ro.status != OrderStatuses.Cancelled)
+      .where((ro) => ro.status != OrderStatuses.Resolved)
+      .toList());
+  }
+
   FutureBuilder _myOrders(){
     return FutureBuilder(
-      future: widget.db.getTakenOrdersStream(widget.userId),
+      future: _getOrdersTaken(),
       builder: (contex, snapshotFuture) {
         if (snapshotFuture.hasData) {
             Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
@@ -70,11 +78,48 @@ class _TakenList extends State<TakenList> {
 class TakenOrderFromOrderList extends StatelessWidget {
 
   final RequestedOrder takenOrder;
+  final FirebaseController db;
 
-  TakenOrderFromOrderList(this.takenOrder);
+  TakenOrderFromOrderList(this.takenOrder, this.db);
 
   Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
     return Icon(requestedOrder.source.icon);
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Finalizar Pedido"),
+          content: new Text("Estás afuera? avisale por acá para finalizar el pedido"),
+          actions: <Widget>[
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Row(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text('CANCELAR',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black38)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('AFUERA',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black)),
+                      onPressed: () async {
+                        db.finishRequestedOrder(takenOrder.id, takenOrder.requesterUserId);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -84,10 +129,10 @@ class TakenOrderFromOrderList extends StatelessWidget {
         children: <Widget>[
           Flexible(
               child: ListTile(
-                  title: new Text(takenOrder.title),
-                  subtitle: new Text(takenOrder.source.viewName),
+                  title: Text(takenOrder.title),
+                  subtitle: Text(takenOrder.source.viewName),
                   leading: _getOrderSourceIcon(takenOrder),
-                  onTap: () {} //Nothing here yes!
+                  onTap: () => _showDialog(context), //Nothing here yes!
               )
           ),
         ]
