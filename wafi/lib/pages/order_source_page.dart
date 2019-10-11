@@ -1,6 +1,3 @@
-
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
@@ -9,6 +6,7 @@ import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/pages/order_form_page.dart';
+//import 'package:flutter_svg/flutter_svg.dart';
 
 class OrderTypePage extends StatefulWidget {
   OrderTypePage({this.onLoggedOut});
@@ -41,18 +39,28 @@ class _OrderTypePageState extends State<OrderTypePage> {
     return OrderSources.validSources.map((source) => _showOrderSourceButton(source)).toList();
   }
 
+  Widget _getImage(String sector) {
+    var assetImage = AssetImage(sector);
+    var image = Image(image: assetImage, height: 106.0, width: 86.0, fit: BoxFit.fitWidth,);
+    return image;
+    // return SvgPicture.asset(
+    //         'assets/coffe.svg',
+    //         width: 34,
+    //         height: 14);
+  }
+
   Widget _showOrderSourceButton(OrderSource orderSource) {
     return Container(
-        // color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
         padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20), //EdgeInsets.fromLTRB(20.0, 45.0, 0.0, 0.0),
         child: SizedBox(
-          height: 60.0,
+          height: 100.0,
           child: RaisedButton(
-            elevation: 5.0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-            color: Colors.white,
-            child: Text(orderSource.viewName,
+            color: Color(0xFFE1DEDE),
+            child: ListTile(
+              title: Text(orderSource.viewName,
                 style: TextStyle(fontSize: 20.0, color: Colors.blueGrey)),
+              leading: _getImage(orderSource.image),
+              ),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
               orderSource: orderSource,
               onLoggedOut: widget.onLoggedOut))),
