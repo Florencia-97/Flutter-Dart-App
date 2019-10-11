@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/order_item.dart';
+import 'package:wafi/extras/thanks_screen.dart';
 import 'package:wafi/login/authentification.dart';
 
 class TakenList extends StatefulWidget {
@@ -110,7 +111,7 @@ class TakenOrderFromOrderList extends StatelessWidget {
                               fontSize: 16.0, color: Colors.black)),
                       onPressed: () async {
                         db.finishRequestedOrder(takenOrder.id, takenOrder.requesterUserId);
-                        Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ThanksScreen()));
                       },
                     ),
                   ],
