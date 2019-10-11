@@ -50,7 +50,7 @@ class OrderSources {
 
     static const OrderSource Photocopier = OrderSource("photocopier", "Fotocopiadora", Icons.print, 'assets/copy.png');
     static const OrderSource Kiosk = OrderSource("kiosk", "Kiosko", Icons.fastfood, 'assets/coffe.png');
-    static const OrderSource Buffet = OrderSource("buffet", "Comedor", Icons.fastfood, 'assets/coffe.png');
+    static const OrderSource Buffet = OrderSource("buffet", "Comedor", Icons.fastfood, 'assets/burger.png');
 
     static const List<OrderSource> validSources = [Photocopier, Kiosk, Buffet];
 

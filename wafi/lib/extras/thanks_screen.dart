@@ -21,9 +21,10 @@ class _ThanksScreenState extends State<ThanksScreen>{
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              Image.asset('assets/persona.png'),
               Center(
                 child: Container(
-                padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 35.0, bottom: 20.0),
+                padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 0.0, bottom: 20.0),
                 child: Text(
                   'Se notificó que estas afuera,\nGracias por traer este pedido!',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400, color: Colors.white),
