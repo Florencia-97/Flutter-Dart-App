@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/bar_app.dart';
-import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
+import 'package:wafi/model/order_source.dart';
+import 'package:wafi/model/requested_order.dart';
 import 'package:wafi/pages/order_form_page.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 
-class OrderTypePage extends StatefulWidget {
-  OrderTypePage({this.onLoggedOut});
+class OrderSourcePage extends StatefulWidget {
+  OrderSourcePage({this.onLoggedOut});
 
   final Auth auth = Auth();
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
   @override
-  State<StatefulWidget> createState() =>  _OrderTypePageState();
+  State<StatefulWidget> createState() =>  _OrderSourcePageState();
 }
 
-class _OrderTypePageState extends State<OrderTypePage> {
+class _OrderSourcePageState extends State<OrderSourcePage> {
 
   // !!!!
   // final _typeOptions = ['Comedor', 'Fotocopiadora', 'Kiosco'];
@@ -68,7 +69,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
         ));
   }
 
-  Widget _showBody(){
+  Widget _showBody() {
     return Container(
         padding: EdgeInsets.fromLTRB(16, 80, 16, 0),
         child: Form(

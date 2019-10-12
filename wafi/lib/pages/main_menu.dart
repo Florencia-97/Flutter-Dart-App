@@ -66,7 +66,7 @@ class _MainMenuPage extends State<MainMenuPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const SizedBox(height: 30),
-              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderTypePage(
+              ButtonMenu("Pedir algo", () {Navigator.push(context, MaterialPageRoute(builder: (context) => OrderSourcePage(
                   onLoggedOut: widget.onLoggedOut
               )));}),
               const SizedBox(height: 30),

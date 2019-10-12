@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/order_list.dart';
+import 'package:wafi/model/order_status.dart';
 
 class MyOrders extends StatefulWidget {
   MyOrders(this.userId);
@@ -23,7 +24,7 @@ class _MyOrders extends State<MyOrders> {
           bottom: TabBar(
             tabs: [
               Tab(text: "En espera"),
-              Tab(text: "En curso")
+              Tab(text: "En cursos")
             ],
           ),
           title: Text('Mis Pedidos'),

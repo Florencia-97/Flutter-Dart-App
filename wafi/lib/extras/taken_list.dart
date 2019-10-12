@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
-import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/thanks_screen.dart';
 import 'package:wafi/login/authentification.dart';
+import 'package:wafi/model/order_status.dart';
+import 'package:wafi/model/requested_order.dart';
 
 class TakenList extends StatefulWidget {
   TakenList(this.userId);

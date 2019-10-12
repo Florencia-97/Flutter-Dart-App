@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
-import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/helpers.dart';
+import 'package:wafi/model/order_status.dart';
+import 'package:wafi/model/requested_order.dart';
 
 class AvailableOrdersPage extends StatefulWidget {
   AvailableOrdersPage({this.auth, this.onLoggedOut});

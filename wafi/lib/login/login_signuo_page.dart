@@ -69,7 +69,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           if (_isIos) {
             _errorMessage = e.details;
           } else
-            _errorMessage = e.message;
+            _errorMessage = e.text;
         });
       }
     }

@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
-import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/extras/ok_screen.dart';
 import 'package:wafi/extras/bar_app.dart';
+import 'package:wafi/model/classroom.dart';
+import 'package:wafi/model/order_source.dart';
+import 'package:wafi/model/requested_order.dart';
 
 class OrderPage extends StatefulWidget {
   OrderPage({this.orderSource, this.onLoggedOut});

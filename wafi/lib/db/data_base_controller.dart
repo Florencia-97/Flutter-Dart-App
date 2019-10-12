@@ -1,9 +1,13 @@
 import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:wafi/model/chat.dart';
+import 'package:wafi/model/classroom.dart';
+import 'package:wafi/model/order_status.dart';
 import 'dart:async';
 
-import 'package:wafi/extras/order_item.dart';
+import 'package:wafi/model/requested_order.dart';
+
 
 abstract class DataBaseController {
 
@@ -28,6 +32,8 @@ abstract class DataBaseController {
   Future<List<String>> getTakenOrdersById(String userId);
 
   Future<void> setToken(String userId, String token);
+
+  Stream<Chat> getChat(String requestedOrderId);
 }
 
 class FirebaseController implements DataBaseController {
@@ -35,6 +41,7 @@ class FirebaseController implements DataBaseController {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
   static const ORDER_COLLECTION = "order";
   static const CLASSROOM_COLLECTION = "classroom";
+  static const CHAT_COLLECTION = "chat";
 
 
   Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, int classroom) {
@@ -182,31 +189,30 @@ class FirebaseController implements DataBaseController {
   Future<void> setToken(String userId, String token) {
     return _databaseReference.child('users/${userId}/notificationToken/${token}').set({"token": token});
   }
-}
 
-class Classroom {
-  final String id;
-  final int floor;
-  final String code;
+  Stream<Chat> getChat(String requestedOrderId) {
+    return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId).onValue.map((event) {
+      Map<String, dynamic> chatDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
-  Classroom({this.id, this.floor, this.code});
+      List<ChatMessage> chatMessages = [];
 
-  Classroom.fromSnapshot(DataSnapshot snapshot)
-      : id = snapshot.key,
-        floor = snapshot.value['floor'],
-        code = snapshot.value['code'];
+      for (var rawMessage in chatDynamic.values) {
+        chatMessages.add(ChatMessage.fromMap(rawMessage));
 
-  Classroom.fromMap(dynamic obj)
-      : id = obj['code'].toString(),
-        floor = obj['floor'],
-        code = obj['code'].toString();
-}
+        // !!!!
+        /*
+        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
 
-class OrderStatuses {
-  static const String Requested = "requested";
-  static const String Taken = "taken";
-  static const String Cancelled = "cancelled";
-  static const String Resolved = "resolved";
 
-  static get values => [Requested, Taken, Cancelled, Resolved];
+        for (var orderId in ordersOfSingleUserDynamic.keys) {
+          var orderDynamic = ordersOfSingleUserDynamic[orderId];
+          var orderMap = Map<String, dynamic>.from(orderDynamic);
+          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+        }
+         */
+      }
+
+      return Chat(chatMessages.reversed);
+    });
+  }
 }

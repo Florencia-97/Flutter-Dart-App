@@ -1,8 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:wafi/extras/order_item.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/model/order_status.dart';
+import 'package:wafi/model/requested_order.dart';
 import 'package:wafi/pages/my_orders_page.dart';
 import 'package:wafi/pages/my_taken_orders_page.dart';
 

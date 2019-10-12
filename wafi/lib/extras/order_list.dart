@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
-import 'package:wafi/extras/order_item.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wafi/login/authentification.dart';
+import 'package:wafi/model/order_source.dart';
+import 'package:wafi/model/order_status.dart';
+import 'package:wafi/model/requested_order.dart';
+import 'package:wafi/pages/chat_page.dart';
 
 class OrderList extends StatefulWidget {
   OrderList(this.userId, this.filterCondition);
@@ -25,7 +28,7 @@ class _OrderList extends State<OrderList> {
 
     Future<void> Function(String requestedOrderId, String userId) onCancelled = widget.db.cancelRequestedOrder;
 
-    return RequestedOrderFromOrderList(requestedOrder, onCancelled);
+    return RequestedOrderFromOrderList(widget.userId, requestedOrder, onCancelled);
   }
 
   Widget _buildOrders(List<RequestedOrder> orders) {
@@ -70,11 +73,13 @@ class _OrderList extends State<OrderList> {
 
 class RequestedOrderFromOrderList extends StatelessWidget {
 
+  final String userId;
   final RequestedOrder requestedOrder;
   final Future<void> Function(String requestedOrderId, String userId) onCancelled;
 
+  RequestedOrderFromOrderList(this.userId, this.requestedOrder,
+      this.onCancelled);
 
-  RequestedOrderFromOrderList(this.requestedOrder, this.onCancelled);
 
   void _showDialog(BuildContext context) {
     showDialog(
@@ -132,6 +137,15 @@ class RequestedOrderFromOrderList extends StatelessWidget {
   }
    */
 
+  void _onTap(BuildContext context, RequestedOrder requestedOrder) {
+    switch (requestedOrder.status) {
+      case OrderStatuses.Taken:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId)));
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +157,7 @@ class RequestedOrderFromOrderList extends StatelessWidget {
                   title: new Text(requestedOrder.title),
                   subtitle: new Text(requestedOrder.source.viewName),
                   leading: _getOrderSourceIcon(requestedOrder),
-                  onTap: () {}
+                  onTap: () => _onTap(context, requestedOrder)
               )
           ),
           Container(
