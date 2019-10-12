@@ -194,6 +194,8 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId).onValue.map((event) {
       Map<String, dynamic> chatDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
+      print("!!!! $chatDynamic");
+
       List<ChatMessage> chatMessages = [];
 
       for (var rawMessage in chatDynamic.values) {

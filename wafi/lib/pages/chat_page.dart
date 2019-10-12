@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/model/chat.dart';
 
+
+// copied from here
+// youtube: https://www.youtube.com/watch?v=1bNME5FWWXk
+// github: https://github.com/tensor-programming/chat_app_live_stream/blob/master/lib/main.dart
 class ChatPage extends StatefulWidget {
 
   final String userId;
@@ -17,18 +22,29 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPage extends State<ChatPage> {
 
-  // !!!! remove eventually
-  var counterStream = Stream<List<ChatMessageWidget>>.periodic(Duration(seconds: 1), (x) {
-    return [
-      ChatMessageWidget("holaa", true),
-      ChatMessageWidget("no sos opi, no?", true),
-      ChatMessageWidget("JAJAJAJA", false),
-      ChatMessageWidget("no tranqui", false),
-      ChatMessageWidget("che, el del buffet me escuchó mal y le puso leche al café", false),
-    ].reversed;
+  TextEditingController messageController = TextEditingController();
+  ScrollController scrollController = ScrollController();
 
-    // return [x.toString(), (x + 1).toString(), (x + 2).toString()];
-  }).take(15);
+  // !!!! remove eventually
+  List<ChatMessageWidget> defaultMessages = [
+    ChatMessageWidget("holaa", true),
+    ChatMessageWidget("no sos opi, no?", true),
+    ChatMessageWidget("JAJAJAJA", false),
+    ChatMessageWidget("no tranqui", false),
+    ChatMessageWidget("che, el del buffet me escuchó mal y le puso leche al café", false),
+    ChatMessageWidget("NO", true),
+    ChatMessageWidget("NOO", true),
+    ChatMessageWidget("NOOO", true),
+    ChatMessageWidget("NOOOO", true),
+    ChatMessageWidget("NOOOOO", true),
+    ChatMessageWidget("NOOOOOO", true),
+    ChatMessageWidget("NOOOOOOO", true),
+    ChatMessageWidget("NOOOOOOO", true),
+    ChatMessageWidget("NOOOOOOO", true),
+    ChatMessageWidget("NOOOOOOO", true),
+    ChatMessageWidget("NOOOOOOO", true),
+
+  ].reversed.toList();
 
 
   Widget buildMessage(ChatMessageWidget chatMessage) {
@@ -37,18 +53,53 @@ class _ChatPage extends State<ChatPage> {
 
   Stream<List<ChatMessageWidget>> buildMessages() {
 
-    // return counterStream;
-
-    // !!!!
     return widget.db.getChat("-LqO5fxzgC_RtIeETGRF").map((chat) {
       return chat.messages.map((msg)  {
         bool own = msg.userId == widget.userId;
         return ChatMessageWidget(msg.text, own);
       }).toList();
     });
+  }
 
 
-    // !!!! return counterStream;
+  Widget _doBuildChat(List<ChatMessageWidget> chatMessages) {
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemBuilder: (context, index) => chatMessages[index],// !!!! buildMessage(listMessage[index], index % 2 == 0), // buildItem(index, snapshot.data.documents[index]),
+              itemCount: chatMessages.length, // snapshot.data.documents.length,
+              reverse: true, // !!!!!
+              controller: scrollController,
+              // controller: listScrollController,
+            ),
+          ),
+          Container(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    onSubmitted: (value) => null, // (value) => callback(),
+                    decoration: InputDecoration(
+                      hintText: "Enter a Message...",
+                      border: const OutlineInputBorder(),
+                    ),
+                    controller: messageController,
+                  ),
+                ),
+                SendButton(
+                  text: "Send",
+                  callback: () => null// callback,
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -59,17 +110,13 @@ class _ChatPage extends State<ChatPage> {
         stream: buildMessages(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
+            return _doBuildChat(defaultMessages);
+            // !!!! Leave what is below
             return Center(
                 child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent))); // !!!! standarize circular progress
           } else {
             List<ChatMessageWidget> chatMessages = snapshot.data;
-            return ListView.builder(
-              padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) => chatMessages[index],// !!!! buildMessage(listMessage[index], index % 2 == 0), // buildItem(index, snapshot.data.documents[index]),
-              itemCount: chatMessages.length, // snapshot.data.documents.length,
-              reverse: true,
-              // controller: listScrollController,
-            );
+            return _doBuildChat(chatMessages);
           }
         },
       ),
@@ -106,6 +153,22 @@ class ChatMessageWidget extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+
+class SendButton extends StatelessWidget {
+  final String text;
+  final VoidCallback callback;
+
+  const SendButton({Key key, this.text, this.callback}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      color: Colors.orange,
+      onPressed: callback,
+      child: Text(text),
     );
   }
 }
