@@ -131,7 +131,7 @@ class TakenOrderFromOrderList extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrderListTile(takenOrder, () => null,
         true, () => _showOrderAlertDialog(context),
-        true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(takenOrder.id, userId))),
+        true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(takenOrder.id, userId, takenOrder))),
             () => null); // !!!!! add cancel button functionality
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/model/chat.dart';
+import 'package:wafi/model/requested_order.dart';
 
 /*
   Copied from here...
@@ -12,9 +13,10 @@ class ChatPage extends StatefulWidget {
 
   final String requestedOrderId;
   final String userId;
+  final RequestedOrder requestedOrder;
   final FirebaseController db = FirebaseController();
 
-  ChatPage(this.requestedOrderId, this.userId);
+  ChatPage(this.requestedOrderId, this.userId, this.requestedOrder);
 
 
   @override
