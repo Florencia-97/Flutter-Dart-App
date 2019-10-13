@@ -60,7 +60,7 @@ class _MainMenuPage extends State<MainMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: BarWafi(),
+        appBar: BarWafi('Wafi'),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

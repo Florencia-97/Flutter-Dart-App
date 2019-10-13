@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BarWafi extends StatefulWidget implements PreferredSizeWidget {
-    BarWafi({Key key}) : 
+    final String title;
+    BarWafi(this.title, {Key key}) : 
       preferredSize = Size.fromHeight(kToolbarHeight), super(key: key);
 
     @override
@@ -16,7 +17,7 @@ class _BarWafiState extends State<BarWafi>{
     @override
     Widget build(BuildContext context) {
         return AppBar(
-          title: Text("Wafi")/*,
+          title: Text(widget.title)/*,
           // !!!!
           actions: <Widget>[
             Padding(
