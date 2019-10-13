@@ -61,6 +61,23 @@ class _ChatPage extends State<ChatPage> {
     });
   }
 
+  Widget _textChatArea(){
+    return Container(
+      height: 50.0,
+      color: Colors.white,
+      child: TextField(
+        maxLines: null,
+        onSubmitted: (value) => null, // (value) => callback(),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(15),
+          hintText: "Ingresá un mensaje...",
+          border: InputBorder.none,
+        ),
+      controller: messageController,
+      ),
+    );
+  }
+
 
   Widget _doBuildChat(List<ChatMessageWidget> chatMessages) {
     return SafeArea(
@@ -81,14 +98,7 @@ class _ChatPage extends State<ChatPage> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: TextField(
-                    onSubmitted: (value) => null, // (value) => callback(),
-                    decoration: InputDecoration(
-                      hintText: "Enter a Message...",
-                      border: const OutlineInputBorder(),
-                    ),
-                    controller: messageController,
-                  ),
+                  child: _textChatArea(),
                 ),
                 SendButton(
                   text: "Send",
@@ -106,6 +116,7 @@ class _ChatPage extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Chat con !!!!")),
+      backgroundColor: Colors.blueGrey[200],
       body: StreamBuilder(
         stream: buildMessages(),
         builder: (context, snapshot) {
@@ -140,14 +151,17 @@ class ChatMessageWidget extends StatelessWidget {
         crossAxisAlignment:
         own ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
-          Material(
-            color: own ? Colors.lightGreen : Colors.grey,
-            borderRadius: BorderRadius.circular(10.0),
-            elevation: 6.0,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-              child: Text(
-                text,
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+            child: Material(
+              color: own ? Colors.lightGreen[200] : Colors.grey[100],
+              borderRadius: BorderRadius.circular(10.0),
+              elevation: 3.0,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                child: Text(
+                  text,
+                ),
               ),
             ),
           )
@@ -165,10 +179,13 @@ class SendButton extends StatelessWidget {
   const SendButton({Key key, this.text, this.callback}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      color: Colors.orange,
-      onPressed: callback,
-      child: Text(text),
+    return Container(
+      height: 50.0,
+      child: FlatButton(
+        color: Colors.grey[50],
+        onPressed: callback,
+        child: Icon(Icons.send, color: Colors.teal,),
+      ),
     );
   }
 }
