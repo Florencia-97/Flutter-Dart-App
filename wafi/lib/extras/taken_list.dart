@@ -91,10 +91,6 @@ class TakenOrderFromOrderList extends StatelessWidget {
       this.db);
 
 
-  Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
-    return Icon(requestedOrder.source.icon);
-  }
-
   void _showOrderAlertDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -135,7 +131,7 @@ class TakenOrderFromOrderList extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrderListTile(takenOrder, () => null,
         true, () => _showOrderAlertDialog(context),
-        true, () => () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(takenOrder.id, userId))),
+        true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(takenOrder.id, userId))),
             () => null); // !!!!! add cancel button functionality
   }
 }
