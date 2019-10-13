@@ -6,6 +6,7 @@ import 'package:wafi/model/order_status.dart';
 import 'package:wafi/model/requested_order.dart';
 import 'package:wafi/pages/my_orders_page.dart';
 import 'package:wafi/pages/my_taken_orders_page.dart';
+import 'package:wafi/pages/profile_page.dart';
 
 class DrawerWafi extends StatefulWidget {
   DrawerWafi({this.onLoggedOut});
@@ -174,6 +175,17 @@ class _DrawerWafi extends State<DrawerWafi> {
     );
   }
 
+  ListTile _profile(){
+    return ListTile(
+      leading: Icon(Icons.settings),
+      title: Text('Mi Perfil'),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => MyProfile(_userId)));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -192,6 +204,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                 ),
                 _myOrders(),
                 _myOrdersTaken(),
+                _profile(),
                 ]
               ),
             ),
