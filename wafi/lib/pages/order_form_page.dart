@@ -293,7 +293,7 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarWafi(),
+      appBar: BarWafi('Orden'),
       body: Stack(
         children: <Widget>[
           _showBody(),
