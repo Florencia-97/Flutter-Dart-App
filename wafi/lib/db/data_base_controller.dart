@@ -76,16 +76,26 @@ class FirebaseController implements DataBaseController {
       "status": OrderStatuses.Taken
     };
 
+    var chatMessagesInit = {"init": {
+      "userId": "",
+      "text": "",
+      "dateTime": DateTime.now().toIso8601String().toString()
+    }};
+
+    var chatInit = {
+      "requesterUserId": requestedOrder.requesterUserId,
+      "takerUserId": userId,
+      "messages": chatMessagesInit
+    };
+
     // !!!! transactional
     _databaseReference.child(CHAT_COLLECTION).child(requestedOrder.id)
-        .push().set({"userId": "", "text": "", "dateTime": DateTime.now().toIso8601String().toString()});
-    /*_databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
-        .child(OrderStatuses.Requested).child(requestedOrder.id)
-        .update({"status": OrderStatuses.Taken});*/
+        .update(chatInit);
     _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
         .child(OrderStatuses.Requested).child(requestedOrder.id)
-        .update({"status": OrderStatuses.Taken, "takenBy": userId});
+        .update({"status": OrderStatuses.Taken, "takerUserId": userId});
     return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).child(requestedOrder.id).set(order);
+    // !!!!! return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).push().set(order);
   }
 
   DatabaseReference getReferenceById(String userId) {
@@ -97,6 +107,7 @@ class FirebaseController implements DataBaseController {
 
     return eventS.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
+      print("\n\nordersDynamic: $ordersDynamic");
 
       List<RequestedOrder> orders = [];
 
@@ -206,10 +217,11 @@ class FirebaseController implements DataBaseController {
   Stream<Chat> getChat(String requestedOrderId) {
     return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId).onValue.map((event) {
       Map<String, dynamic> chatDynamic = Map<String, dynamic>.from(event.snapshot.value);
+      print(chatDynamic.toString() + "\n\n\n");
 
       List<ChatMessage> chatMessages = [];
 
-      for (var rawMessage in chatDynamic.values) {
+      for (var rawMessage in chatDynamic["messages"].values) {
         chatMessages.add(ChatMessage.fromMap(rawMessage));
       }
 
@@ -218,7 +230,8 @@ class FirebaseController implements DataBaseController {
           .toList();
       finalChatMessages.sort((cm1, cm2) => cm1.dateTime.compareTo(cm2.dateTime));
 
-      return Chat(finalChatMessages.reversed.toList());
+      return Chat(chatDynamic["requesterUserId"], chatDynamic["takerUserId"],
+          finalChatMessages.reversed.toList());
     });
   }
 
@@ -230,7 +243,7 @@ class FirebaseController implements DataBaseController {
       "dateTime": dateTime
     };
 
-    return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId)
+    return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId).child("messages")
         .push().set(message);
   }
 }

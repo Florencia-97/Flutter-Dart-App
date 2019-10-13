@@ -1,9 +1,12 @@
 
 class Chat {
 
+  final String requesterUserId;
+  final String takerUserId;
   final List<ChatMessage> messages;
 
-  Chat(this.messages);
+
+  Chat(this.requesterUserId, this.takerUserId, this.messages);
 
   @override
   String toString() {
