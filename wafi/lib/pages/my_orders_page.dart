@@ -31,8 +31,8 @@ class _MyOrders extends State<MyOrders> {
         ),
         body: TabBarView(
           children: [
-            OrderList(widget.userId, (ro) => ro.status == OrderStatuses.Requested),
-            OrderList(widget.userId, (ro) => ro.status == OrderStatuses.Taken),
+            OrderList(widget.userId, (ro) => ro.status == OrderStatuses.Requested, false),
+            OrderList(widget.userId, (ro) => ro.status == OrderStatuses.Taken, true),
           ],
         ),
       ),

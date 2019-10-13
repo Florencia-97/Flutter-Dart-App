@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -8,12 +10,15 @@ import 'package:wafi/model/requested_order.dart';
 import 'package:wafi/pages/chat_page.dart';
 
 class OrderList extends StatefulWidget {
-  OrderList(this.userId, this.filterCondition);
 
-  // !!!! remove this
+  // !!!! remove this o try it again later
   // final Stream<List<RequestedOrder>> _requestedOrdersS;
   final String userId;
   final filterCondition;
+  final bool enableChats;
+
+  OrderList(this.userId, this.filterCondition, this.enableChats);
+
   final Auth auth = Auth();
   final FirebaseController db = FirebaseController();
 
@@ -28,7 +33,8 @@ class _OrderList extends State<OrderList> {
 
     Future<void> Function(String requestedOrderId, String userId) onCancelled = widget.db.cancelRequestedOrder;
 
-    return RequestedOrderFromOrderList(widget.userId, requestedOrder, onCancelled);
+    return RequestedOrderFromOrderList(widget.userId, requestedOrder,
+        widget.enableChats, onCancelled);
   }
 
   Widget _buildOrders(List<RequestedOrder> orders) {
@@ -75,13 +81,14 @@ class RequestedOrderFromOrderList extends StatelessWidget {
 
   final String userId;
   final RequestedOrder requestedOrder;
+  final bool enableChat;
   final Future<void> Function(String requestedOrderId, String userId) onCancelled;
 
   RequestedOrderFromOrderList(this.userId, this.requestedOrder,
-      this.onCancelled);
+      this.enableChat, this.onCancelled);
 
 
-  void _showDialog(BuildContext context) {
+  void _showCancelDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -117,26 +124,6 @@ class RequestedOrderFromOrderList extends StatelessWidget {
     );
   }
 
-  Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
-    return Icon(requestedOrder.source.icon); requestedOrder.source == OrderSources.Photocopier ? Icon(Icons.print) : Icon(Icons.fastfood);
-  }
-
-  /*
-  String _sourceToView(String orderSource){
-    return orderSource.
-    switch (orderSource){
-      case OrderSources.Photocopier:
-        return "Fotocopiadora";
-      case OrderSources.Buffet:
-        return "Comedor";
-      case OrderSources.Kiosk:
-        return "Kiosko";
-      default:
-        return "$orderSource (!!!!)";
-    }
-  }
-   */
-
   void _onTap(BuildContext context, RequestedOrder requestedOrder) {
     switch (requestedOrder.status) {
       case OrderStatuses.Taken:
@@ -149,6 +136,32 @@ class RequestedOrderFromOrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return OrderListTile(requestedOrder, () => _onTap(context, requestedOrder),
+        false, () => null,
+        enableChat, () => _onTap(context, requestedOrder),
+        () => _showCancelDialog(context));
+  }
+}
+
+
+class OrderListTile extends StatelessWidget {
+
+  final RequestedOrder requestedOrder;
+
+  final VoidCallback onTilePressed;
+  final bool enableAlert;
+  final VoidCallback onAlertButtonPressed;
+  final bool enableChat;
+  final VoidCallback onChatButtonPressed;
+  final VoidCallback onCancelledButtonPressed;
+
+  OrderListTile(this.requestedOrder, this.onTilePressed, this.enableAlert,
+      this.onAlertButtonPressed, this.enableChat, this.onChatButtonPressed,
+      this.onCancelledButtonPressed);
+
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -156,18 +169,53 @@ class RequestedOrderFromOrderList extends StatelessWidget {
               child: ListTile(
                   title: new Text(requestedOrder.title),
                   subtitle: new Text(requestedOrder.source.viewName),
-                  leading: _getOrderSourceIcon(requestedOrder),
-                  onTap: () => _onTap(context, requestedOrder)
+                  leading: Icon(requestedOrder.source.icon),
+                  onTap: onTilePressed
               )
           ),
-          Container(
-            child: IconButton(
-              icon: Icon(Icons.cancel,
-                color: Colors.blueGrey,
+          Visibility(
+            visible: enableAlert,
+            maintainState: true,
+            maintainAnimation: true,
+            maintainSize: true,
+            child: Container(
+              child: IconButton(
+                icon: Icon(Icons.add_alert,
+                  color: Colors.blueGrey,
+                ),
+                onPressed: onAlertButtonPressed, // !!!!
               ),
-              onPressed: () => _showDialog(context), // !!!!
             ),
           ),
+          Visibility(
+            visible: enableChat,
+            maintainState: true,
+            maintainAnimation: true,
+            maintainSize: true,
+            child: Container(
+              child: IconButton(
+                icon: Icon(Icons.chat,
+                  color: Colors.blueGrey,
+                ),
+                onPressed: onChatButtonPressed, // !!!!
+              ),
+            ),
+          ),
+          Visibility(
+            visible: true,
+            maintainState: true,
+            maintainAnimation: true,
+            maintainSize: true,
+            child: Container(
+              child: IconButton(
+                icon: Icon(Icons.cancel,
+                  color: Colors.blueGrey,
+                ),
+                onPressed: onCancelledButtonPressed, // !!!!
+              ),
+            ),
+          ),
+
         ]
     );
   }

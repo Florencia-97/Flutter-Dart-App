@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/extras/order_list.dart';
 import 'package:wafi/extras/thanks_screen.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/model/order_status.dart';
@@ -78,6 +79,7 @@ class _TakenList extends State<TakenList> {
   }
 }
 
+// !!!!! add the orderlisttile
 class TakenOrderFromOrderList extends StatelessWidget {
 
   final String userId;
@@ -93,7 +95,7 @@ class TakenOrderFromOrderList extends StatelessWidget {
     return Icon(requestedOrder.source.icon);
   }
 
-  void _showDialog(BuildContext context) {
+  void _showOrderAlertDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -131,22 +133,9 @@ class TakenOrderFromOrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Flexible(
-              child: ListTile(
-                  title: Text(takenOrder.title),
-                  subtitle: Text(takenOrder.source.viewName),
-                  leading: _getOrderSourceIcon(takenOrder),
-                  // !!!! perdón oli
-                  // onTap: () => _showDialog(context), //Nothing here yes!
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                      ChatPage(takenOrder.id, userId)))
-                ,
-              )
-          ),
-        ]
-    );
+    return OrderListTile(takenOrder, () => null,
+        true, () => _showOrderAlertDialog(context),
+        true, () => () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(takenOrder.id, userId))),
+            () => null); // !!!!! add cancel button functionality
   }
 }
