@@ -135,16 +135,28 @@ exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/{messa
 
       console.log(change);
       console.log(change.after._data.userId);
+      console.log(orderId);
 
       //console.log('New order taken ID:', realOrderId, 'by user:', userUid, 'for user:', requesterId );
 
 
       let snapshot = await admin.database().ref(`/order/${senderId}/taken`).once('value');
-      const orderData = snapshot.child(orderId).val();
+      let orderData = snapshot.child(orderId).val();
+      let recieverId = orderData.requestedUserId
       console.log(orderData);
 
-      /*const getDeviceTokensPromise = admin.database()
-          .ref(`/users/${requesterId}/notificationToken`).once('value');*/
+      if(!orderData) {
+        snapshot = await admin.database().ref(`/order/${senderId}/requested`).once('value');
+        orderData = snapshot.child(orderId).val();
+        recieverId = orderData.takenBy;
+        console.log("order data es");
+        console.log(orderData);
+      }
+
+      
+
+      const getDeviceTokensPromise = admin.database()
+          .ref(`/users/${recieverId}/notificationToken`).once('value');
 
       // podria estar bueno tener el id del usuario que tomo el pedido
       //const getFollowerProfilePromise = admin.auth().getUser(userCapoId);
@@ -169,8 +181,8 @@ exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/{messa
       // Notification details.
       const payload = {
         notification: {
-          title: '${}',
-          body: `El pedido: "${orderData.title}" al aula: ${orderData.classroom} esta en curso.`,
+          title: `${orderData.title}`,
+          body: `${senderId}: ${change.after._data.text}`,
           //icon: follower.photoURL
         }
       };

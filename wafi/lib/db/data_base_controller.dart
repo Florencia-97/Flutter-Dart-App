@@ -79,9 +79,12 @@ class FirebaseController implements DataBaseController {
     // !!!! transactional
     _databaseReference.child(CHAT_COLLECTION).child(requestedOrder.id)
         .push().set({"userId": "", "text": "", "dateTime": DateTime.now().toIso8601String().toString()});
+    /*_databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
+        .child(OrderStatuses.Requested).child(requestedOrder.id)
+        .update({"status": OrderStatuses.Taken});*/
     _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
         .child(OrderStatuses.Requested).child(requestedOrder.id)
-        .update({"status": OrderStatuses.Taken});
+        .update({"status": OrderStatuses.Taken, "takenBy": userId});
     return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).child(requestedOrder.id).set(order);
   }
 
