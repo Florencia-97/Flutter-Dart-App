@@ -11,12 +11,11 @@ import 'package:wafi/model/requested_order.dart';
 */
 class ChatPage extends StatefulWidget {
 
-  final String requestedOrderId;
   final String userId;
   final RequestedOrder requestedOrder;
   final FirebaseController db = FirebaseController();
 
-  ChatPage(this.requestedOrderId, this.userId, this.requestedOrder);
+  ChatPage(this.userId, this.requestedOrder);
 
 
   @override
@@ -69,7 +68,7 @@ class _ChatPage extends State<ChatPage> {
        */
 
       var dateTime = DateTime.now().toIso8601String().toString();
-      await widget.db.sendMessage(widget.requestedOrderId, widget.userId, text, dateTime);
+      await widget.db.sendMessage(widget.requestedOrder.id, widget.userId, text, dateTime);
 
       messageController.clear();
       scrollController.animateTo(
@@ -85,7 +84,7 @@ class _ChatPage extends State<ChatPage> {
   }
 
   Stream<List<ChatMessageWidget>> buildMessages() {
-    return widget.db.getChat(widget.requestedOrderId).map((chat) {
+    return widget.db.getChat(widget.requestedOrder.id).map((chat) {
       return chat.messages.map((msg)  {
         bool own = msg.userId == widget.userId;
         return ChatMessageWidget(msg.text, own);
