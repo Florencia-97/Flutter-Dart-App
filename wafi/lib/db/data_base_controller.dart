@@ -82,7 +82,7 @@ class FirebaseController implements DataBaseController {
     _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
         .child(OrderStatuses.Requested).child(requestedOrder.id)
         .update({"status": OrderStatuses.Taken});
-    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).push().set(order);
+    return _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).child(requestedOrder.id).set(order);
   }
 
   DatabaseReference getReferenceById(String userId) {
