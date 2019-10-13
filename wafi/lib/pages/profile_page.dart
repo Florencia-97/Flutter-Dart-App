@@ -9,7 +9,8 @@ class MyProfile extends StatelessWidget {
   Widget _headerBuilder(){
     return Container(
       height: 250,
-      color: Color(0xFFCA4F4C),
+      decoration: _decorationBox(),
+      //color: Color(0xFFCA4F4C),
       child: SizedBox.expand(
         child: Column( 
           mainAxisAlignment: MainAxisAlignment.center,
@@ -67,32 +68,61 @@ class MyProfile extends StatelessWidget {
     );
   }
 
+  BoxDecoration _decorationBox(){
+    return BoxDecoration(
+      color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Color(0xd1ff4e50),
+            Color(0xddf9d423),
+          ],
+      ),
+    );
+  }
+
   Widget _boxStats(String text, int n){
     return Container(
+      decoration: _decorationBox(),
       alignment: Alignment.center,
-      height: 90,
-      width: 90,
-      color: Colors.pink[200],
+      height: 100,
+      width: 100,
       child: SizedBox.expand(
-        child: Text('$text, $n'),
+        child: Column(
+          children: <Widget>[
+            Text('$n',
+              style: TextStyle(fontSize: 50, color: Colors.white),  
+            ),
+            Text(text.toUpperCase(),
+              style: TextStyle(fontSize: 14 ,color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _statsBuilder(){
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Data'),
         Container(
-          height: 160,// remove hard code
+          padding: EdgeInsets.all(20),
+          child: Text('Stats:',
+            style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+          ),
+        ),
+        Container(
+          //height: 160,// remove hard code
           alignment: Alignment.center,
           child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             _boxStats('Pedidos', 10),
-            _boxStats('Tomados', 10),
-        ],
-      ),
+            _boxStats('Tomados', 5),
+            ],
+          ),
         )
       ],
     );
