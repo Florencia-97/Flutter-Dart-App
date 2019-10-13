@@ -140,7 +140,7 @@ class RequestedOrderFromOrderList extends StatelessWidget {
   void _onTap(BuildContext context, RequestedOrder requestedOrder) {
     switch (requestedOrder.status) {
       case OrderStatuses.Taken:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(requestedOrder.id, userId)));
         break;
       default:
         break;

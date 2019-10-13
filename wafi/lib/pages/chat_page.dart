@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/model/chat.dart';
 
-
-// copied from here
-// youtube: https://www.youtube.com/watch?v=1bNME5FWWXk
-// github: https://github.com/tensor-programming/chat_app_live_stream/blob/master/lib/main.dart
+/*
+  Copied from here...
+  youtube: https://www.youtube.com/watch?v=1bNME5FWWXk
+  github: https://github.com/tensor-programming/chat_app_live_stream/blob/master/lib/main.dart
+*/
 class ChatPage extends StatefulWidget {
 
+  final String requestedOrderId;
   final String userId;
   final FirebaseController db = FirebaseController();
 
-  ChatPage(this.userId);
+  ChatPage(this.requestedOrderId, this.userId);
 
 
   @override
@@ -47,13 +49,41 @@ class _ChatPage extends State<ChatPage> {
   ].reversed.toList();
 
 
+  @override
+  void initState() {
+  }
+
+  Future<void> sendButtonCallback() async {
+
+    var text = messageController.text.trim();
+    if (text.length > 0) {
+      // !!!! Interesting the date part
+      /*
+      await _firestore.collection('messages').add({
+        'text': messageController.text,
+        'from': widget.user.email,
+        'date': DateTime.now().toIso8601String().toString(),
+      });
+       */
+
+      var dateTime = DateTime.now().toIso8601String().toString();
+      await widget.db.sendMessage(widget.requestedOrderId, widget.userId, text, dateTime);
+
+      messageController.clear();
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
+  }
+
   Widget buildMessage(ChatMessageWidget chatMessage) {
     return chatMessage;
   }
 
   Stream<List<ChatMessageWidget>> buildMessages() {
-
-    return widget.db.getChat("-LqO5fxzgC_RtIeETGRF").map((chat) {
+    return widget.db.getChat(widget.requestedOrderId).map((chat) {
       return chat.messages.map((msg)  {
         bool own = msg.userId == widget.userId;
         return ChatMessageWidget(msg.text, own);
@@ -67,7 +97,7 @@ class _ChatPage extends State<ChatPage> {
       color: Colors.white,
       child: TextField(
         maxLines: null,
-        onSubmitted: (value) => null, // (value) => callback(),
+        onSubmitted: (value) => null, // It think it is not necessary since the send button does it. // !!!! (value) => callback(),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.all(15),
           hintText: "Ingresá un mensaje...",
@@ -87,11 +117,10 @@ class _ChatPage extends State<ChatPage> {
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) => chatMessages[index],// !!!! buildMessage(listMessage[index], index % 2 == 0), // buildItem(index, snapshot.data.documents[index]),
-              itemCount: chatMessages.length, // snapshot.data.documents.length,
-              reverse: true, // !!!!!
-              controller: scrollController,
-              // controller: listScrollController,
+              itemBuilder: (context, index) => chatMessages[index],
+              itemCount: chatMessages.length,
+              reverse: true,
+              controller: scrollController, // !!!! In the "reference" page (above the name of the class) it is used.
             ),
           ),
           Container(
@@ -102,7 +131,7 @@ class _ChatPage extends State<ChatPage> {
                 ),
                 SendButton(
                   text: "Send",
-                  callback: () => null// callback,
+                  callback: sendButtonCallback,
                 )
               ],
             ),
@@ -121,8 +150,8 @@ class _ChatPage extends State<ChatPage> {
         stream: buildMessages(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return _doBuildChat(defaultMessages);
-            // !!!! Leave what is below
+            // !!!! remove
+            // return _doBuildChat(defaultMessages);
             return Center(
                 child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent))); // !!!! standarize circular progress
           } else {

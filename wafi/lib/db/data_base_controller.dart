@@ -34,6 +34,8 @@ abstract class DataBaseController {
   Future<void> setToken(String userId, String token);
 
   Stream<Chat> getChat(String requestedOrderId);
+
+  Future<void> sendMessage(String requestedOrderId, String fromUserId, String text, String dateTime);
 }
 
 class FirebaseController implements DataBaseController {
@@ -73,6 +75,8 @@ class FirebaseController implements DataBaseController {
     };
 
     // !!!! transactional
+    _databaseReference.child(CHAT_COLLECTION).child(requestedOrder.id)
+        .push().set({"userId": "", "text": "", "dateTime": DateTime.now().toIso8601String().toString()});
     _databaseReference.child(ORDER_COLLECTION).child(requestedOrder.requesterUserId)
         .child(OrderStatuses.Requested).child(requestedOrder.id)
         .update({"status": OrderStatuses.Taken});
@@ -194,27 +198,30 @@ class FirebaseController implements DataBaseController {
     return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId).onValue.map((event) {
       Map<String, dynamic> chatDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
-      print("!!!! $chatDynamic");
-
       List<ChatMessage> chatMessages = [];
 
       for (var rawMessage in chatDynamic.values) {
         chatMessages.add(ChatMessage.fromMap(rawMessage));
-
-        // !!!!
-        /*
-        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
-
-
-        for (var orderId in ordersOfSingleUserDynamic.keys) {
-          var orderDynamic = ordersOfSingleUserDynamic[orderId];
-          var orderMap = Map<String, dynamic>.from(orderDynamic);
-          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
-        }
-         */
       }
 
-      return Chat(chatMessages.reversed);
+      // !!!! order by dates
+      var finalChatMessages = chatMessages.where((cm) => cm.text.length > 0)
+          .toList();
+      finalChatMessages.sort((cm1, cm2) => cm1.dateTime.compareTo(cm2.dateTime));
+
+      return Chat(finalChatMessages.reversed.toList());
     });
+  }
+
+  Future<void> sendMessage(String requestedOrderId, String fromUserId, String text, String dateTime) {
+
+    var message = {
+      "userId": fromUserId,
+      "text": text,
+      "dateTime": dateTime
+    };
+
+    return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId)
+        .push().set(message);
   }
 }
