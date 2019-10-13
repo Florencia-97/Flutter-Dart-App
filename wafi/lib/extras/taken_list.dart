@@ -4,6 +4,7 @@ import 'package:wafi/extras/thanks_screen.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/model/order_status.dart';
 import 'package:wafi/model/requested_order.dart';
+import 'package:wafi/pages/chat_page.dart';
 
 class TakenList extends StatefulWidget {
   TakenList(this.userId);
@@ -19,7 +20,7 @@ class TakenList extends StatefulWidget {
 class _TakenList extends State<TakenList> {
 
   Widget _ordersTakenToWidget(RequestedOrder requestedOrder) {
-    return TakenOrderFromOrderList(requestedOrder, widget.db);
+    return TakenOrderFromOrderList(widget.userId, requestedOrder, widget.db);
   }
 
   Widget _buildOrdersTaken(List<RequestedOrder> orders) {
@@ -79,10 +80,14 @@ class _TakenList extends State<TakenList> {
 
 class TakenOrderFromOrderList extends StatelessWidget {
 
+  final String userId;
   final RequestedOrder takenOrder;
   final FirebaseController db;
 
-  TakenOrderFromOrderList(this.takenOrder, this.db);
+
+  TakenOrderFromOrderList(this.userId, this.takenOrder,
+      this.db);
+
 
   Icon _getOrderSourceIcon(RequestedOrder requestedOrder) {
     return Icon(requestedOrder.source.icon);
@@ -134,7 +139,11 @@ class TakenOrderFromOrderList extends StatelessWidget {
                   title: Text(takenOrder.title),
                   subtitle: Text(takenOrder.source.viewName),
                   leading: _getOrderSourceIcon(takenOrder),
-                  onTap: () => _showDialog(context), //Nothing here yes!
+                  // !!!! perdón oli
+                  // onTap: () => _showDialog(context), //Nothing here yes!
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      ChatPage(takenOrder.id, userId)))
+                ,
               )
           ),
         ]
