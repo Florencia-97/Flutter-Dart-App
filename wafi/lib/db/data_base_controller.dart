@@ -33,6 +33,8 @@ abstract class DataBaseController {
 
   Future<void> setToken(String userId, String token);
 
+  Future<void> removeToken(String userId, String token);
+
   Stream<Chat> getChat(String requestedOrderId);
 }
 
@@ -188,6 +190,10 @@ class FirebaseController implements DataBaseController {
 
   Future<void> setToken(String userId, String token) {
     return _databaseReference.child('users/${userId}/notificationToken/${token}').set({"token": token});
+  }
+
+  Future<void> removeToken(String userId, String token) {
+    return _databaseReference.child('users/${userId}/notificationToken/${token}').remove();
   }
 
   Stream<Chat> getChat(String requestedOrderId) {

@@ -98,6 +98,9 @@ class _RootPageState extends State<RootPage> {
   }
 
   void _onLoggedOut() {
+    widget.fM.getToken().then((token) {
+        widget.db.removeToken(_userId, token);
+      });
     setState(() {
       Future<void> signedOutF = widget.auth.signOut();
       signedOutF.then((aVoid) {
@@ -105,6 +108,8 @@ class _RootPageState extends State<RootPage> {
         _userId = "";
       });
     });
+    
+    
   }
 
   Widget _buildWaitingScreen() {
