@@ -25,7 +25,7 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   final _formKey = GlobalKey<FormState>();
 
-  List<Classroom> _classroomsOptions = [];
+  List<String> _floors = [];
 
   String _userId;
   String _title;
@@ -113,15 +113,16 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   void _loadClassrooms() async {
-    List<Classroom> classrooms = await widget.db.getClassroomsSnapshot();
+    ;
+    List<String> classrooms = await widget.db.getFloorsSnapshot();
 
     setState(() {
-      _classroomsOptions = classrooms;
+      _floors = classrooms;
     });
   }
 
   List<String> _getFloors() {
-    return _classroomsOptions.map((c) => c.floor.toString()).toSet().toList();
+    return _floors;
   }
 
   void _showDialog() {
@@ -192,12 +193,6 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  List<Classroom> _getClassrooms() {
-    if (_floor == null) return [];
-    return _classroomsOptions.where((c) => c.floor == int.parse(_floor))
-        .toList();
-  }
-
   Widget _showInputClassrooms() {
     return Container(
       padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
@@ -212,36 +207,6 @@ class _OrderPageState extends State<OrderPage> {
       ),
     );
   }
-
-  // !!!!!
-  /*
-  Widget _showInputClassrooms() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
-      child: DropdownButtonFormField<String>(
-        value: _classroom,
-        items: this._getClassrooms().map<DropdownMenuItem<String>>((
-            Classroom classroom) {
-          return DropdownMenuItem<String>(
-            value: classroom.code,
-            child: Text(classroom.code),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-          hintText: 'Aula',
-        ),
-        onSaved: (value) => _classroom = value.trim(),
-        onChanged: (String newValue) {
-          setState(() {
-            _classroom = newValue;
-          });
-        },
-        validator: (value) =>
-        value.isEmpty ? 'Aula no puede estar vacia' : null,
-      ),
-    );
-  }
-   */
 
   Widget _showPrimaryButton() {
     return Container(

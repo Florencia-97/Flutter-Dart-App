@@ -23,7 +23,7 @@ abstract class DataBaseController {
 
     /* TODO: getOrderById, etc */
 
-  Future<List<Classroom>> getClassroomsSnapshot();
+  Future<List<String>> getFloorsSnapshot();
 
   Stream<List<RequestedOrder>> getRequestedOrdersStream();
 
@@ -44,7 +44,7 @@ class FirebaseController implements DataBaseController {
 
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
   static const ORDER_COLLECTION = "order";
-  static const CLASSROOM_COLLECTION = "classroom";
+  static const FLOR_COLLECTION = "floor";
   static const CHAT_COLLECTION = "chat";
 
 
@@ -121,19 +121,12 @@ class FirebaseController implements DataBaseController {
     });
   }
 
-  Future<List<Classroom>> getClassroomsSnapshot() async {
-    DataSnapshot snapshot = await _databaseReference.child(CLASSROOM_COLLECTION).once();
+  Future<List<String>> getFloorsSnapshot() async {
+    DataSnapshot snapshot = await _databaseReference.child(FLOR_COLLECTION).once();
 
-    Map<String, dynamic> classroomsDynamic = Map<String, dynamic>.from(snapshot.value);
+    List<String> floors = List<String>.from(snapshot.value);
 
-    List<Classroom> classrooms = [];
-
-    for (var classroomDynamic in classroomsDynamic.values) {
-      var classroomMap = Map<String, dynamic>.from(classroomDynamic);
-      classrooms.add(Classroom.fromMap(classroomMap));
-    }
-
-    return classrooms;
+    return floors;
   }
 
    Stream<List<RequestedOrder>> getRequestedOrdersStream() {
