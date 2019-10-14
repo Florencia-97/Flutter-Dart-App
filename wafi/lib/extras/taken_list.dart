@@ -44,6 +44,23 @@ class _TakenList extends State<TakenList> {
       .toList());
   }
 
+   Widget _noOrdersTaken(){
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Icon(Icons.account_balance,
+            size: 100.0,),
+          Padding(padding: EdgeInsets.only(top: 40.0)),
+          Text('No has tomado ningún pedido',
+            style: TextStyle(
+              fontSize: 18),
+          ),
+        ],)
+    );
+  }
+
   FutureBuilder _myOrders(){
     return FutureBuilder(
       future: _getOrdersTaken(),
@@ -53,21 +70,14 @@ class _TakenList extends State<TakenList> {
             return StreamBuilder(
               stream: requestedOdersS,
               builder: (context, snapshotStream) {
-              if (snapshotStream.hasData) {
-                List<RequestedOrder> requestedOrders = snapshotStream.data;
-                return _buildOrdersTaken(requestedOrders);
-              } 
-                  return Text('No elements');
+                if (snapshotStream.hasData) {
+                  List<RequestedOrder> requestedOrders = snapshotStream.data;
+                  return requestedOrders.length > 0 ? _buildOrdersTaken(requestedOrders) : _noOrdersTaken() ;
+                } 
               }
             );
-        } else { // Modifie
-            return ListTile(
-              leading: Text(
-                0.toString()),
-                title: Text('Nada'),
-                onTap: null,
-                );
-          }
+        }
+        return _noOrdersTaken();
       },
     );
   }
