@@ -171,7 +171,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
             } else if (snapshot.connectionState == ConnectionState.done) {
               return Text("Done !!!!");
             } else if (snapshot.hasError) {
-              return Text("Error !!!!: ${snapshot.error}");
+              return Text("Available Error !!!!: ${snapshot.error}");
             } else {
               var orders = snapshot.data;
               return _buildDisplay(orders);

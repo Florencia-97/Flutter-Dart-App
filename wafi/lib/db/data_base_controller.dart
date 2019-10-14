@@ -132,27 +132,46 @@ class FirebaseController implements DataBaseController {
 
     return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
 
-      if (event.snapshot.value == null) {
+      try {
+        if (event.snapshot.value == null) {
+          return [];
+        }
+
+        Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(
+            event.snapshot.value);
+
+        List<RequestedOrder> orders = [];
+
+        for (var userId in ordersDynamic.keys) {
+          var ordersOfSingleUser = ordersDynamic[userId];
+          if (ordersOfSingleUser == null || ordersOfSingleUser[OrderStatuses.Requested] == null) {
+            continue;
+          }
+
+          Map<String, dynamic> ordersOfSingleUserDynamic = Map<String,
+              dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
+
+          for (var orderId in ordersOfSingleUserDynamic.keys) {
+            var orderDynamic = ordersOfSingleUserDynamic[orderId];
+            if (orderDynamic == null) {
+              continue;
+            }
+
+            var orderMap = Map<String, dynamic>.from(orderDynamic);
+
+            try {
+              orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+            } catch (e) {
+              print("getRequestedOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
+            }
+          }
+        }
+
+        return orders;
+      } catch(e) {
+        print("getRequestedOrdersStream. Error bringing data: $e");
         return [];
       }
-
-      Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-
-      List<RequestedOrder> orders = [];
-
-      for (var userId in ordersDynamic.keys) {
-        var ordersOfSingleUser = ordersDynamic[userId];
-        Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
-
-
-        for (var orderId in ordersOfSingleUserDynamic.keys) {
-          var orderDynamic = ordersOfSingleUserDynamic[orderId];
-          var orderMap = Map<String, dynamic>.from(orderDynamic);
-          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
-        }
-      }
-
-      return orders;
     });
   }
 
@@ -160,6 +179,11 @@ class FirebaseController implements DataBaseController {
       List<String> ordersTakenByUser = await getTakenOrdersById(userId);
 
       return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
+
+        if (event.snapshot.value == null) {
+          return [];
+        }
+
         Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
         List<RequestedOrder> orders = [];
