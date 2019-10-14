@@ -139,11 +139,47 @@ class TakenOrderFromOrderList extends StatelessWidget {
     );
   }
 
+  void _showCancelDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Seguro?"),
+          content: new Text("De aceptar se cancelará el pedido !!!!."), // !!!! este es del otro lado, otro texto?
+          actions: <Widget>[
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Row(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text('NO',
+                          style: TextStyle(
+                              fontSize: 16.0, color: Colors.black38)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                        child: Text('SÍ',
+                            style: TextStyle(
+                                fontSize: 16.0, color: Colors.black)),
+                        onPressed: () async {
+                          await onCancelled(takenOrder.id, takenOrder.requesterUserId);
+                          Navigator.pop(context);
+                        }
+                    ),
+                  ],
+                )
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return OrderListTile(takenOrder, () => null,
         true, () => _showOrderAlertDialog(context),
         true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId, takenOrder))),
-            () => onCancelled(takenOrder.id, takenOrder.requesterUserId));
+            () => _showCancelDialog(context));
   }
 }
