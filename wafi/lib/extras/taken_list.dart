@@ -21,7 +21,8 @@ class TakenList extends StatefulWidget {
 class _TakenList extends State<TakenList> {
 
   Widget _ordersTakenToWidget(RequestedOrder requestedOrder) {
-    return TakenOrderFromOrderList(widget.userId, requestedOrder, widget.db);
+    Future<void> Function(String requestedOrderId, String userId) onCancelled = widget.db.cancelRequestedOrder;
+    return TakenOrderFromOrderList(widget.userId, requestedOrder, widget.db, onCancelled);
   }
 
   Widget _buildOrdersTaken(List<RequestedOrder> orders) {
@@ -85,10 +86,11 @@ class TakenOrderFromOrderList extends StatelessWidget {
   final String userId;
   final RequestedOrder takenOrder;
   final FirebaseController db;
+  final Future<void> Function(String requestedOrderId, String userId) onCancelled;
 
 
   TakenOrderFromOrderList(this.userId, this.takenOrder,
-      this.db);
+      this.db, this.onCancelled);
 
 
   void _showOrderAlertDialog(BuildContext context) {
@@ -132,6 +134,6 @@ class TakenOrderFromOrderList extends StatelessWidget {
     return OrderListTile(takenOrder, () => null,
         true, () => _showOrderAlertDialog(context),
         true, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(userId, takenOrder))),
-            () => null); // !!!!! add cancel button functionality
+            () => onCancelled(takenOrder.id, takenOrder.requesterUserId));
   }
 }
