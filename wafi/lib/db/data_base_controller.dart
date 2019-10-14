@@ -106,6 +106,9 @@ class FirebaseController implements DataBaseController {
     Stream<Event> eventS = _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Requested).onValue;
 
     return eventS.map((event) {
+      if (event.snapshot.value == null) {
+        return [];
+      }
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
       List<RequestedOrder> orders = [];
@@ -113,7 +116,11 @@ class FirebaseController implements DataBaseController {
       for (var orderId in ordersDynamic.keys) {
         var orderDynamic = ordersDynamic[orderId];
         var orderMap = Map<String, dynamic>.from(orderDynamic);
-        orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+        try {
+          orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+        } catch (e) {
+          print("getRequestedOrdersById. Error parsing RequestedOrder: ${orderMap} | ${e}");
+        }
       }
 
       return orders;

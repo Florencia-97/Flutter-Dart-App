@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:wafi/login/authentification.dart';
@@ -170,6 +172,9 @@ class _DrawerWafi extends State<DrawerWafi> {
         return StreamBuilder(
             stream: requestedOdersS,
             builder: (context, snapshotStream) {
+              if (snapshotStream.hasError) {
+                return Text("MyOrders: Error ${snapshotStream.error}");
+              }
               if (!snapshotStream.hasData) {
                 return _listDrawerTileOrdersDisabled();
               }
