@@ -129,7 +129,13 @@ class FirebaseController implements DataBaseController {
   }
 
    Stream<List<RequestedOrder>> getRequestedOrdersStream() {
+
     return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
+
+      if (event.snapshot.value == null) {
+        return [];
+      }
+
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
 
       List<RequestedOrder> orders = [];
