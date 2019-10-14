@@ -11,7 +11,7 @@ import 'package:wafi/model/requested_order.dart';
 
 abstract class DataBaseController {
 
-  Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, int classroom);
+  Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, String classroom);
 
   Future<void> addTakenOrder(String userId, RequestedOrder requestedOrder);
 
@@ -48,7 +48,7 @@ class FirebaseController implements DataBaseController {
   static const CHAT_COLLECTION = "chat";
 
 
-  Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, int classroom) {
+  Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, String classroom) {
 
     // this is because of a bug (Rodri)
     var finalTitle = title;

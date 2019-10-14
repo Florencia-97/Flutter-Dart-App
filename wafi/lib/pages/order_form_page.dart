@@ -49,20 +49,15 @@ class _OrderPageState extends State<OrderPage> {
     if (form.validate()) {
       form.save();
 
-      // due to bug
-      if (_title == null) {
-        final fakeTitle = "default ${Random().nextInt(2000)}";
-        widget.db.addRequestedOrder(_userId, fakeTitle, widget.orderSource.name, _floor, _description, int.parse(_classroom));
-      } else {
-        widget.db.addRequestedOrder(_userId, _title, widget.orderSource.name, _floor, _description, int.parse(_classroom));
-      }
+      // !!!!! due to bug
+      _title = _title == null ? "default-${Random().nextInt(2000)}" : _title;
+      _classroom = _classroom == null ? "default????${Random().nextInt(2000)}" : _classroom;
+
+      widget.db.addRequestedOrder(_userId, _title, widget.orderSource.name, _floor, _description, _classroom);
+
 
       Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
-  }
-
-  IconData _orderSourceIcon(String orderSourceName){
-    return OrderSource.fromName(orderSourceName).icon;
   }
 
   Widget _showOrderTitle() {
@@ -98,7 +93,7 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Titulo',
         ),
         onSaved: (value) =>  setState ( () => _title = value.trim() ),
-        // validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
+        // !!!! validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
         validator: (x) => null,
       ),
     );
@@ -131,32 +126,8 @@ class _OrderPageState extends State<OrderPage> {
 
   void _showDialog() {
 
-    // Only enters here because of a bug
-    if (_title == null || _classroom == null || _floor == null) {
-      if (false) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Bug"),
-                content: new Text(
-                    "No me toma (soy todri) el title y queda en null\n$_title $_classroom $_floor $_description"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('CANCELAR',
-                        style: TextStyle(
-                            fontSize: 16.0, color: Colors.black38)),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              );
-            }
-        );
-        return;
-      }
-    }
-
-    if (_title == null) {
+    // This here because of bug
+    if (_title == null || _title == "") {
       _title = "default ${Random().nextInt(2000)}";
     }
 
@@ -230,6 +201,23 @@ class _OrderPageState extends State<OrderPage> {
   Widget _showInputClassrooms() {
     return Container(
       padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
+      child: TextFormField(
+        autofocus: false,
+        decoration: InputDecoration(
+          hintText: 'Aula',
+        ),
+        onSaved: (value) => _description = value.trim(),
+        // !!!! validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
+        validator: (x) => null,
+      ),
+    );
+  }
+
+  // !!!!!
+  /*
+  Widget _showInputClassrooms() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
       child: DropdownButtonFormField<String>(
         value: _classroom,
         items: this._getClassrooms().map<DropdownMenuItem<String>>((
@@ -253,6 +241,7 @@ class _OrderPageState extends State<OrderPage> {
       ),
     );
   }
+   */
 
   Widget _showPrimaryButton() {
     return Container(

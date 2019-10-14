@@ -12,7 +12,7 @@ class RequestedOrder {
     final String title;
     final OrderSource source;
     final String floor;
-    final int classroom;
+    final String classroom;
     final String description;
     final String status;
 
