@@ -16,19 +16,6 @@ class RequestedOrder {
     final String description;
     final String status;
 
-    /*
-    RequestedOrder(this.id, this.requestUserId, this.title, this.source, this.floor, this.classroom,
-        this.description, this.status);
-     */
-
-    /*
-    RequestedOrder.fromSnapshot(String id, String requestUserId, DataSnapshot snapshot)
-        : title = snapshot.value['title'],
-            source = snapshot.value['source'],
-            floor = snapshot.value['floor'].toString(),
-            classroom = snapshot.value['classroom'],
-            description = snapshot.value['description'];
-*/
 
     RequestedOrder.fromMap(String id, String requestUserId, dynamic obj,[String requestedUserId]):
         this.id = id,
