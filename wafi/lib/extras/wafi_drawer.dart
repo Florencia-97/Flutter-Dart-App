@@ -142,7 +142,9 @@ class _DrawerWafi extends State<DrawerWafi> {
             stream: requestedOdersS,
             builder: (context, snapshotStream) {
               if (snapshotStream.hasError) {
-                print("Drawer Error: ${snapshotStream.error}");
+                var errorMsg = "Drawer Error: ${snapshotStream.error}";
+                print(errorMsg);
+                return Text(errorMsg);
               }
               if (!snapshotStream.hasData) {
                 return _listDrawerTileTakenDisabled();

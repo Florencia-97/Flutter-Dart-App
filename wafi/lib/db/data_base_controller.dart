@@ -144,7 +144,7 @@ class FirebaseController implements DataBaseController {
 
         for (var userId in ordersDynamic.keys) {
           var ordersOfSingleUser = ordersDynamic[userId];
-          if (ordersOfSingleUser == null || ordersOfSingleUser[OrderStatuses.Requested] == null) {
+          if (ordersOfSingleUser[OrderStatuses.Requested] == null) {
             continue;
           }
 
@@ -153,9 +153,6 @@ class FirebaseController implements DataBaseController {
 
           for (var orderId in ordersOfSingleUserDynamic.keys) {
             var orderDynamic = ordersOfSingleUserDynamic[orderId];
-            if (orderDynamic == null) {
-              continue;
-            }
 
             var orderMap = Map<String, dynamic>.from(orderDynamic);
 
@@ -175,8 +172,8 @@ class FirebaseController implements DataBaseController {
     });
   }
 
-  Future<Stream<List<RequestedOrder>>> getTakenOrdersStream(String userId) async{
-      List<String> ordersTakenByUser = await getTakenOrdersById(userId);
+  Future<Stream<List<RequestedOrder>>> getTakenOrdersStream(String myUserId) async{
+      List<String> ordersTakenByUser = await getTakenOrdersById(myUserId);
 
       return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
 
@@ -190,28 +187,46 @@ class FirebaseController implements DataBaseController {
 
         for (var userId in ordersDynamic.keys) {
           var ordersOfSingleUser = ordersDynamic[userId];
+
+          if (ordersOfSingleUser[OrderStatuses.Requested] == null) {
+            continue;
+          }
+
           Map<String, dynamic> ordersOfSingleUserDynamic = Map<String, dynamic>.from(ordersOfSingleUser[OrderStatuses.Requested]);
 
           for (var orderId in ordersOfSingleUserDynamic.keys) {
             if(ordersTakenByUser.contains(orderId) == false) continue;
             var orderDynamic = ordersOfSingleUserDynamic[orderId];
             var orderMap = Map<String, dynamic>.from(orderDynamic);
-            orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+            try {
+              orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+            } catch (e) {
+              print("getTakenOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
+            }
           }
         }
       return orders;
     });
   }
 
-  Future<List<String>> getTakenOrdersById(String userId) async{
+  Future<List<String>> getTakenOrdersById(String userId) async {
     DataSnapshot snapshot = await _databaseReference.child(ORDER_COLLECTION).child(userId).child(OrderStatuses.Taken).once();
+
+    if (snapshot.value == null) {
+      return [];
+    }
+
     Map<String, dynamic> ordersTaken = Map<String, dynamic>.from(snapshot.value);
 
     List<String> listOrdersId = [];
 
     for (var ordersDynamic in ordersTaken.values){
-      var order = Map<String, dynamic>.from(ordersDynamic);
-      listOrdersId.add(order['requestedOrderId']);
+      try {
+        var order = Map<String, dynamic>.from(ordersDynamic);
+        listOrdersId.add(order['requestedOrderId']);
+      } catch (e) {
+        print("getTakenOrdersById. Error parsing map: ${ordersDynamic} | ${e}");
+      }
     }
     return listOrdersId;
   }
