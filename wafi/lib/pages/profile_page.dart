@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/bar_app.dart';
+import 'package:wafi/login/authentification.dart';
+import 'package:wafi/model/order_status.dart';
+import 'package:wafi/model/requested_order.dart';
 
-class MyProfile extends StatelessWidget {
+class MyProfile extends StatefulWidget {
   MyProfile(this._userId);
 
   final String _userId;
+  final Auth auth = Auth();
+  final FirebaseController db = FirebaseController();
+
+  @override
+  State createState() => _MyProfileState();
+}
+
+class _MyProfileState extends State<MyProfile> {
 
   Widget _headerBuilder(){
     return Container(
@@ -82,7 +94,7 @@ class MyProfile extends StatelessWidget {
     );
   }
 
-  Widget _boxStats(String text, int n){
+  Widget _boxStatsContainer(String text, String n){
     return Container(
       decoration: _decorationBox(),
       alignment: Alignment.center,
@@ -103,6 +115,45 @@ class MyProfile extends StatelessWidget {
     );
   }
 
+  FutureBuilder _boxStats(String text, Function ordersStreamFunction){
+    return FutureBuilder(
+      future: ordersStreamFunction(),
+      builder: (contex, snapshotFuture) {
+        if (snapshotFuture.hasData) {
+            Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
+            return StreamBuilder(
+              stream: requestedOdersS,
+              builder: (context, snapshotStream) {
+              if (snapshotStream.hasData) {
+                List<RequestedOrder> requestedOrders = snapshotStream.data;
+                return _boxStatsContainer(text ,requestedOrders.length.toString());
+              } 
+                return _boxStatsContainer(text, '-');
+              }
+            );
+        } else {
+          return _boxStatsContainer(text, '-');
+        }
+      },
+    );
+  }
+
+  Future<Stream<List<RequestedOrder>>> _getResolvedOrders(){
+    return widget.auth.getCurrentUser().then((user) {
+      return widget.db.getRequestedOrdersById(user.uid) //userId shoud be the same, change
+          .map((requestedOrders) => requestedOrders.where((ro) => ro.status == OrderStatuses.Resolved).toList());
+    });
+  }
+
+  //Refactor add this to db and use it everywhere more generic
+  Future<Stream<List<RequestedOrder>>> _getOrdersTaken() async {
+    var takenOrders =  await widget.db.getTakenOrdersStream(widget._userId);
+    return takenOrders.map((requestedOrders) => requestedOrders
+      .where((ro) => ro.status == OrderStatuses.Resolved)
+      .toList());
+  }
+
+
   Widget _statsBuilder(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,8 +170,8 @@ class MyProfile extends StatelessWidget {
           child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _boxStats('Pedidos', 10),
-            _boxStats('Tomados', 5),
+            _boxStats('Pedidos', _getResolvedOrders), //Change name!
+            _boxStats('Tomados', _getOrdersTaken), //Change name!
             ],
           ),
         )
