@@ -85,6 +85,7 @@ class FirebaseController implements DataBaseController {
     var chatInit = {
       "requesterUserId": requestedOrder.requesterUserId,
       "takerUserId": userId,
+      "requestedOrderId": requestedOrder.id,
       "messages": chatMessagesInit
     };
 
