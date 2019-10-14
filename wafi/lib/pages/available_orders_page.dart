@@ -199,7 +199,7 @@ class ButtonOrder extends StatelessWidget {
         onPressed: onPressedButton,
         child: ListTile(
             title: Text(order.title),
-            subtitle: Text(order.source.viewName),
+            subtitle: Text("${order.source.viewName} -> ${order.classroom}"),
             leading: getOrderSourceIcon(order),
             )
       ),
