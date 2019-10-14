@@ -50,8 +50,8 @@ class _OrderPageState extends State<OrderPage> {
       form.save();
 
       // !!!!! due to bug
-      _title = _title == null ? "default-${Random().nextInt(2000)}" : _title;
-      _classroom = _classroom == null ? "default????${Random().nextInt(2000)}" : _classroom;
+      _title = _title == null ? "default|${Random().nextInt(2000)}" : _title;
+      _classroom = _classroom == null ? "d-${Random().nextInt(99)}" : _classroom;
 
       widget.db.addRequestedOrder(_userId, _title, widget.orderSource.name, _floor, _description, _classroom);
 

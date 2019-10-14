@@ -168,7 +168,7 @@ class OrderListTile extends StatelessWidget {
           Flexible(
               child: ListTile(
                   title: new Text(requestedOrder.title),
-                  subtitle: new Text(requestedOrder.source.viewName),
+                  subtitle: new Text("${requestedOrder.source.viewName}\n${requestedOrder.classroom}"),
                   leading: Icon(requestedOrder.source.icon),
                   onTap: onTilePressed
               )

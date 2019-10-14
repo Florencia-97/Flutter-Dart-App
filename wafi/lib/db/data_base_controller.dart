@@ -53,7 +53,7 @@ class FirebaseController implements DataBaseController {
     // this is because of a bug (Rodri)
     var finalTitle = title;
     if (finalTitle == null || finalTitle == "") {
-      finalTitle = "default-${Random().nextInt(2000)}";
+      finalTitle = "d-${Random().nextInt(999)}";
     }
 
     var order = {
@@ -107,7 +107,6 @@ class FirebaseController implements DataBaseController {
 
     return eventS.map((event) {
       Map<String, dynamic> ordersDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      print("\n\nordersDynamic: $ordersDynamic");
 
       List<RequestedOrder> orders = [];
 
@@ -210,7 +209,6 @@ class FirebaseController implements DataBaseController {
   Stream<Chat> getChat(String requestedOrderId) {
     return _databaseReference.child(CHAT_COLLECTION).child(requestedOrderId).onValue.map((event) {
       Map<String, dynamic> chatDynamic = Map<String, dynamic>.from(event.snapshot.value);
-      print(chatDynamic.toString() + "\n\n\n");
 
       List<ChatMessage> chatMessages = [];
 
