@@ -28,27 +28,6 @@ class _ChatPage extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
 
-  // !!!! remove eventually
-  List<ChatMessageWidget> defaultMessages = [
-    ChatMessageWidget("holaa", true),
-    ChatMessageWidget("no sos opi, no?", true),
-    ChatMessageWidget("JAJAJAJA", false),
-    ChatMessageWidget("no tranqui", false),
-    ChatMessageWidget("che, el del buffet me escuchó mal y le puso leche al café", false),
-    ChatMessageWidget("NO", true),
-    ChatMessageWidget("NOO", true),
-    ChatMessageWidget("NOOO", true),
-    ChatMessageWidget("NOOOO", true),
-    ChatMessageWidget("NOOOOO", true),
-    ChatMessageWidget("NOOOOOO", true),
-    ChatMessageWidget("NOOOOOOO", true),
-    ChatMessageWidget("NOOOOOOO", true),
-    ChatMessageWidget("NOOOOOOO", true),
-    ChatMessageWidget("NOOOOOOO", true),
-    ChatMessageWidget("NOOOOOOO", true),
-
-  ].reversed.toList();
-
 
   @override
   void initState() {
@@ -58,14 +37,6 @@ class _ChatPage extends State<ChatPage> {
 
     var text = messageController.text.trim();
     if (text.length > 0) {
-      // !!!! Interesting the date part
-      /*
-      await _firestore.collection('messages').add({
-        'text': messageController.text,
-        'from': widget.user.email,
-        'date': DateTime.now().toIso8601String().toString(),
-      });
-       */
 
       var dateTime = DateTime.now().toIso8601String().toString();
       await widget.db.sendMessage(widget.requestedOrder.id, widget.userId, text, dateTime);
@@ -121,7 +92,7 @@ class _ChatPage extends State<ChatPage> {
               itemBuilder: (context, index) => chatMessages[index],
               itemCount: chatMessages.length,
               reverse: true,
-              controller: scrollController, // !!!! In the "reference" page (above the name of the class) it is used.
+              controller: scrollController,
             ),
           ),
           Container(
@@ -145,16 +116,14 @@ class _ChatPage extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chat con !!!!")),
+      appBar: AppBar(title: Text("Chat")),
       backgroundColor: Colors.blueGrey[200],
       body: StreamBuilder(
         stream: buildMessages(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            // !!!! remove
-            // return _doBuildChat(defaultMessages);
             return Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent))); // !!!! standarize circular progress
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.teal))); // !!!! standarize circular progress
           } else {
             List<ChatMessageWidget> chatMessages = snapshot.data;
             return _doBuildChat(chatMessages);

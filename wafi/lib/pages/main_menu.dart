@@ -80,7 +80,7 @@ class _MainMenuPage extends State<MainMenuPage> {
         endDrawer: DrawerWafi(
             onLoggedOut: widget.onLoggedOut
         ),
-        floatingActionButton: _showFastFoodSignInButton()
+        // !!!! floatingActionButton: _showFastFoodSignInButton()
     );
   }
 }

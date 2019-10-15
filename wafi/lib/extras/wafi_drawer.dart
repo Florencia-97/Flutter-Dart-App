@@ -215,7 +215,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                 ),
                 _myOrders(),
                 _myOrdersTaken(),
-                _profile(),
+                // _profile(),
                 ]
               ),
             ),

@@ -136,7 +136,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _showCircularProgress(),
           ],
         ),
-        floatingActionButton: _showFastFoodLogInButton()
+        // !!!!! floatingActionButton: _showFastFoodLogInButton()
     );
   }
 

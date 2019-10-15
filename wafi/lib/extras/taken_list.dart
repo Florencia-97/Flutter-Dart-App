@@ -70,10 +70,11 @@ class _TakenList extends State<TakenList> {
             return StreamBuilder(
               stream: requestedOdersS,
               builder: (context, snapshotStream) {
-                if (snapshotStream.hasData) {
-                  List<RequestedOrder> requestedOrders = snapshotStream.data;
-                  return requestedOrders.length > 0 ? _buildOrdersTaken(requestedOrders) : _noOrdersTaken() ;
-                } 
+                if (!snapshotStream.hasData) {
+                  return _noOrdersTaken();
+                }
+                List<RequestedOrder> requestedOrders = snapshotStream.data;
+                return requestedOrders.length > 0 ? _buildOrdersTaken(requestedOrders) : _noOrdersTaken() ;
               }
             );
         }
