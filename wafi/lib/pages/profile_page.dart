@@ -17,6 +17,29 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
+  String _userEmail = '';
+  String _userId = "";
+  dynamic _username = "";
+
+  //This is for username Form, can i put it in othre place? (Flor)
+  final _formKey = GlobalKey<FormState>();
+  String _usernameInput;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.auth.getCurrentUser().then((user) {
+      setState(() {
+        _userEmail = user.email;
+        _userId = user.uid;
+      });
+    });
+    widget.db.getUserInfo(widget._userId).then((username) {
+      setState(() {
+        _username = username;
+      });
+    });
+  }
 
   Widget _headerBuilder(){
     return Container(
@@ -38,7 +61,7 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Container _field(String title, String text){
+  Container _field(String title, String text, bool editable){
     return Container(
       color: Colors.grey[100],
       padding: EdgeInsets.all(20),
@@ -55,14 +78,14 @@ class _MyProfileState extends State<MyProfile> {
               Text(text,
                 style: TextStyle(fontSize: 18),
               ),
-              Container(
+              if (editable) Container(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                icon: Icon(Icons.edit,
-                  color: Colors.blueGrey,
+                  icon: Icon(Icons.edit,
+                    color: Colors.blueGrey,
+                  ),
+                  onPressed: () => _editAlias(), 
                 ),
-                onPressed: () => null, 
-            ),
           ),
             ],
           ),
@@ -71,11 +94,79 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
+  void _editAlias(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alias',
+            style: TextStyle(fontSize: 20),
+          ),
+          content: _formUsername(),
+      );}
+    );
+  }
+
+  Widget _formUsername(){
+    return Form(
+      key: _formKey,
+      child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _usernameInputArea(),
+          Row(
+            children: <Widget>[
+              FlatButton(
+                child: Text('CANCELAR',
+                    style: TextStyle(
+                        fontSize: 16.0, color: Colors.black38)),
+                onPressed: () => Navigator.pop(context),
+              ),
+              FlatButton(
+                child: Text('CREAR',
+                    style: TextStyle(
+                      fontSize: 16.0, color: Colors.black)),
+                onPressed: _updateUsername,
+              ),
+              ],
+            )
+],
+      )
+    );
+  }
+
+  Container _usernameInputArea(){
+     return Container(
+          padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
+          child: TextFormField(
+            autofocus: false,
+            decoration: InputDecoration(
+              hintText: _username,
+            ),
+            onSaved: (value) => _usernameInput = value.trim(),
+                ),
+    );
+  }
+
+  void _updateUsername() async {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+
+      widget.db.updateUserName(_userId, _usernameInput);
+      widget.db.getUserInfo(widget._userId).then((username) {
+        _username = username;
+      });
+      Navigator.pop(context);
+    }
+  }
+
   Widget _infoBuilder(){
     return Column(
       children: <Widget>[
-        _field('Alias', 'Alan Turing'),
-        _field('Mail', 'alan_turing_1@speedy.com'),
+        _field('Alias', _username, true),
+        _field('Mail', _userEmail, false),
       ],
     );
   }
@@ -147,7 +238,7 @@ class _MyProfileState extends State<MyProfile> {
 
   //Refactor add this to db and use it everywhere more generic
   Future<Stream<List<RequestedOrder>>> _getOrdersTaken() async {
-    var takenOrders =  await widget.db.getTakenOrdersStream(widget._userId);
+    var takenOrders =  await widget.db.getTakenOrdersStream(_userId);
     return takenOrders.map((requestedOrders) => requestedOrders
       .where((ro) => ro.status == OrderStatuses.Resolved)
       .toList());
