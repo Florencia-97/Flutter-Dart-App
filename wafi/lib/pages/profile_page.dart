@@ -6,8 +6,9 @@ import 'package:wafi/model/order_status.dart';
 import 'package:wafi/model/requested_order.dart';
 
 class MyProfile extends StatefulWidget {
-  MyProfile();
+  MyProfile(this._userId);
 
+  final String _userId;
   final Auth auth = Auth();
   final FirebaseController db = FirebaseController();
 
@@ -27,9 +28,11 @@ class _MyProfileState extends State<MyProfile> {
       setState(() {
         _userEmail = user.email;
         _userId = user.uid;
-        widget.db.getUserInfo(_userId).then((username) {
-          _username = username;
-        });
+      });
+    });
+    widget.db.getUserInfo(widget._userId).then((username) {
+      setState(() {
+        _username = username;
       });
     });
   }
