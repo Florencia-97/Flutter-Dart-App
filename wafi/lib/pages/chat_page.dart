@@ -27,10 +27,15 @@ class _ChatPage extends State<ChatPage> {
 
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
-
+  String _usernameBud = "";
 
   @override
   void initState() {
+    widget.db.getUserInfo(widget.requestedOrder.id).then((username) {
+      setState(() {
+        _usernameBud = username;
+      });
+    });
   }
 
   Future<void> sendButtonCallback() async {
@@ -116,7 +121,7 @@ class _ChatPage extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chat")),
+      appBar: AppBar(title: Text(_usernameBud)),
       backgroundColor: Colors.blueGrey[200],
       body: StreamBuilder(
         stream: buildMessages(),
