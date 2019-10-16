@@ -44,6 +44,12 @@ class _OrderPageState extends State<OrderPage> {
     });
   }
 
+  void _validateAndSubmit() async {
+    final form = _formKey.currentState;
+    if (!form.validate())  Navigator.pop(context);
+    _onOrderSubmit();
+  }
+
   void _onOrderSubmit() async {
     final form = _formKey.currentState;
     if (form.validate()) {
@@ -54,8 +60,7 @@ class _OrderPageState extends State<OrderPage> {
       _classroom = _classroom == null ? "d-${Random().nextInt(99)}" : _classroom;
 
       widget.db.addRequestedOrder(_userId, _title, widget.orderSource.name, _floor, _description, _classroom);
-
-
+      
       Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
   }
@@ -93,8 +98,7 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Titulo',
         ),
         onSaved: (value) =>  setState ( () => _title = value.trim() ),
-        // !!!! validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
-        validator: (x) => null,
+        validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
       ),
     );
   }
@@ -153,7 +157,7 @@ class _OrderPageState extends State<OrderPage> {
                       child: Text('CREAR',
                           style: TextStyle(
                               fontSize: 16.0, color: Colors.black)),
-                      onPressed: _onOrderSubmit,
+                      onPressed: _validateAndSubmit,
                     ),
                   ],
                 )
@@ -202,7 +206,6 @@ class _OrderPageState extends State<OrderPage> {
           hintText: 'Aula',
         ),
         onSaved: (value) => _description = value.trim(),
-        // !!!! validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
         validator: (x) => null,
       ),
     );
