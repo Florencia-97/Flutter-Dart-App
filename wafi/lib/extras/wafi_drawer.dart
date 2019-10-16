@@ -25,7 +25,7 @@ class DrawerWafi extends StatefulWidget {
 
 class _DrawerWafi extends State<DrawerWafi> {
 
-  String _userEmail = '';
+  String _username = '';
   String _userId = "";
   List<RequestedOrder> _orders = new List();
   DatabaseReference _userRef;
@@ -34,22 +34,13 @@ class _DrawerWafi extends State<DrawerWafi> {
   void initState() {
     super.initState();
     widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        _userEmail = user.email;
-        _userId = user.uid;
-        // _userRef = widget.db.getReferenceById(user.uid);
-        // _userRef.onChildAdded.listen(_onOrderAdded);
-
-        // unused
-        Stream<List<RequestedOrder>> notCancelledRequestedOrders = widget.db.getRequestedOrdersById(user.uid).map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList());
-
-        /*
-        notCancelledRequestedOrders.listen((List<RequestedOrder> data) {
-          setState(() {
-            _orders = data;
-          });
+      widget.db.getUserInfo(user.uid).then((username) {
+        setState(() {
+          _username = username;
         });
-         */
+      });
+      setState(() {
+        _userId = user.uid;
       });
     });
   }
@@ -83,13 +74,13 @@ class _DrawerWafi extends State<DrawerWafi> {
           radius: 50.0,
           backgroundColor: Colors.red[200],
           // This fails sometimes, what is it doing? !!!! Value not in range: 1
-          child: Text(_userEmail != "" ? _userEmail.substring(0,1).toUpperCase() : "",
+          child: Text(_username != "" ? _username.substring(0,1).toUpperCase() : "",
             style: TextStyle(fontSize: 40.0, color: Colors.white)
           ),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-          child: Text(_userEmail,
+          child: Text(_username,
             style: TextStyle(fontSize: 16.0, color: Colors.white)
           ),
         ),

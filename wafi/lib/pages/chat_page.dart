@@ -24,14 +24,15 @@ class ChatPage extends StatefulWidget {
 
 
 class _ChatPage extends State<ChatPage> {
-
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
   String _usernameBud = "";
 
   @override
   void initState() {
-    widget.db.getUserInfo(widget.requestedOrder.id).then((username) {
+    String budId =  widget.requestedOrder.requesterUserId;
+    if (budId == widget.userId) budId = widget.requestedOrder.requestedUserId;
+    widget.db.getUserInfo(budId).then((username) {
       setState(() {
         _usernameBud = username;
       });

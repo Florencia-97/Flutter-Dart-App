@@ -38,6 +38,8 @@ abstract class DataBaseController {
   Stream<Chat> getChat(String requestedOrderId);
 
   Future<void> sendMessage(String requestedOrderId, String fromUserId, String text, String dateTime);
+
+  Future<String> getUserInfo(String userId);
 }
 
 class FirebaseController implements DataBaseController {
