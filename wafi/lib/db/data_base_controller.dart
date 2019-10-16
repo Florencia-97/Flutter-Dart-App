@@ -46,6 +46,7 @@ class FirebaseController implements DataBaseController {
   static const ORDER_COLLECTION = "order";
   static const FLOR_COLLECTION = "floor";
   static const CHAT_COLLECTION = "chat";
+  static const USER_COLLECTION = "users";
 
 
   Future<void> addRequestedOrder(String userId, String title, String source, String floor, String description, String classroom) {
@@ -276,6 +277,24 @@ class FirebaseController implements DataBaseController {
       return Chat(chatDynamic["requesterUserId"], chatDynamic["takerUserId"],
           finalChatMessages.reversed.toList());
     });
+  }
+
+  Future<void> setUserName(String userId, String username){
+    return _databaseReference.child('users/${userId}/info').set({"username": username});
+  }
+
+  Future<void> updateUserName(String userId, String username){
+    return _databaseReference.child('users/${userId}/info').update({"username": username});
+  }
+
+  Future<String> getUserInfo(String userId) async{
+    DataSnapshot snapshot = await _databaseReference.child(USER_COLLECTION).child(userId).child("info").once();
+    print('Value : ${snapshot.value}');
+    if (snapshot.value == null) {
+      setUserName(userId, 'Tortuga'); //Default Name
+      return 'Tortuga';
+    }
+    return snapshot.value['username'].toString();
   }
 
   Future<void> sendMessage(String requestedOrderId, String fromUserId, String text, String dateTime) {

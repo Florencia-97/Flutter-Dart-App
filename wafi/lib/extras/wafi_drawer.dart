@@ -192,7 +192,7 @@ class _DrawerWafi extends State<DrawerWafi> {
       title: Text('Mi Perfil'),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
-          builder: (context) => MyProfile(_userId)));
+          builder: (context) => MyProfile()));
       },
     );
   }
