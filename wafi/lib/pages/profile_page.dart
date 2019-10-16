@@ -21,6 +21,10 @@ class _MyProfileState extends State<MyProfile> {
   String _userId = "";
   dynamic _username = "";
 
+  //This is for username Form, can i put it in othre place? (Flor)
+  final _formKey = GlobalKey<FormState>();
+  String _usernameInput;
+
   @override
   void initState() {
     super.initState();
@@ -77,11 +81,11 @@ class _MyProfileState extends State<MyProfile> {
               if (editable) Container(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                icon: Icon(Icons.edit,
-                  color: Colors.blueGrey,
+                  icon: Icon(Icons.edit,
+                    color: Colors.blueGrey,
+                  ),
+                  onPressed: () => _editAlias(), 
                 ),
-                onPressed: () => null, 
-            ),
           ),
             ],
           ),
@@ -90,57 +94,73 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  // void _editAlias(){
-  //   final formKey = GlobalKey<FormState>();
-  //   String usernameInput;
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Alias',
-  //                   style: TextStyle(fontSize: 20),
-  //         ),
-  //         content: Form(
-  //           key: _formKey,
-  //           child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: <Widget>[
-  //               Container(
-  //                   padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
-  //                   child: TextFormField(
-  //                     autofocus: false,
-  //                     decoration: InputDecoration(
-  //                       hintText: 'Descripción',
-  //                     ),
-  //                     onSaved: (value) => usernameInput = value.trim(),
-  //                   ),
-  //                 ),
-  //               Align(
-  //                 alignment: Alignment.bottomLeft,
-  //                 child: Row(
-  //                   children: <Widget>[
-  //                     FlatButton(
-  //                       child: Text('CANCELAR',
-  //                           style: TextStyle(
-  //                               fontSize: 16.0, color: Colors.black38)),
-  //                       onPressed: () => Navigator.pop(context),
-  //                     ),
-  //                     FlatButton(
-  //                       child: Text('CREAR',
-  //                           style: TextStyle(
-  //                               fontSize: 16.0, color: Colors.black)),
-  //                       onPressed: _updateUsername(formKey),
-  //                     ),
-  //                   ],
-  //                 )
-  //             )
-  //           ],
-  //         )
-  //       ),
-  //     );}
-  //   );
-  // }
+  void _editAlias(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alias',
+            style: TextStyle(fontSize: 20),
+          ),
+          content: _formUsername(),
+      );}
+    );
+  }
+
+  Widget _formUsername(){
+    return Form(
+      key: _formKey,
+      child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _usernameInputArea(),
+          Row(
+            children: <Widget>[
+              FlatButton(
+                child: Text('CANCELAR',
+                    style: TextStyle(
+                        fontSize: 16.0, color: Colors.black38)),
+                onPressed: () => Navigator.pop(context),
+              ),
+              FlatButton(
+                child: Text('CREAR',
+                    style: TextStyle(
+                      fontSize: 16.0, color: Colors.black)),
+                onPressed: _updateUsername,
+              ),
+              ],
+            )
+],
+      )
+    );
+  }
+
+  Container _usernameInputArea(){
+     return Container(
+          padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
+          child: TextFormField(
+            autofocus: false,
+            decoration: InputDecoration(
+              hintText: _username,
+            ),
+            onSaved: (value) => _usernameInput = value.trim(),
+                ),
+    );
+  }
+
+  void _updateUsername() async {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+
+      widget.db.updateUserName(_userId, _usernameInput);
+      widget.db.getUserInfo(widget._userId).then((username) {
+        _username = username;
+      });
+      Navigator.pop(context);
+    }
+  }
 
   Widget _infoBuilder(){
     return Column(
