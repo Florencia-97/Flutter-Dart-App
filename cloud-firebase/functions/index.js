@@ -126,33 +126,20 @@ exports.sendOrderFinishedNotification = functions.database.ref('/order/{userUid}
       return Promise.all(tokensToRemove);
     });
 
-exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/{messageId}')
+exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/messages/{messageId}')
     .onWrite(async (change, context) => {
-      /*const userUid = context.params.userUid;*/
       const orderId = context.params.orderId;
       const senderId = change.after._data.userId;
-      /*const realOrderId = change.after._data.requestedOrderId;*/
 
-      console.log(change);
-      console.log(change.after._data.userId);
-      console.log(orderId);
+      let snapshotChat = await admin.database().ref(`/chat/${orderId}`).once('value');
+      let chatData = snapshotChat.val();
+      console.log(chatData);
 
-      //console.log('New order taken ID:', realOrderId, 'by user:', userUid, 'for user:', requesterId );
-
-
-      let snapshot = await admin.database().ref(`/order/${senderId}/taken`).once('value');
-      let orderData = snapshot.child(orderId).val();
-      let recieverId = orderData.requestedUserId
+      let snapshotOrder = await admin.database().ref(`/order/${chatData.requesterUserId}/requested`).once('value');
+      let orderData = snapshotOrder.child(orderId).val();
       console.log(orderData);
 
-      if(!orderData) {
-        snapshot = await admin.database().ref(`/order/${senderId}/requested`).once('value');
-        orderData = snapshot.child(orderId).val();
-        recieverId = orderData.takenBy;
-        console.log("order data es");
-        console.log(orderData);
-      }
-
+      const recieverId = senderId === chatData.requesterUserId ? chatData.takerUserId : chatData.requesterUserId;
       
 
       const getDeviceTokensPromise = admin.database()
@@ -182,7 +169,7 @@ exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/{messa
       const payload = {
         notification: {
           title: `${orderData.title}`,
-          body: `${senderId}: ${change.after._data.text}`,
+          body: `Tu wafi: ${change.after._data.text}`,
           //icon: follower.photoURL
         }
       };
