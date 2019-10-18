@@ -29,6 +29,8 @@ abstract class DataBaseController {
 
   Future<Stream<List<RequestedOrder>>> getTakenOrdersStream(String userId);
 
+  Future<int> getAmountTakenOrderById(String userId);
+
   Future<List<String>> getTakenOrdersById(String userId);
 
   Future<void> setToken(String userId, String token);
@@ -217,6 +219,15 @@ class FirebaseController implements DataBaseController {
         }
       return orders;
     });
+  }
+
+  Future<int> getAmountTakenOrderById(String userId) async{
+    dynamic takenOrders = await getTakenOrdersStream(userId);
+    dynamic orders = takenOrders.map((requestedOrders) => requestedOrders
+        .where((ro) => ro.status == OrderStatuses.Resolved)
+        .toList());
+    //print(orders.key);
+    return orders.length;
   }
 
   Future<List<String>> getTakenOrdersById(String userId) async {
