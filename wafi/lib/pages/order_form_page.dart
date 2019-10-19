@@ -68,29 +68,28 @@ class _OrderPageState extends State<OrderPage> {
   Widget _showOrderTitle() {
     String _titleName = widget.orderSource.viewName.toUpperCase();
     return Container(
-        margin: EdgeInsets.all(20),
-        color: Colors.grey[200],
-        child: Row(
-          children: <Widget>[
-            Container( 
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
-              child:Icon(widget.orderSource.icon),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(30.0, 10.0, 0.0, 10.0),
-              child: Text(_titleName,
-                style: TextStyle( fontSize: 18,)
-              ),
-            ),
-          ],
-        ),
+      height: 50,
+      margin: EdgeInsets.only(bottom: 30),
+      color:  Color(0xFF596275),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container( 
+            child:Icon(widget.orderSource.icon, color: Colors.teal,),
+            margin: EdgeInsets.only(right: 30),
+          ),
+          Text(_titleName,
+              style: TextStyle( fontSize: 18, color: Colors.white,)
+          ),
+        ],
+      ),
     );
   }
 
   /* TODO: Refactor, use same function for all inputs. Add validators */
-  Widget _showInputTitle() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(25.0, 30.0, 25.0, 0.0),
+  Widget _showInputTitle(double pad) {
+    return Container(
+      padding: EdgeInsets.only(bottom: pad),
       child: TextFormField(
         maxLines: 1,
         autofocus: false,
@@ -103,9 +102,9 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _showInputDescription() {
+  Widget _showInputDescription(double pad) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
+      padding: EdgeInsets.only(bottom: pad),
       child: TextFormField(
         autofocus: false,
         decoration: InputDecoration(
@@ -168,9 +167,9 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _showInputFloor() {
+  Widget _showInputFloor(double pad) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
+      padding: EdgeInsets.only(bottom: pad),
       child: DropdownButtonFormField<String>(
         value: _floor,
         items: _getFloors().map<DropdownMenuItem<String>>((String floor) {
@@ -197,9 +196,9 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _showInputClassrooms() {
+  Widget _showInputClassrooms(double pad) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
+      padding: EdgeInsets.only(bottom: pad),
       child: TextFormField(
         autofocus: false,
         decoration: InputDecoration(
@@ -211,40 +210,44 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _showPrimaryButton() {
+  Widget _showPrimaryButton(double pad) {
     return Container(
-        padding: EdgeInsets.fromLTRB(25.0, 45.0, 25.0, 0.0),
-        child: SizedBox(
-          height: 40.0,
-          child: RaisedButton(
-            elevation: 5.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)),
-            color: Colors.teal,
-            child: Text('Añadir pedido',
-                style: TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: _showDialog,
-          ),
-        ));
+      padding: EdgeInsets.only(bottom: pad),
+      child: SizedBox(
+        height: 40.0,
+        child: RaisedButton(
+          elevation: 5.0,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0)),
+          color: Colors.teal,
+          child: Text('Añadir pedido',
+              style: TextStyle(fontSize: 20.0, color: Colors.white)),
+          onPressed: _showDialog,
+        ),
+      )
+    );
   }
 
   Widget _showBody() {
+    double n = 60;
     return Container(
-        padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              _showOrderTitle(),
-              _showInputTitle(),
-              _showInputFloor(),
-              _showInputClassrooms(),
-              _showInputDescription(),
-              _showPrimaryButton(),
-            ],
-          ),
-        ));
+      padding: EdgeInsets.only(left: 28, right: 28),
+      alignment: Alignment.center,
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            _showOrderTitle(),
+            _showInputTitle(n),
+            _showInputFloor(n),
+            _showInputClassrooms(n),
+            _showInputDescription(n),
+            _showPrimaryButton(n),
+          ],
+        ),
+      )
+    );
   }
 
   @override
