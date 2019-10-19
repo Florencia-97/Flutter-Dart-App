@@ -166,7 +166,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   Widget _showBody(){
     return Container(
-      color: Colors.grey[100],
+      color: Colors.white10,
       alignment: Alignment.center,
         padding: EdgeInsets.all(16.0),
         child: Form(

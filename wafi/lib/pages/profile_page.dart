@@ -64,7 +64,7 @@ class _MyProfileState extends State<MyProfile> {
 
   Container _field(String title, String text, bool editable){
     return Container(
-      color: Colors.grey[100],
+      color: Colors.white24,
       padding: EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,7 +75,7 @@ class _MyProfileState extends State<MyProfile> {
             children: <Widget>[ 
               Text('$title:',
                 textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               Text(text,
                 style: TextStyle(fontSize: 18),
@@ -88,7 +88,7 @@ class _MyProfileState extends State<MyProfile> {
             child: IconButton(
               alignment: Alignment.topCenter,
               icon: Icon(Icons.edit,
-                color: Colors.blueGrey[400],
+                color: Colors.blueGrey,
               ),
               iconSize: 20,
               onPressed: () => _editAlias(), 

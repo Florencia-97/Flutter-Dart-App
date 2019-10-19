@@ -211,7 +211,7 @@ class _DrawerWafi extends State<DrawerWafi> {
               ),
             ),
             Container(
-              color: Colors.grey[100],
+              color: Colors.white60,
               child: ListTile(
                   leading: Icon(Icons.power_settings_new),
                   title: Text('Cerrar sesión'),

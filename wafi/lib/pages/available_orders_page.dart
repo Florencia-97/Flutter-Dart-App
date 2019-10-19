@@ -194,7 +194,7 @@ class ButtonOrder extends StatelessWidget {
     return ButtonTheme(
       minWidth: 250.0,
       child: RaisedButton(
-        color: Colors.white,
+        color: Colors.white70,
         onPressed: onPressedButton,
         child: ListTile(
             title: Text(order.title),
