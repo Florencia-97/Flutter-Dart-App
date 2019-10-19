@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/login/authentification.dart';
 
 class LoginSignUpPage extends StatefulWidget {
@@ -75,7 +74,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     }
   }
 
-
   @override
   void initState() {
     _errorMessage = "";
@@ -102,7 +100,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   // This must not reach prod.
   FloatingActionButton _showFastFoodLogInButton() {
-    return new FloatingActionButton(
+    return FloatingActionButton(
         onPressed: _fastFoodLogin,
         tooltip: 'Fast Food Login',
         child: Icon(Icons.fastfood)
@@ -126,10 +124,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   @override
   Widget build(BuildContext context) {
     _isIos = Theme.of(context).platform == TargetPlatform.iOS;
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Wafi'),
-        ),
+    return Scaffold(
         body: Stack(
           children: <Widget>[
             _showBody(),
@@ -153,11 +148,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Verify your account"),
-          content: new Text("Link to verify account has been sent to your email"),
+          title: Text("Verificá tu cuenta"),
+          content: Text("Se ha enviado un mail para verificar tu cuenta"),
           actions: <Widget>[
-            new FlatButton(
-              child: new Text("Dismiss"),
+            FlatButton(
+              child: Text("Ignorar"),
               onPressed: () {
                 _changeFormToLogin();
                 Navigator.of(context).pop();
@@ -170,11 +165,13 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showBody(){
-    return new Container(
+    return Container(
+      color: Colors.grey[100],
+      alignment: Alignment.center,
         padding: EdgeInsets.all(16.0),
-        child: new Form(
+        child: Form(
           key: _formKey,
-          child: new ListView(
+          child: ListView(
             shrinkWrap: true,
             children: <Widget>[
               _showLogo(),
@@ -190,7 +187,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   Widget _showErrorMessage() {
     if (_errorMessage.length > 0 && _errorMessage != null) {
-      return new Text(
+      return Text(
         _errorMessage,
         style: TextStyle(
             fontSize: 13.0,
@@ -199,72 +196,75 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             fontWeight: FontWeight.w300),
       );
     } else {
-      return new Container(
+      return  Container(
         height: 0.0,
       );
     }
   }
 
   Widget _showLogo() {
-    return new Hero(
-      tag: 'hero',
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 48.0,
-          child: Image.asset('assets/flutter-icon.png'), /* TODO: Wafi logo*/
-        ),
-      ),
+    return Container(
+      alignment: Alignment.center,
+      child: Text('Wafi',
+        style: TextStyle(color: Colors.teal, fontSize: 75),
+      )
     );
   }
 
   Widget _showEmailInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-      child: new TextFormField(
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
+      child: TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
             hintText: 'Email',
-            icon: new Icon(
+            icon: Icon(
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        validator: (value) => value.isEmpty ? 'Email no puede estar vacio' : null,
         onSaved: (value) => _email = value.trim(),
       ),
     );
   }
 
   Widget _showPasswordInput() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
+      child: TextFormField(
         maxLines: 1,
         obscureText: true,
         autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Password',
-            icon: new Icon(
+        decoration: InputDecoration(
+            hintText: 'Contraseña',
+            icon: Icon(
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+        validator: (value) => value.isEmpty ? 'Contraseña no puede estar vacia' : null,
         onSaved: (value) => _password = value.trim(),
       ),
     );
   }
 
   Widget _showSecondaryButton() {
-    return new FlatButton(
+    return FlatButton(
       child: _formMode == FormMode.LOGIN
-          ? new Text('Create an account',
-              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : new Text('Have an account? Sign in',
-              style:
-                  new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+          ? Text('Crear una cuenta',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+          : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Sos usuario? ',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)
+              ),
+              Text('Ingresa', 
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300, color: Colors.teal),
+              ),
+            ],
+          ),
       onPressed: _formMode == FormMode.LOGIN
           ? _changeFormToSignUp
           : _changeFormToLogin,
@@ -272,21 +272,22 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showPrimaryButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.teal,
-            child: _formMode == FormMode.LOGIN
-                ? new Text('Login',
-                    style: new TextStyle(fontSize: 20.0, color: Colors.white))
-                : new Text('Create account',
-                    style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: _validateAndSubmit,
-          ),
-        ));
+    return Container(
+      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+      child: SizedBox(
+        height: 40.0,
+        child: RaisedButton(
+          elevation: 5.0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          color: Colors.teal,
+          child: _formMode == FormMode.LOGIN
+              ? Text('Ingresar',
+                  style: TextStyle(fontSize: 20.0, color: Colors.white))
+              : Text('Crear una cuenta',
+                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
+          onPressed: _validateAndSubmit,
+        ),
+      )
+    );
   }
 }
