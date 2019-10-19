@@ -43,17 +43,18 @@ class _MyProfileState extends State<MyProfile> {
 
   Widget _headerBuilder(){
     return Container(
-      height: 250,
-      decoration: _decorationBox(),
-      //color: Color(0xFFCA4F4C),
+      height: 300,
       child: SizedBox.expand(
         child: Column( 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CircleAvatar(
-              backgroundImage: AssetImage('assets/turing_profile_ej.jpg'),
+              //backgroundImage: AssetImage('assets/turing_profile_ej.jpg'),
               radius: 70.0,
-              //backgroundColor: Colors.red[200],
+              backgroundColor: Color(0xFF596275),
+              child: Text(_username != "" ? _username.substring(0,1).toUpperCase() : "",
+                style: TextStyle(fontSize: 40.0, color: Colors.white)
+              ),
             ),
           ],
         ),
@@ -65,29 +66,33 @@ class _MyProfileState extends State<MyProfile> {
     return Container(
       color: Colors.grey[100],
       padding: EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text('$title: ',
-            textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 16, color: Colors.grey[500]),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[ 
+              Text('$title:',
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+              ),
               Text(text,
                 style: TextStyle(fontSize: 18),
               ),
-              if (editable) Container(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(Icons.edit,
-                    color: Colors.blueGrey,
-                  ),
-                  onPressed: () => _editAlias(), 
-                ),
-          ),
             ],
+          ),
+          if (editable) Container(
+            alignment: Alignment.topCenter,
+            height: 30,
+            child: IconButton(
+              alignment: Alignment.topCenter,
+              icon: Icon(Icons.edit,
+                color: Colors.blueGrey[400],
+              ),
+              iconSize: 20,
+              onPressed: () => _editAlias(), 
+            ),
           ),
         ],
       )
@@ -111,11 +116,14 @@ class _MyProfileState extends State<MyProfile> {
     return Form(
       key: _formKey,
       child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        _usernameInputArea(),
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _usernameInputArea(),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               FlatButton(
                 child: Text('CANCELAR',
@@ -124,28 +132,27 @@ class _MyProfileState extends State<MyProfile> {
                 onPressed: () => Navigator.pop(context),
               ),
               FlatButton(
-                child: Text('CREAR',
+                child: Text('MODIFICAR',
                     style: TextStyle(
                       fontSize: 16.0, color: Colors.black)),
                 onPressed: _updateUsername,
               ),
               ],
-            )
-],
+          )
+        ],
       )
     );
   }
 
   Container _usernameInputArea(){
-     return Container(
-          padding: const EdgeInsets.fromLTRB(25.0, 100.0, 25.0, 0.0),
-          child: TextFormField(
-            autofocus: false,
-            decoration: InputDecoration(
-              hintText: _username,
-            ),
-            onSaved: (value) => _usernameInput = value.trim(),
-                ),
+    return Container(
+      alignment: Alignment.bottomLeft,
+      padding: const EdgeInsets.fromLTRB(5.0, 10.0, 25.0, 0.0),
+      child: TextFormField(
+        controller: TextEditingController(text: _username),
+        autofocus: false,
+        onSaved: (value) => _usernameInput = value.trim(),
+      ),
     );
   }
 
@@ -163,11 +170,14 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   Widget _infoBuilder(){
-    return Column(
-      children: <Widget>[
-        _field('Alias', _username, true),
-        _field('Mail', _userEmail, false),
-      ],
+    return Container(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: Column(
+        children: <Widget>[
+          _field('Alias', _username, true),
+          _field('Mail', _userEmail, false),
+        ],
+      ),
     );
   }
 
@@ -178,31 +188,20 @@ class _MyProfileState extends State<MyProfile> {
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
           colors: [
-            Color(0xd1ff4e50),
-            Color(0xddf9d423),
+            Color(0xd1159957),
+            Color(0xf1155799),
           ],
       ),
     );
   }
 
   Widget _boxStatsContainer(String text, String n){
-    return Container(
-      decoration: _decorationBox(),
-      alignment: Alignment.center,
-      height: 100,
-      width: 100,
-      child: SizedBox.expand(
-        child: Column(
-          children: <Widget>[
-            Text('$n',
-              style: TextStyle(fontSize: 50, color: Colors.white),  
-            ),
-            Text(text.toUpperCase(),
-              style: TextStyle(fontSize: 14 ,color: Colors.white),
-            ),
-          ],
-        ),
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Text(text, style: TextStyle(color: Colors.white, fontSize: 20),),
+        Text(n, style: TextStyle(color: Colors.white, fontSize: 20),)
+      ],
     );
   }
 
@@ -246,45 +245,40 @@ class _MyProfileState extends State<MyProfile> {
 
 
   Widget _statsBuilder(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.all(20),
-          child: Text('Stats:',
-            style: TextStyle(fontSize: 16, color: Colors.grey[500]),
-          ),
-        ),
-        Container(
-          //height: 160,// remove hard code
-          alignment: Alignment.center,
-          child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            _boxStats('Pedidos', _getResolvedOrders), //Change name!
-            _boxStats('Tomados', _getOrdersTaken), //Change name!
-            ],
-          ),
-        )
-      ],
-    );
+    return Expanded(child: Container(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _boxStats('Pedidos realizados', _getResolvedOrders), 
+          SizedBox(height: 20),
+          _boxStats('Pedidos tomados', _getOrdersTaken), //Change name!
+        ],
+      ),
+    ));
   }
 
   Widget _body(){
-    return Column(
+    return Container(
+      decoration: _decorationBox(),
+      child: Column(
       children: <Widget>[
         _headerBuilder(),
-        _infoBuilder(),
+        Container(child: _infoBuilder(), padding: EdgeInsets.only(right: 10, left: 10)),
         _statsBuilder(),
       ],
+    ),
     );
   }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
+        resizeToAvoidBottomPadding: false, //fixes overflowing issues
         appBar: BarWafi('Perfil'),
-        body: _body(), // Make it expanded?
+        body: _body(),
     );
   }
 }
