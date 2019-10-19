@@ -31,7 +31,7 @@ class _ChatPage extends State<ChatPage> {
   @override
   void initState() {
     String budId =  widget.requestedOrder.requesterUserId;
-    if (budId == widget.userId) budId = widget.requestedOrder.requestedUserId;
+    if (budId == widget.userId) budId = widget.requestedOrder.takerUserId;
     widget.db.getUserInfo(budId).then((username) {
       setState(() {
         _usernameBud = username;
