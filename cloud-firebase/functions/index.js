@@ -44,9 +44,13 @@ exports.sendOrderTakenNotification = functions.database.ref('/order/{userUid}/ta
         notification: {
           title: 'Alguien tomo tu pedido!',
           body: `El pedido: "${orderData.title}" al aula: ${orderData.classroom} esta en curso.`,
-          //icon: follower.photoURL
+        },
+        data: {
+          type: 'ORDER_TAKEN_NOTIFICATION',
         }
       };
+
+      console.log(payload);
 
       // Listing all tokens as an array.
       tokens = Object.keys(tokensSnapshot.val());
@@ -100,9 +104,13 @@ exports.sendOrderFinishedNotification = functions.database.ref('/order/{userUid}
           notification: {
             title: 'Tu pedido esta afuera!',
             body: `El pedido: "${change.after._data.title}" se encuentra afuera del aula: ${change.after._data.classroom}.`,
-            //icon: follower.photoURL
+          },
+          data: {
+            type: 'ORDER_FINISHED_NOTIFICATION',
           }
         };
+
+        console.log(payload);
 
         // Listing all tokens as an array.
         tokens = Object.keys(tokensSnapshot.val());
@@ -130,6 +138,7 @@ exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/messag
     .onWrite(async (change, context) => {
       const orderId = context.params.orderId;
       const senderId = change.after._data.userId;
+      console.log(change.after._data);
 
       let snapshotChat = await admin.database().ref(`/chat/${orderId}`).once('value');
       let chatData = snapshotChat.val();
@@ -170,7 +179,12 @@ exports.sendMessageNotification = functions.database.ref('/chat/{orderId}/messag
         notification: {
           title: `${orderData.title}`,
           body: `Tu wafi: ${change.after._data.text}`,
-          //icon: follower.photoURL
+        },
+        data: {
+          type: 'CHAT_NOTIFICATION',
+          takerUserId: orderData.takerUserId,
+          requestedUserId: chatData.requesterUserId,
+          id: orderId
         }
       };
 

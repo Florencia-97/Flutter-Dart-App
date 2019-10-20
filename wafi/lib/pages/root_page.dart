@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wafi/db/data_base_controller.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/login/login_signuo_page.dart';
+import 'package:wafi/model/requested_order.dart';
 import 'package:wafi/pages/main_menu.dart';
+
+import 'chat_page.dart';
+import 'my_orders_page.dart';
 
 class RootPage extends StatefulWidget {
   RootPage();
@@ -65,8 +71,36 @@ class _RootPageState extends State<RootPage> {
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-        widget.fLNP.initialize(initializationSettings);
+    widget.fLNP.initialize(initializationSettings, onSelectNotification: onSelectNotification);
   }
+
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    Map<String, dynamic> data = jsonDecode(payload);
+    print(data);
+    
+    switch(data["type"]){
+      case "ORDER_TAKEN_NOTIFICATION":
+        {
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(_userId)));
+        }
+        break;
+    
+      case "ORDER_FINISHED_NOTIFICATION":
+        {
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(_userId)));
+        }
+        break;
+      
+      case "CHAT_NOTIFICATION":
+        {
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(_userId, RequestedOrder.fromMap(data["id"], data["requestedUserId"], data))));
+        }
+      
+    }
+}
 
   showNotification(Map<String, dynamic> msg) async {
     var android = new AndroidNotificationDetails(
@@ -74,12 +108,14 @@ class _RootPageState extends State<RootPage> {
       "Dont know 2",
       "Dont know 3",
     );
-    //print('msg es');
-    print(msg["notification"]["body"]);
+    print('msg es');
+    print(msg);
+    String payload = jsonEncode(msg["data"]);
+    print(payload);
     var iOS = new IOSNotificationDetails();
     var platform = new NotificationDetails(android, iOS);
     await widget.fLNP.show(
-        0, msg["notification"]["title"], msg["notification"]["body"], platform);
+        0, msg["notification"]["title"], msg["notification"]["body"], platform, payload: payload);
   }
 
   void _onLoggedIn() {
