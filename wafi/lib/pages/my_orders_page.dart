@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:wafi/db/data_base_controller.dart';
 import 'package:wafi/extras/order_list.dart';
 import 'package:wafi/model/order_status.dart';
 
 class MyOrders extends StatefulWidget {
-  MyOrders(this.userId);
+  MyOrders(this.userId, {this.selectedTab = 0});
 
   final String userId;
+  final selectedTab;
 
   @override
   State createState() => _MyOrders();
@@ -19,12 +19,13 @@ class _MyOrders extends State<MyOrders> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
+      initialIndex: widget.selectedTab,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
               Tab(text: "En espera"),
-              Tab(text: "En cursos")
+              Tab(text: "En curso")
             ],
           ),
           title: Text('Mis Pedidos'),

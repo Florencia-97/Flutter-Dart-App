@@ -87,13 +87,14 @@ class _RootPageState extends State<RootPage> {
     switch(data["type"]){
       case "ORDER_TAKEN_NOTIFICATION":
         {
-          await Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(_userId)));
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(_userId, selectedTab:1)));
         }
         break;
     
       case "ORDER_FINISHED_NOTIFICATION":
         {
-          await Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(_userId)));
+          //TODO: Add finished orders tab in my orders page
+          //await Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders(_userId)));
         }
         break;
       
