@@ -38,12 +38,15 @@ class _RootPageState extends State<RootPage> {
   void initState() {
     super.initState();
     widget.fM.configure(onLaunch: (Map<String, dynamic> msg) {
-      showNotification(msg);
       print(" onLaunch called ${msg}");
-    }, onResume: (Map<String, dynamic> msg) {
       showNotification(msg);
+      
+    }, onResume: (Map<String, dynamic> msg) {
       print( " onResume called ${msg}");
+      showNotification(msg);
+      
     }, onMessage: (Map<String, dynamic> msg) {
+      print( " onMessage called ${msg}");
       showNotification(msg);
     });
     widget.auth.getCurrentUser().then((user) {
@@ -80,7 +83,7 @@ class _RootPageState extends State<RootPage> {
     }
     Map<String, dynamic> data = jsonDecode(payload);
     print(data);
-    
+
     switch(data["type"]){
       case "ORDER_TAKEN_NOTIFICATION":
         {
@@ -107,6 +110,7 @@ class _RootPageState extends State<RootPage> {
       'Dont know 1',
       "Dont know 2",
       "Dont know 3",
+      importance: Importance.Max, priority: Priority.High, ticker: 'ticker'
     );
     print('msg es');
     print(msg);
