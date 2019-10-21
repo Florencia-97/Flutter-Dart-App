@@ -204,7 +204,7 @@ class _OrderPageState extends State<OrderPage> {
         decoration: InputDecoration(
           hintText: 'Aula',
         ),
-        onSaved: (value) => _description = value.trim(),
+        onSaved: (value) => _classroom = value.trim(),
         validator: (x) => null,
       ),
     );
