@@ -8,6 +8,8 @@ import 'package:wafi/helpers.dart';
 import 'package:wafi/model/order_status.dart';
 import 'package:wafi/model/requested_order.dart';
 
+import 'my_taken_orders_page.dart';
+
 class AvailableOrdersPage extends StatefulWidget {
   AvailableOrdersPage({this.auth, this.onLoggedOut});
 
@@ -64,8 +66,9 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
                       onPressed: () async {
                         var user = await widget.auth.getCurrentUser();
                         widget.db.addTakenOrder(user.uid, order);
-                        Navigator.pop(context);
-                      },
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => MyTakenOrders(user.uid)));
+                        },
                     ),
                   ],
                 )
