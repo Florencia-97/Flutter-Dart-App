@@ -67,12 +67,27 @@ class _DrawerWafi extends State<DrawerWafi> {
       .toList());
   }
 
+  //Not ideal de repetition, future refactor
+  BoxDecoration _decorationBox(){
+    return BoxDecoration(
+      color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Color(0xd1159957),
+            Color(0xf1155799),
+          ],
+      ),
+    );
+  }
+
   Column _buildDrawerHeader() {
     return Column(
       children: <Widget>[
         CircleAvatar(
           radius: 50.0,
-          backgroundColor: Colors.red[200],
+          backgroundColor: Color(0xFF596275),
           // This fails sometimes, what is it doing? !!!! Value not in range: 1
           child: Text(_username != "" ? _username.substring(0,1).toUpperCase() : "",
             style: TextStyle(fontSize: 40.0, color: Colors.white)
@@ -200,9 +215,7 @@ class _DrawerWafi extends State<DrawerWafi> {
               children: <Widget>[
                 DrawerHeader(
                   child: _buildDrawerHeader(),
-                  decoration: BoxDecoration(
-                      color: Colors.teal
-                  ),
+                  decoration: _decorationBox()
                 ),
                 _myOrders(),
                 _myOrdersTaken(),
