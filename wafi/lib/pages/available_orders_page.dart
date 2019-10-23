@@ -44,6 +44,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
                 _createText('Compra: ${order.title}'),
+                _createText('Piso: ${order.floor}'),
                 _createText('Aula: ${order.classroom}'),
                 _createText('Descripción: ${order.description}'),
             ],
@@ -62,7 +63,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
                     FlatButton(
                       child: Text('TOMAR',
                           style: TextStyle(
-                              fontSize: 16.0, color: Colors.black)),
+                              fontSize: 16.0, color: Colors.teal)),
                       onPressed: () async {
                         var user = await widget.auth.getCurrentUser();
                         widget.db.addTakenOrder(user.uid, order);
