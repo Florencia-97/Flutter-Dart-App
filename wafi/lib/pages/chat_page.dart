@@ -27,11 +27,15 @@ class _ChatPage extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
   String _usernameBud = "";
+  bool _isCapo = false;
 
   @override
   void initState() {
     String budId =  widget.requestedOrder.requesterUserId;
-    if (budId == widget.userId) budId = widget.requestedOrder.takerUserId;
+    if (budId == widget.userId){
+      budId = widget.requestedOrder.takerUserId;
+      _isCapo = true;
+    }
     widget.db.getUserInfo(budId).then((username) {
       setState(() {
         _usernameBud = username;
@@ -122,7 +126,16 @@ class _ChatPage extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_usernameBud)),
+      appBar: AppBar(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(_usernameBud),
+            if(_isCapo) Text('Tu capo', style: TextStyle(color: Colors.grey[300], fontSize: 14) )
+          ]
+          ,)
+        ),
       backgroundColor: Colors.blueGrey[200],
       body: StreamBuilder(
         stream: buildMessages(),
