@@ -79,6 +79,7 @@ class _ChatPage extends State<ChatPage> {
       color: Colors.white,
       child: TextField(
         maxLines: null,
+        style: TextStyle(color: Colors.black),
         onSubmitted: (value) => null, // It think it is not necessary since the send button does it. // !!!! (value) => callback(),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.all(15),
@@ -179,6 +180,7 @@ class ChatMessageWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                 child: Text(
                   text,
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ),
