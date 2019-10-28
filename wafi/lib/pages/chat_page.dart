@@ -29,8 +29,21 @@ class _ChatPage extends State<ChatPage> {
   String _usernameBud = "";
   bool _isCapo = false;
 
+
+  List<ChatMessage> _chatMessages = [];
+
+
   @override
   void initState() {
+
+    widget.db.getChat(widget.requestedOrder.id).forEach((chat) {
+      setState(() {
+        print(chat.messages);
+        _chatMessages = chat.messages;
+      });
+    });
+
+
     String budId =  widget.requestedOrder.requesterUserId;
     if (budId == widget.userId){
       budId = widget.requestedOrder.takerUserId;
@@ -41,6 +54,8 @@ class _ChatPage extends State<ChatPage> {
         _usernameBud = username;
       });
     });
+
+
   }
 
   Future<void> sendButtonCallback() async {
@@ -64,7 +79,7 @@ class _ChatPage extends State<ChatPage> {
     return chatMessage;
   }
 
-  Stream<List<ChatMessageWidget>> buildMessages() {
+  Stream<List<ChatMessageWidget>> _buildMessageWidgets() {
     return widget.db.getChat(widget.requestedOrder.id).map((chat) {
       return chat.messages.map((msg)  {
         bool own = msg.userId == widget.userId;
@@ -124,7 +139,51 @@ class _ChatPage extends State<ChatPage> {
     );
   }
 
-  @override
+  Widget _waitingForMessages() {
+    return Center(
+        child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+                Colors.teal))); // !!!! standarize circular progress
+  }
+
+  Widget _buildStreamBuilderMessages() {
+    return StreamBuilder(
+        stream: _buildMessageWidgets(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return _waitingForMessages();
+          } else {
+            List<ChatMessageWidget> chatMessages = snapshot.data;
+            return _doBuildChat(chatMessages);
+          }
+        }
+    );
+  }
+
+  Widget _buildStreamBuilderMessages2() {
+    var chatMessageWidgets = _chatMessages.map((msg) {
+      bool own = msg.userId == widget.userId;
+      return ChatMessageWidget(msg.text, own);
+    }).toList();
+
+    return _doBuildChat(chatMessageWidgets);
+  }
+
+  Widget _buildStreamBuilderMessages3() {
+    return StreamBuilder(
+      stream: _buildMessageWidgets(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _waitingForMessages();
+        } else {
+          var chatMessageWidgets = snapshot.data;
+          return _doBuildChat(chatMessageWidgets);
+        }
+      },
+    );
+  }
+
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -138,18 +197,7 @@ class _ChatPage extends State<ChatPage> {
           ,)
         ),
       backgroundColor: Colors.blueGrey[200],
-      body: StreamBuilder(
-        stream: buildMessages(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.teal))); // !!!! standarize circular progress
-          } else {
-            List<ChatMessageWidget> chatMessages = snapshot.data;
-            return _doBuildChat(chatMessages);
-          }
-        },
-      ),
+      body: _buildStreamBuilderMessages2()
     );
   }
 }
