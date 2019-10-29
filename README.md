@@ -8,6 +8,8 @@ Integrantes:
 - Rodrigo Souto
 - Florencia Rodriguez
 
+Aplicación que permite conectar a los estudiantes de la Facultad de Ingenieria para poder realizar y llevar pedidos dentro de esta.
+
 <p align="center">
   <img src="assets_rm/logo.jpg" width="200" />
   <img src="assets_rm/drawer.jpg" width="200" /> 
