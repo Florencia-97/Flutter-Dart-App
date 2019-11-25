@@ -30,8 +30,36 @@ enum AuthStatus {
   LOGGED_IN,
 }
 
+// |||| get auta here
+class UserStatus {
+  static final UserStatus _singleton = UserStatus._internal();
+
+  static String __userId;
+
+  static String getUserId() {
+    return __userId;
+  }
+
+  static void setUserId(String uid) {
+    __userId = uid;
+  }
+
+  static void unSetUserId() {
+    __userId = null;
+  }
+
+
+  factory UserStatus() {
+    return _singleton;
+  }
+
+  UserStatus._internal();
+}
+
+
 class _RootPageState extends State<RootPage> {
-  AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
+  AuthStatus authStatus = AuthStatus.NOT_DETERMINED; // !!!! pass to UserStatus
+  // |||| remove this from here
   String _userId = "";
 
   @override
@@ -134,6 +162,7 @@ class _RootPageState extends State<RootPage> {
       });
     });
     setState(() {
+      UserStatus.setUserId(_userId);
       authStatus = AuthStatus.LOGGED_IN;
     });
   }
@@ -145,6 +174,7 @@ class _RootPageState extends State<RootPage> {
     setState(() {
       Future<void> signedOutF = widget.auth.signOut();
       signedOutF.then((aVoid) {
+        UserStatus.unSetUserId();
         authStatus = AuthStatus.NOT_LOGGED_IN;
         _userId = "";
       });

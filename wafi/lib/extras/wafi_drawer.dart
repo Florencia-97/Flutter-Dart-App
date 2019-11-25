@@ -9,6 +9,7 @@ import 'package:wafi/model/requested_order.dart';
 import 'package:wafi/pages/my_orders_page.dart';
 import 'package:wafi/pages/my_taken_orders_page.dart';
 import 'package:wafi/pages/profile_page.dart';
+import 'package:wafi/pages/root_page.dart';
 
 class DrawerWafi extends StatefulWidget {
   DrawerWafi({this.onLoggedOut});
@@ -27,8 +28,6 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   String _username = '';
   String _userId = "";
-  List<RequestedOrder> _orders = new List();
-  DatabaseReference _userRef;
 
   @override
   void initState() {
@@ -58,9 +57,10 @@ class _DrawerWafi extends State<DrawerWafi> {
     });
   }
 
-  Future<Stream<List<RequestedOrder>>> _getOrdersTaken() async {
-    var user = await widget.auth.getCurrentUser();
-    var takenOrders =  await widget.db.getTakenOrdersStream(user.uid);
+  Stream<List<RequestedOrder>> _getOrdersTaken() {
+    var userId = UserStatus.getUserId();
+
+    var takenOrders =  widget.db.getTakenOrdersStream(userId);
     return takenOrders.map((requestedOrders) => requestedOrders
       .where((ro) => ro.status != OrderStatuses.Cancelled)
       .where((ro) => ro.status != OrderStatuses.Resolved)
@@ -136,34 +136,24 @@ class _DrawerWafi extends State<DrawerWafi> {
     return _listDrawerTileTaken('-', 'Pedidos Tomados', false);
   }
 
-    //Refactor join functions!!!
-  FutureBuilder _myOrdersTaken(){
-    return FutureBuilder(
-      future: _getOrdersTaken(),
-      builder: (contex, snapshotFuture) {
-        if (!snapshotFuture.hasData) {
-          return _listDrawerTileTakenDisabled();
+  // |||| check if this works
+  Widget _myOrdersTaken() {
+    return StreamBuilder(
+        stream: _getOrdersTaken(),
+        builder: (context, snapshotStream) {
+          if (snapshotStream.hasError) {
+            var errorMsg = "Drawer Error: ${snapshotStream.error}";
+            print(errorMsg);
+            return Text(errorMsg);
+          }
+          if (!snapshotStream.hasData) {
+            return _listDrawerTileTakenDisabled();
+          }
+
+          List<RequestedOrder> requestedOrders = snapshotStream.data;
+          return _listDrawerTileTaken(
+              requestedOrders.length.toString(), 'Pedidos Tomados', true);
         }
-
-        Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
-        return StreamBuilder(
-            stream: requestedOdersS,
-            builder: (context, snapshotStream) {
-              if (snapshotStream.hasError) {
-                var errorMsg = "Drawer Error: ${snapshotStream.error}";
-                print(errorMsg);
-                return Text(errorMsg);
-              }
-              if (!snapshotStream.hasData) {
-                return _listDrawerTileTakenDisabled();
-              }
-
-              List<RequestedOrder> requestedOrders = snapshotStream.data;
-              return _listDrawerTileTaken(
-                  requestedOrders.length.toString(), 'Pedidos Tomados', true);
-            }
-        );
-      },
     );
   }
 
