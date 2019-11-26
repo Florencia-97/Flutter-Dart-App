@@ -32,6 +32,7 @@ class Auth implements BaseAuth {
     return user.uid;
   }
 
+  // |||| check all the times it is called
   Future<FirebaseUser> getCurrentUser() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
     return user;

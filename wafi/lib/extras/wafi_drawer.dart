@@ -11,56 +11,28 @@ import 'package:wafi/pages/my_taken_orders_page.dart';
 import 'package:wafi/pages/profile_page.dart';
 import 'package:wafi/pages/root_page.dart';
 
-class DrawerWafi extends StatefulWidget {
+// |||| change to stateless
+class DrawerWafi extends StatelessWidget {
   DrawerWafi({this.onLoggedOut});
 
+  final String userId = UserStatus.getUserId();
+  final String username = UserStatus.getUsername();
   final Auth auth = Auth();
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
 
-  @override
-  State createState() => _DrawerWafi();
-}
-
-
-class _DrawerWafi extends State<DrawerWafi> {
-
-  String _username = '';
-  String _userId = "";
-
-  @override
-  void initState() {
-    super.initState();
-    widget.auth.getCurrentUser().then((user) {
-      widget.db.getUserInfo(user.uid).then((username) {
-        setState(() {
-          _username = username;
-        });
-      });
-      setState(() {
-        _userId = user.uid;
-      });
-    });
-  }
-
-  _onOrderAdded(Event event) {
-    setState(() {
-      // _orders.add(RequestedOrder.fromSnapshot(event.snapshot));
-    });
-  }
-
-  Future<Stream<List<RequestedOrder>>> _getRequestedOrders() {
-    return widget.auth.getCurrentUser().then((user) {
-      return widget.db.getRequestedOrdersById(user.uid)
-          .map((requestedOrders) => requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled).toList());
-    });
+  Stream<List<RequestedOrder>> _getRequestedOrders() {
+    return db.getRequestedOrdersById(userId)
+        .map((requestedOrders) =>
+        requestedOrders.where((ro) => ro.status != OrderStatuses.Cancelled)
+            .toList());
   }
 
   Stream<List<RequestedOrder>> _getOrdersTaken() {
     var userId = UserStatus.getUserId();
 
-    var takenOrders =  widget.db.getTakenOrdersStream(userId);
+    var takenOrders =  db.getTakenOrdersStream(userId);
     return takenOrders.map((requestedOrders) => requestedOrders
       .where((ro) => ro.status != OrderStatuses.Cancelled)
       .where((ro) => ro.status != OrderStatuses.Resolved)
@@ -89,13 +61,13 @@ class _DrawerWafi extends State<DrawerWafi> {
           radius: 50.0,
           backgroundColor: Color(0xFF596275),
           // This fails sometimes, what is it doing? !!!! Value not in range: 1
-          child: Text(_username != "" ? _username.substring(0,1).toUpperCase() : "",
+          child: Text(username != "" ? username.substring(0,1).toUpperCase() : "",
             style: TextStyle(fontSize: 40.0, color: Colors.white)
           ),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-          child: Text(_username,
+          child: Text(username,
             style: TextStyle(fontSize: 16.0, color: Colors.white)
           ),
         ),
@@ -104,36 +76,36 @@ class _DrawerWafi extends State<DrawerWafi> {
   }
 
   // Refactor, use only one function!
-  ListTile _listDrawerTileOrders(String leading, String title, bool enabled) {
+  ListTile _listDrawerTileOrders(BuildContext context, String leading, String title, bool enabled) {
     return ListTile(
       enabled: enabled,
       leading: Text(leading),
       title: Text(title),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
-          builder: (context) => MyOrders(_userId)));
+          builder: (context) => MyOrders(username)));
       },
     );
   }
 
-  ListTile _listDrawerTileOrdersDisabled() {
-    return _listDrawerTileOrders('-', 'Mis Pedidos', false);
+  ListTile _listDrawerTileOrdersDisabled(BuildContext context) {
+    return _listDrawerTileOrders(context, '-', 'Mis Pedidos', false);
   }
 
-  ListTile _listDrawerTileTaken(String leading, String title, bool enabled) {
+  ListTile _listDrawerTileTaken(BuildContext context, String leading, String title, bool enabled) {
     return ListTile(
       enabled: enabled,
       leading: Text(leading),
       title: Text(title),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
-            builder: (context) => MyTakenOrders(_userId)));
+            builder: (context) => MyTakenOrders(userId)));
       },
     );
   }
 
-  ListTile _listDrawerTileTakenDisabled() {
-    return _listDrawerTileTaken('-', 'Pedidos Tomados', false);
+  ListTile _listDrawerTileTakenDisabled(BuildContext context) {
+    return _listDrawerTileTaken(context, '-', 'Pedidos Tomados', false);
   }
 
   // |||| check if this works
@@ -147,48 +119,39 @@ class _DrawerWafi extends State<DrawerWafi> {
             return Text(errorMsg);
           }
           if (!snapshotStream.hasData) {
-            return _listDrawerTileTakenDisabled();
+            return _listDrawerTileTakenDisabled(context);
           }
 
           List<RequestedOrder> requestedOrders = snapshotStream.data;
           return _listDrawerTileTaken(
-              requestedOrders.length.toString(), 'Pedidos Tomados', true);
+              context, requestedOrders.length.toString(), 'Pedidos Tomados', true);
         }
     );
   }
 
-  FutureBuilder _myOrders(){
-    return FutureBuilder(
-      future: _getRequestedOrders(),
-      builder: (contex, snapshotFuture) {
-        if (!snapshotFuture.hasData) {
-          return _listDrawerTileOrdersDisabled();
+  StreamBuilder _myOrders(){
+    return StreamBuilder(
+        stream: _getRequestedOrders(),
+        builder: (context, snapshotStream) {
+          if (snapshotStream.hasError) {
+            return Text("MyOrders: Error ${snapshotStream.error}");
+          }
+          if (!snapshotStream.hasData) {
+            return _listDrawerTileOrdersDisabled(context);
+          }
+          List<RequestedOrder> requestedOrders = snapshotStream.data;
+          return _listDrawerTileOrders(context, requestedOrders.length.toString(), 'Mis Pedidos', true);
         }
-        Stream<List<RequestedOrder>> requestedOdersS = snapshotFuture.data;
-        return StreamBuilder(
-            stream: requestedOdersS,
-            builder: (context, snapshotStream) {
-              if (snapshotStream.hasError) {
-                return Text("MyOrders: Error ${snapshotStream.error}");
-              }
-              if (!snapshotStream.hasData) {
-                return _listDrawerTileOrdersDisabled();
-              }
-              List<RequestedOrder> requestedOrders = snapshotStream.data;
-              return _listDrawerTileOrders(requestedOrders.length.toString(), 'Mis Pedidos', true);
-            }
-        );
-      },
     );
   }
 
-  ListTile _profile(){
+  ListTile _profile(BuildContext context){
     return ListTile(
       leading: Icon(Icons.settings),
       title: Text('Mi Perfil'),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(
-          builder: (context) => MyProfile(_userId)));
+          builder: (context) => MyProfile(userId)));
       },
     );
   }
@@ -209,7 +172,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                 ),
                 _myOrders(),
                 _myOrdersTaken(),
-                _profile(),
+                _profile(context),
                 ]
               ),
             ),
@@ -219,7 +182,7 @@ class _DrawerWafi extends State<DrawerWafi> {
                   leading: Icon(Icons.power_settings_new),
                   title: Text('Cerrar sesión'),
                   onTap: () {
-                    widget.onLoggedOut();
+                    onLoggedOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                 ),

@@ -35,19 +35,25 @@ class UserStatus {
   static final UserStatus _singleton = UserStatus._internal();
 
   static String __userId;
+  static String __username;
+  static final DataBaseController db = FirebaseController();
 
   static String getUserId() {
     return __userId;
   }
 
-  static void setUserId(String uid) {
+  static Future<void> setUserId(String uid) async {
     __userId = uid;
+    __username = await db.getUserInfo(__userId);
   }
 
   static void unSetUserId() {
     __userId = null;
   }
 
+  static String getUsername() {
+    return __username;
+  }
 
   factory UserStatus() {
     return _singleton;
@@ -161,9 +167,11 @@ class _RootPageState extends State<RootPage> {
         ,token);
       });
     });
-    setState(() {
-      UserStatus.setUserId(_userId);
-      authStatus = AuthStatus.LOGGED_IN;
+
+    UserStatus.setUserId(_userId).then((_) {
+      setState(() {
+        authStatus = AuthStatus.LOGGED_IN;
+      });
     });
   }
 
