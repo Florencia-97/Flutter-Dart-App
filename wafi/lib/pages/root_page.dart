@@ -51,7 +51,13 @@ class UserStatus {
     __userId = null;
   }
 
-  static String getUsername() {
+  static String getUserName() {
+    return __username;
+  }
+
+  static Future<String> updateUserName(String newUserName) async {
+    await db.updateUserName(__userId, newUserName);
+    __username = await db.getUserInfo(__userId);
     return __username;
   }
 
@@ -157,7 +163,12 @@ class _RootPageState extends State<RootPage> {
         0, msg["notification"]["title"], msg["notification"]["body"], platform, payload: payload);
   }
 
-  void _onLoggedIn() {
+  // The parameter is only for the fast food login.
+  void _onLoggedIn(String overridenUserId) {
+    if (overridenUserId != null) {
+      _userId = overridenUserId;
+    }
+
     widget.auth.getCurrentUser().then((user){
       setState(() {
         _userId = user.uid.toString();
@@ -209,7 +220,7 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.NOT_LOGGED_IN:
         return new LoginSignUpPage(
           auth: widget.auth,
-          onSignedIn: _onLoggedIn,
+          onLoggedIn: _onLoggedIn,
         );
         break;
       case AuthStatus.LOGGED_IN:

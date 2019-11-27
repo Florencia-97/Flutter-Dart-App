@@ -4,13 +4,14 @@ import 'package:wafi/extras/bar_app.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:wafi/model/order_status.dart';
 import 'package:wafi/model/requested_order.dart';
+import 'package:wafi/pages/root_page.dart';
 
 class MyProfile extends StatefulWidget {
   MyProfile(this._userId);
 
   final String _userId;
   final Auth auth = Auth();
-  final FirebaseController db = FirebaseController();
+  final DataBaseController db = FirebaseController();
 
   @override
   State createState() => _MyProfileState();
@@ -34,10 +35,8 @@ class _MyProfileState extends State<MyProfile> {
         _userId = user.uid;
       });
     });
-    widget.db.getUserInfo(widget._userId).then((username) {
-      setState(() {
-        _username = username;
-      });
+    setState(() {
+      _username = UserStatus.getUserName();
     });
   }
 
@@ -161,9 +160,11 @@ class _MyProfileState extends State<MyProfile> {
     if (form.validate()) {
       form.save();
 
-      widget.db.updateUserName(_userId, _usernameInput);
-      widget.db.getUserInfo(widget._userId).then((username) {
-        _username = username;
+      // !!!! °°°° If the name is too long, there is a debug overflow.
+      UserStatus.updateUserName(_usernameInput).then((username) {
+        setState(() {
+          _username = username;
+        });
       });
       Navigator.pop(context);
     }

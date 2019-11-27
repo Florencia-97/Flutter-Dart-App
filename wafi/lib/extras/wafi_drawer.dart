@@ -16,7 +16,7 @@ class DrawerWafi extends StatelessWidget {
   DrawerWafi({this.onLoggedOut});
 
   final String userId = UserStatus.getUserId();
-  final String username = UserStatus.getUsername();
+  final String username = UserStatus.getUserName();
   final Auth auth = Auth();
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();

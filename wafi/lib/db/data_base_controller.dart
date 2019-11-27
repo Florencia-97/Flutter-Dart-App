@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:wafi/model/chat.dart';
 import 'package:wafi/model/classroom.dart';
 import 'package:wafi/model/order_status.dart';
@@ -42,6 +43,8 @@ abstract class DataBaseController {
   Future<void> sendMessage(String requestedOrderId, String fromUserId, String text, String dateTime);
 
   Future<String> getUserInfo(String userId);
+
+  Future<void> updateUserName(String userId, String username);
 }
 
 class FirebaseController implements DataBaseController {
@@ -124,7 +127,7 @@ class FirebaseController implements DataBaseController {
         try {
           orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
         } catch (e) {
-          print("getRequestedOrdersById. Error parsing RequestedOrder: ${orderMap} | ${e}");
+          print("ERROR: getRequestedOrdersById. Error parsing RequestedOrder: ${orderMap} | ${e}");
         }
       }
 
@@ -171,14 +174,14 @@ class FirebaseController implements DataBaseController {
             try {
               orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
             } catch (e) {
-              print("getRequestedOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
+              print("ERROR: getRequestedOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
             }
           }
         }
 
         return orders;
       } catch(e) {
-        print("getRequestedOrdersStream. Error bringing data: $e");
+        print("ERROR: getRequestedOrdersStream. Error bringing data: $e");
         return [];
       }
     });
@@ -191,6 +194,7 @@ class FirebaseController implements DataBaseController {
       return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
 
         if (event.snapshot.value == null) {
+          debugPrint("ERROR: No child $ORDER_COLLECTION found for User: $myUserId.");
           return [];
         }
 
@@ -198,8 +202,8 @@ class FirebaseController implements DataBaseController {
 
         List<RequestedOrder> orders = [];
 
-        for (var userId in ordersDynamic.keys) {
-          var ordersOfSingleUser = ordersDynamic[userId];
+        for (var otherUserId in ordersDynamic.keys) {
+          var ordersOfSingleUser = ordersDynamic[otherUserId];
 
           if (ordersOfSingleUser[OrderStatuses.Requested] == null) {
             continue;
@@ -212,9 +216,9 @@ class FirebaseController implements DataBaseController {
             var orderDynamic = ordersOfSingleUserDynamic[orderId];
             var orderMap = Map<String, dynamic>.from(orderDynamic);
             try {
-              orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+              orders.add(RequestedOrder.fromMap(orderId, otherUserId, orderMap));
             } catch (e) {
-              print("getTakenOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
+              print("ERROR: getTakenOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
             }
           }
         }
@@ -239,6 +243,7 @@ class FirebaseController implements DataBaseController {
       var snapshot = event.snapshot;
 
       if (snapshot.value == null) {
+        debugPrint("ERROR: Not found taken orders by User: $userId");
         return [];
       }
 
@@ -251,7 +256,7 @@ class FirebaseController implements DataBaseController {
           var order = Map<String, dynamic>.from(ordersDynamic);
           listOrdersId.add(order['requestedOrderId']);
         } catch (e) {
-          print("getTakenOrdersById. Error parsing map: ${ordersDynamic} | ${e}");
+          print("ERROR: getTakenOrdersById. Error parsing map: ${ordersDynamic} | ${e}");
         }
       }
       return listOrdersId;
@@ -308,7 +313,6 @@ class FirebaseController implements DataBaseController {
 
   Future<String> getUserInfo(String userId) async{
     DataSnapshot snapshot = await _databaseReference.child(USER_COLLECTION).child(userId).child("info").once();
-    print('Value : ${snapshot.value}');
     if (snapshot.value == null) {
       setUserName(userId, 'Tortuga'); //Default Name
       return 'Tortuga';
