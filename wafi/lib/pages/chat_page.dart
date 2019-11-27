@@ -31,7 +31,6 @@ class _ChatPage extends State<ChatPage> {
 
   @override
   void initState() {
-    _listenToChat();
     String budId =  widget.requestedOrder.requesterUserId;
     if (budId == widget.userId){
       budId = widget.requestedOrder.takerUserId;
@@ -99,19 +98,13 @@ class _ChatPage extends State<ChatPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: chatMessages,
-              ),
-            ),
-            /*child: ListView.builder(
+            child: ListView.builder(
               padding: EdgeInsets.all(10.0),
               itemBuilder: (context, index) => chatMessages[index],
               itemCount: chatMessages.length,
               reverse: true,
               controller: scrollController,
-            ),*/
+            ),
           ),
           Container(
             child: Row(
@@ -131,45 +124,6 @@ class _ChatPage extends State<ChatPage> {
     );
   }
 
-  ///////////////////////////////////////////
-
-  List<ChatMessage> _chatMessages = [];
-
-  List<Widget> _buildChatMessageWidgets(List<ChatMessage> chatMessages) {
-    return chatMessages.map((msg) {
-      bool own = msg.userId == widget.userId;
-      return ChatMessageWidget(msg.text, own);
-    }).toList();
-  }
-
-  void _listenToChat() {
-    widget.db.getChat(widget.requestedOrder.id).listen((data) {
-      setState(() {
-        _chatMessages = data.messages;
-      });
-    });
-  }
-
-  Widget _showChatArea() {
-    return _doBuildChat(_buildChatMessageWidgets(_chatMessages));
-  }
-
-  Widget _showChatArea2() {
-    return StreamBuilder(
-      stream: widget.db.getChat(widget.requestedOrder.id),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-              child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.teal))
-          );
-        }
-
-        return _showChatArea();
-      },
-    );
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,18 +138,18 @@ class _ChatPage extends State<ChatPage> {
           ,)
         ),
       backgroundColor: Colors.blueGrey[200],
-      body: _showChatArea()/* StreamBuilder(
+      body: StreamBuilder(
         stream: buildMessages(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.teal)));
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.teal))); // !!!! standarize circular progress
           } else {
             List<ChatMessageWidget> chatMessages = snapshot.data;
             return _doBuildChat(chatMessages);
           }
         },
-      ),*/
+      ),
     );
   }
 }

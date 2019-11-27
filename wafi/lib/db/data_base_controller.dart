@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:wafi/model/chat.dart';
 import 'package:wafi/model/classroom.dart';
 import 'package:wafi/model/order_status.dart';
@@ -191,6 +192,7 @@ class FirebaseController implements DataBaseController {
       return _databaseReference.child(ORDER_COLLECTION).onValue.map((event) {
 
         if (event.snapshot.value == null) {
+          debugPrint("No child $ORDER_COLLECTION found for User: $myUserId.");
           return [];
         }
 
@@ -198,8 +200,8 @@ class FirebaseController implements DataBaseController {
 
         List<RequestedOrder> orders = [];
 
-        for (var userId in ordersDynamic.keys) {
-          var ordersOfSingleUser = ordersDynamic[userId];
+        for (var otherUserId in ordersDynamic.keys) {
+          var ordersOfSingleUser = ordersDynamic[otherUserId];
 
           if (ordersOfSingleUser[OrderStatuses.Requested] == null) {
             continue;
@@ -212,7 +214,7 @@ class FirebaseController implements DataBaseController {
             var orderDynamic = ordersOfSingleUserDynamic[orderId];
             var orderMap = Map<String, dynamic>.from(orderDynamic);
             try {
-              orders.add(RequestedOrder.fromMap(orderId, userId, orderMap));
+              orders.add(RequestedOrder.fromMap(orderId, otherUserId, orderMap));
             } catch (e) {
               print("getTakenOrdersStream. Error parsing RequestedOrder: ${orderMap} | ${e}");
             }
@@ -239,6 +241,7 @@ class FirebaseController implements DataBaseController {
       var snapshot = event.snapshot;
 
       if (snapshot.value == null) {
+        debugPrint("Not found taken orders by User: $userId");
         return [];
       }
 

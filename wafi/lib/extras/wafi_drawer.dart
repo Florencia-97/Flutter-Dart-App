@@ -44,12 +44,6 @@ class _DrawerWafi extends State<DrawerWafi> {
     });
   }
 
-  _onOrderAdded(Event event) {
-    setState(() {
-      // _orders.add(RequestedOrder.fromSnapshot(event.snapshot));
-    });
-  }
-
   Future<Stream<List<RequestedOrder>>> _getRequestedOrders() {
     return widget.auth.getCurrentUser().then((user) {
       return widget.db.getRequestedOrdersById(user.uid)
@@ -59,7 +53,9 @@ class _DrawerWafi extends State<DrawerWafi> {
 
   Stream<List<RequestedOrder>> _getOrdersTaken() {
     var userId = UserStatus.getUserId();
+    print("\n\n\n\n userid: $userId");
 
+    // |||| ask for it on creation
     var takenOrders =  widget.db.getTakenOrdersStream(userId);
     return takenOrders.map((requestedOrders) => requestedOrders
       .where((ro) => ro.status != OrderStatuses.Cancelled)

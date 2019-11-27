@@ -151,7 +151,12 @@ class _RootPageState extends State<RootPage> {
         0, msg["notification"]["title"], msg["notification"]["body"], platform, payload: payload);
   }
 
-  void _onLoggedIn() {
+  // The parameter is only for the fast food login.
+  void _onLoggedIn(String overridenUserId) {
+    if (overridenUserId != null) {
+      _userId = overridenUserId;
+    }
+
     widget.auth.getCurrentUser().then((user){
       setState(() {
         _userId = user.uid.toString();
@@ -162,7 +167,9 @@ class _RootPageState extends State<RootPage> {
       });
     });
     setState(() {
+      print("\n\nKAWABUNGA");
       UserStatus.setUserId(_userId);
+      print(UserStatus.getUserId());
       authStatus = AuthStatus.LOGGED_IN;
     });
   }
@@ -201,7 +208,7 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.NOT_LOGGED_IN:
         return new LoginSignUpPage(
           auth: widget.auth,
-          onSignedIn: _onLoggedIn,
+          onLoggedIn: _onLoggedIn,
         );
         break;
       case AuthStatus.LOGGED_IN:

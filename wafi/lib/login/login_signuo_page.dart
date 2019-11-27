@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:wafi/login/authentification.dart';
 
 class LoginSignUpPage extends StatefulWidget {
-  LoginSignUpPage({this.auth, this.onSignedIn});
+  LoginSignUpPage({this.auth, this.onLoggedIn});
 
   final BaseAuth auth;
-  final VoidCallback onSignedIn;
+  final Function(String) onLoggedIn;
 
   @override
   State<StatefulWidget> createState() => new _LoginSignUpPageState();
@@ -58,7 +58,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         });
 
         if (userId.length > 0 && userId != null && _formMode == FormMode.LOGIN) {
-          widget.onSignedIn();
+          widget.onLoggedIn(null);
         }
 
       } catch (e) {
@@ -82,7 +82,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   void _changeFormToSignUp() {
-    //print('holaaaaa');
+    //print('holaaaaa'); !!!!
     _formKey.currentState.reset();
     _errorMessage = "";
     setState(() {
@@ -110,14 +110,14 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   // This must not reach prod.
   void _fastFoodLogin() {
 
-    //print('PRESSED FAKE LOGIN !!!!');
     Future<String> uidF = widget.auth.signIn('rnsoutob@gmail.com', '123457');
     uidF.then((uid) {
       if (uid == null) {
         //print('IN FAKE LOGIN, UID WAS NULL');
         return;
       }
-      widget.onSignedIn();
+      // !!!!
+      widget.onLoggedIn(uid);
     });
   }
 
