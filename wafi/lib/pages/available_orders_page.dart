@@ -67,6 +67,7 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
                       onPressed: () async {
                         var user = await widget.auth.getCurrentUser();
                         widget.db.addTakenOrder(user.uid, order);
+                        Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) => MyTakenOrders(user.uid)));
                         },

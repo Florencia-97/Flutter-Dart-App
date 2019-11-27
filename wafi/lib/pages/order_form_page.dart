@@ -60,7 +60,8 @@ class _OrderPageState extends State<OrderPage> {
       _classroom = _classroom == null ? "d-${Random().nextInt(99)}" : _classroom;
 
       widget.db.addRequestedOrder(_userId, _title, widget.orderSource.name, _floor, _description, _classroom);
-      
+
+      Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
       Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
   }

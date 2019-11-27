@@ -128,6 +128,7 @@ class TakenOrderFromOrderList extends StatelessWidget {
                               fontSize: 16.0, color: Colors.black)),
                       onPressed: () async {
                         db.finishRequestedOrder(takenOrder.id, takenOrder.requesterUserId);
+                        Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ThanksScreen()));
                       },
                     ),

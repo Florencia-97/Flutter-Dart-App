@@ -61,7 +61,7 @@ class DrawerWafi extends StatelessWidget {
           radius: 50.0,
           backgroundColor: Color(0xFF596275),
           // This fails sometimes, what is it doing? !!!! Value not in range: 1
-          child: Text(username != "" ? username.substring(0,1).toUpperCase() : "",
+          child: Text(_initialLetterOfUserName(),
             style: TextStyle(fontSize: 40.0, color: Colors.white)
           ),
         ),
@@ -73,6 +73,15 @@ class DrawerWafi extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _initialLetterOfUserName() {
+    try {
+      return username.substring(0,1).toUpperCase();
+    } catch (e) {
+      debugPrint("ERROR: Cannot make substring of: '$username' in wafi_drawer");
+      return "";
+    }
   }
 
   // Refactor, use only one function!

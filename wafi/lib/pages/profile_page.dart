@@ -20,7 +20,7 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   String _userEmail = '';
   String _userId = "";
-  dynamic _username = "";
+  dynamic _username = " ";
 
   //This is for username Form, can i put it in othre place? (Flor)
   final _formKey = GlobalKey<FormState>();
@@ -51,7 +51,7 @@ class _MyProfileState extends State<MyProfile> {
               //backgroundImage: AssetImage('assets/turing_profile_ej.jpg'),
               radius: 70.0,
               backgroundColor: Color(0xFF596275),
-              child: Text(_username != "" ? _username.substring(0,1).toUpperCase() : "",
+              child: Text(_initialLetterOfUserName(),
                 style: TextStyle(fontSize: 40.0, color: Colors.white)
               ),
             ),
@@ -59,6 +59,15 @@ class _MyProfileState extends State<MyProfile> {
         ),
       )
     );
+  }
+
+  String _initialLetterOfUserName() {
+    try {
+      return _username.substring(0,1).toUpperCase();
+    } catch (e) {
+      debugPrint("ERROR: Cannot make substring of: '$_username' in profile_page");
+      return "";
+    }
   }
 
   Container _field(String title, String text, bool editable){
