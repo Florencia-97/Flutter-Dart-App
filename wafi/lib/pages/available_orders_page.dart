@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wafi/db/data_base_controller.dart';
+import 'package:wafi/extras/custom_dialog.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/login/authentification.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -35,48 +36,49 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pedido de ${order.source.viewName}',
-                    style: TextStyle(fontSize: 20),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-                _createText('Compra: ${order.title}'),
-                _createText('Piso: ${order.floor}'),
-                _createText('Aula: ${order.classroom}'),
-                _createText('Descripción: ${order.description}'),
-            ],
-          ),
-          actions: <Widget>[
-            Align(
-                alignment: Alignment.bottomLeft,
-                child: Row(
-                  children: <Widget>[
-                    FlatButton(
-                      child: Text('IGNORAR',
-                          style: TextStyle(
-                              fontSize: 16.0, color: Colors.black38)),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text('TOMAR',
-                          style: TextStyle(
-                              fontSize: 16.0, color: Colors.teal)),
-                      onPressed: () async {
-                        var user = await widget.auth.getCurrentUser();
-                        widget.db.addTakenOrder(user.uid, order);
-                        Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MyTakenOrders(user.uid)));
-                        },
-                    ),
-                  ],
-                )
-            )
-          ],
-        );
+        return CustomDialog(order);
+        // return AlertDialog(
+        //   title: Text('Pedido de ${order.source.viewName}',
+        //             style: TextStyle(fontSize: 20),
+        //   ),
+        //   content: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: <Widget>[
+        //         _createText('Compra: ${order.title}'),
+        //         _createText('Piso: ${order.floor}'),
+        //         _createText('Aula: ${order.classroom}'),
+        //         _createText('Descripción: ${order.description}'),
+        //     ],
+        //   ),
+        //   actions: <Widget>[
+        //     Align(
+        //         alignment: Alignment.bottomLeft,
+        //         child: Row(
+        //           children: <Widget>[
+        //             FlatButton(
+        //               child: Text('IGNORAR',
+        //                   style: TextStyle(
+        //                       fontSize: 16.0, color: Colors.black38)),
+        //               onPressed: () => Navigator.pop(context),
+        //             ),
+        //             FlatButton(
+        //               child: Text('TOMAR',
+        //                   style: TextStyle(
+        //                       fontSize: 16.0, color: Colors.teal)),
+        //               onPressed: () async {
+        //                 var user = await widget.auth.getCurrentUser();
+        //                 widget.db.addTakenOrder(user.uid, order);
+        //                 Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+        //                 Navigator.push(context, MaterialPageRoute(
+        //                   builder: (context) => MyTakenOrders(user.uid)));
+        //                 },
+        //             ),
+        //           ],
+        //         )
+        //     )
+        //   ],
+        // );
       }
     );
   }
