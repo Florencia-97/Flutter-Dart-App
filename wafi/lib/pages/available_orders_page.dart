@@ -36,49 +36,15 @@ class _AvailableOrdersPageState extends State<AvailableOrdersPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomDialog(order);
-        // return AlertDialog(
-        //   title: Text('Pedido de ${order.source.viewName}',
-        //             style: TextStyle(fontSize: 20),
-        //   ),
-        //   content: Column(
-        //     mainAxisSize: MainAxisSize.min,
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: <Widget>[
-        //         _createText('Compra: ${order.title}'),
-        //         _createText('Piso: ${order.floor}'),
-        //         _createText('Aula: ${order.classroom}'),
-        //         _createText('Descripción: ${order.description}'),
-        //     ],
-        //   ),
-        //   actions: <Widget>[
-        //     Align(
-        //         alignment: Alignment.bottomLeft,
-        //         child: Row(
-        //           children: <Widget>[
-        //             FlatButton(
-        //               child: Text('IGNORAR',
-        //                   style: TextStyle(
-        //                       fontSize: 16.0, color: Colors.black38)),
-        //               onPressed: () => Navigator.pop(context),
-        //             ),
-        //             FlatButton(
-        //               child: Text('TOMAR',
-        //                   style: TextStyle(
-        //                       fontSize: 16.0, color: Colors.teal)),
-        //               onPressed: () async {
-        //                 var user = await widget.auth.getCurrentUser();
-        //                 widget.db.addTakenOrder(user.uid, order);
-        //                 Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-        //                 Navigator.push(context, MaterialPageRoute(
-        //                   builder: (context) => MyTakenOrders(user.uid)));
-        //                 },
-        //             ),
-        //           ],
-        //         )
-        //     )
-        //   ],
-        // );
+        return CustomDialog(order, context,
+          () async {
+            var user = await widget.auth.getCurrentUser();
+            widget.db.addTakenOrder(user.uid, order);
+            Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => MyTakenOrders(user.uid)));
+          },
+        );
       }
     );
   }

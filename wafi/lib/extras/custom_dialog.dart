@@ -4,9 +4,10 @@ import 'package:wafi/model/requested_order.dart';
 class CustomDialog extends StatelessWidget {
 
   final RequestedOrder order;
+  BuildContext context;
+  Function onPressed;
 
-  CustomDialog(this.order){
-  }
+  CustomDialog(this.order, this.context, this.onPressed);
 
   Text _createText(String text){
     return Text(text,
@@ -23,13 +24,13 @@ class CustomDialog extends StatelessWidget {
             child: Text('IGNORAR',
                 style: TextStyle(
                     fontSize: 16.0, color: Colors.black38)),
-            onPressed: null,
+            onPressed: () => Navigator.pop(context),
           ),
           FlatButton(
             child: Text('TOMAR',
                 style: TextStyle(
                     fontSize: 16.0, color: Colors.teal)),
-            onPressed: null,
+            onPressed: () => onPressed(),
           ),
         ],
     );
@@ -60,7 +61,7 @@ class CustomDialog extends StatelessWidget {
             Container(
               padding: EdgeInsets.only(top:15.0),
               height: 200,
-              child: Image(image: AssetImage('assets/buffet.png'))
+              child: Image(image: AssetImage('assets/kiosk.png'))
             ),
             Container(
               child: details(),
