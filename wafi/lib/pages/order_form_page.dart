@@ -6,15 +6,12 @@ import 'package:wafi/login/authentification.dart';
 import 'package:wafi/extras/wafi_drawer.dart';
 import 'package:wafi/extras/ok_screen.dart';
 import 'package:wafi/extras/bar_app.dart';
-import 'package:wafi/model/classroom.dart';
 import 'package:wafi/model/order_source.dart';
-import 'package:wafi/model/requested_order.dart';
 
 class OrderPage extends StatefulWidget {
-  OrderPage({this.orderSource, this.onLoggedOut});
+  OrderPage({this.onLoggedOut});
 
   final Auth auth = Auth();
-  final OrderSource orderSource;
   final VoidCallback onLoggedOut;
   final DataBaseController db = FirebaseController();
 
@@ -23,7 +20,10 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
+
   final _formKey = GlobalKey<FormState>();
+  final PageController cntrl = PageController(viewportFraction: 0.5);
+  int currentPage = 1;
 
   List<String> _floors = [];
 
@@ -42,6 +42,15 @@ class _OrderPageState extends State<OrderPage> {
         _loadClassrooms();
       });
     });
+
+    cntrl.addListener(() { 
+      int next = cntrl.page.round();
+      if (currentPage != next) { 
+        setState(() {
+          currentPage = next;
+        });
+      } 
+    });
   }
 
   void _validateAndSubmit() async {
@@ -56,68 +65,135 @@ class _OrderPageState extends State<OrderPage> {
       form.save();
 
       // !!!!! due to bug
-      _title = _title == null ? "default|${Random().nextInt(2000)}" : _title;
-      _classroom = _classroom == null ? "d-${Random().nextInt(99)}" : _classroom;
-
-      widget.db.addRequestedOrder(_userId, _title, widget.orderSource.name, _floor, _description, _classroom);
-
-      Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-      Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
+    _title = _title == null ? "default|${Random().nextInt(2000)}" : _title;
+    _classroom = _classroom == null ? "d-${Random().nextInt(99)}" : _classroom;
+    String orderSourceName = OrderSources.validSources[currentPage].name;
+    widget.db.addRequestedOrder(_userId, _title, orderSourceName, _floor, _description, _classroom);
+    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => OkScreen()));
     }
   }
 
-  Widget _showOrderTitle() {
-    String _titleName = widget.orderSource.viewName.toUpperCase();
-    return Container(
-      height: 50,
-      margin: EdgeInsets.only(bottom: 30),
-      color:  Color(0xFF596275),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container( 
-            child:Icon(widget.orderSource.icon, color: Colors.teal,),
-            margin: EdgeInsets.only(right: 30),
-          ),
-          Text(_titleName,
-              style: TextStyle( fontSize: 18, color: Colors.white,)
-          ),
-        ],
-      ),
-    );
-  }
-
   /* TODO: Refactor, use same function for all inputs. Add validators */
-  Widget _showInputTitle(double pad) {
-    return Container(
-      padding: EdgeInsets.only(bottom: pad),
-      child: TextFormField(
+  Widget _showInputTitle() {
+    Widget child = TextFormField(
         maxLines: 1,
         autofocus: false,
         decoration: InputDecoration(
-          hintText: 'Titulo',
+          hintText: '¿Qué querés comprar?',
         ),
         onSaved: (value) =>  setState ( () => _title = value.trim() ),
         validator: (value) => value.isEmpty ? 'Titulo no puede estar vacio' : null,
-      ),
+    );
+    return _wrapField(child);
+  }
+
+  Widget _getImage(String sector) {
+    var assetImage = AssetImage(sector);
+    return Image(
+      image: assetImage, 
+      width: 55.0,
     );
   }
 
-  Widget _showInputDescription(double pad) {
+  Widget _buildStoryPage(OrderSource orderSource, bool active) {
+    final double blur = active ? 20 : 0;
+    final double offset = active ? 20 : 0;
+    final double top = active ? 5 : 10;
+    final Color textColor = active? Colors.teal : Colors.white;
+
+
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOutQuint,
+      margin: EdgeInsets.only(top: top, bottom: 35, right: 10),
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black87, blurRadius: blur, offset: Offset(offset, offset))
+        ]
+      ),
+      child: RaisedButton(
+        color: Colors.grey[300],
+        child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _getImage(orderSource.image),
+                Text(orderSource.viewName, style: TextStyle(fontSize: 15, color: textColor)),
+              ],)
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        )
+      )
+    );
+  }
+
+  Widget _showPlaceBody(BuildContext context) {
+    List<OrderSource> slideList = OrderSources.validSources;
+
+    PageView pageView = PageView.builder(
+        controller: cntrl,
+        itemCount: slideList.length,
+        itemBuilder: (context, int currentIdx){
+          if (slideList.length > currentIdx) {
+                bool active = currentIdx == currentPage;
+                return _buildStoryPage(slideList[currentIdx ], active);
+          }
+        },
+    );
+
+    return Expanded(
+      flex: 1,
+      child: pageView,
+    );
+  }
+
+  Widget _showOrderPlace(BuildContext context){
+    Widget info = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+          child: Text('Seleccioná el lugar',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20
+            ),
+          ),
+        ),
+        _showPlaceBody(context),
+      ],
+    );
     return Container(
-      padding: EdgeInsets.only(bottom: pad),
-      child: TextFormField(
+      height: 280,
+      decoration: BoxDecoration(
+        color: Colors.teal,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)
+        )
+      ),
+      child: info,
+    );
+  }
+
+  Widget _showInputDescription() {
+    Widget child = TextFormField(
         autofocus: false,
         decoration: InputDecoration(
           hintText: 'Descripción',
         ),
         onSaved: (value) => _description = value.trim(),
-      ),
     );
+    return _wrapField(child);
   }
 
   void _loadClassrooms() async {
-    ;
     List<String> classrooms = await widget.db.getFloorsSnapshot();
 
     setState(() {
@@ -168,10 +244,8 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _showInputFloor(double pad) {
-    return Container(
-      padding: EdgeInsets.only(bottom: pad),
-      child: DropdownButtonFormField<String>(
+  Widget _showInputFloor() {
+    Widget child = DropdownButtonFormField<String>(
         value: _floor,
         items: _getFloors().map<DropdownMenuItem<String>>((String floor) {
           return DropdownMenuItem<String>(
@@ -193,28 +267,24 @@ class _OrderPageState extends State<OrderPage> {
         value.isEmpty
             ? 'Piso no puede estar vacio'
             : null,
-      ),
     );
+    return Flexible(child: child, flex: 4,);
   }
 
-  Widget _showInputClassrooms(double pad) {
-    return Container(
-      padding: EdgeInsets.only(bottom: pad),
-      child: TextFormField(
+  Widget _showInputClassrooms() {
+    Widget child = TextFormField(
         autofocus: false,
         decoration: InputDecoration(
           hintText: 'Aula',
         ),
         onSaved: (value) => _classroom = value.trim(),
         validator: (x) => null,
-      ),
     );
+    return Flexible(child: child, flex: 6,);
   }
 
-  Widget _showPrimaryButton(double pad) {
-    return Container(
-      padding: EdgeInsets.only(bottom: pad),
-      child: SizedBox(
+  Widget _showPrimaryButton() {
+    Widget child = SizedBox(
         height: 40.0,
         child: RaisedButton(
           elevation: 5.0,
@@ -225,40 +295,50 @@ class _OrderPageState extends State<OrderPage> {
               style: TextStyle(fontSize: 20.0, color: Colors.white)),
           onPressed: _showDialog,
         ),
-      )
     );
+    return _wrapField(child);
   }
 
-  Widget _showBody() {
-    double n = 60;
+  Widget _showFloorClass(){
+    Widget child = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _showInputFloor(),
+        _showInputClassrooms(),
+      ],
+    );
+    return _wrapField(child);
+  }
+
+  Widget _wrapField(Widget child){
     return Container(
-      padding: EdgeInsets.only(left: 28, right: 28),
-      alignment: Alignment.center,
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            _showOrderTitle(),
-            _showInputTitle(n),
-            _showInputFloor(n),
-            _showInputClassrooms(n),
-            _showInputDescription(n),
-            _showPrimaryButton(n),
-          ],
-        ),
-      )
+      padding: EdgeInsets.only(bottom: 25, right: 30, left: 30, top: 25),
+      child: child
+    );
+  }
+  
+  Widget _showBody(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: ListView(
+        children:[
+          _showOrderPlace(context),
+          _showFloorClass(),
+          _showInputTitle(),
+          _showInputDescription(),
+          _showPrimaryButton(),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarWafi('Orden'),
-      body: Stack(
-        children: <Widget>[
-          _showBody(),
-        ],
+      appBar: BarWafi('Nueva Orden'),
+      body: Container(
+        child: _showBody(context),
       ),
       endDrawer: DrawerWafi(
           onLoggedOut: widget.onLoggedOut
