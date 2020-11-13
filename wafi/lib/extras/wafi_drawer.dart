@@ -56,19 +56,14 @@ class DrawerWafi extends StatelessWidget {
 
   Column _buildDrawerHeader() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        CircleAvatar(
-          radius: 50.0,
-          backgroundColor: Color(0xFF596275),
-          // This fails sometimes, what is it doing? !!!! Value not in range: 1
-          child: Text(_initialLetterOfUserName(),
-            style: TextStyle(fontSize: 40.0, color: Colors.white)
-          ),
-        ),
+        Text('Hola', style: TextStyle(fontSize: 16.0, color: Colors.white)),
         Container(
-          padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+          padding: const EdgeInsets.only(top: 8),
           child: Text(username,
-            style: TextStyle(fontSize: 16.0, color: Colors.white)
+            style: TextStyle(fontSize: 28.0, color: Colors.white)
           ),
         ),
       ],

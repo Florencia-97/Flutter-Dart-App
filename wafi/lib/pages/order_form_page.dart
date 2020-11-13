@@ -23,7 +23,7 @@ class _OrderPageState extends State<OrderPage> {
 
   final _formKey = GlobalKey<FormState>();
   final PageController cntrl = PageController(viewportFraction: 0.5);
-  int currentPage = 1;
+  int currentPage = 0;
 
   List<String> _floors = [];
 
@@ -92,7 +92,7 @@ class _OrderPageState extends State<OrderPage> {
     var assetImage = AssetImage(sector);
     return Image(
       image: assetImage, 
-      width: 55.0,
+      width: 65.0,
     );
   }
 
@@ -108,14 +108,13 @@ class _OrderPageState extends State<OrderPage> {
       curve: Curves.easeOutQuint,
       margin: EdgeInsets.only(top: top, bottom: 35, right: 10),
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Colors.lightBlue[900],
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(color: Colors.black87, blurRadius: blur, offset: Offset(offset, offset))
         ]
       ),
       child: RaisedButton(
-        color: Colors.grey[300],
         child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
