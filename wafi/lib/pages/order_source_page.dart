@@ -20,51 +20,84 @@ class OrderSourcePage extends StatefulWidget {
 
 class _OrderSourcePageState extends State<OrderSourcePage> {
 
+  final PageController cntrl = PageController(viewportFraction: 0.8);
+  int currentPage = 0;
+
   @override
   void initState() {
     super.initState();
-  }
 
-  List<Widget> _showTypeButtons() {
-    return OrderSources.validSources.map((source) => _showOrderSourceButton(source)).toList();
+    cntrl.addListener(() { 
+      int next = cntrl.page.round();
+      if (currentPage != next) { 
+        setState(() {
+          currentPage = next;
+        });
+      } 
+    });
   }
 
   Widget _getImage(String sector) {
     var assetImage = AssetImage(sector);
-    return Image(image: assetImage, height: 106.0, width: 86.0, fit: BoxFit.fitWidth,);
-  }
-
-  Widget _showOrderSourceButton(OrderSource orderSource) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-      child: SizedBox(
-        height: 100.0,
-        child: RaisedButton(
-          color: Color(0xFFE1DEDE),
-          child: ListTile(
-            title: Text(orderSource.viewName,
-              style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[600])),
-            leading: _getImage(orderSource.image),
-          ),
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
-            orderSource: orderSource,
-            onLoggedOut: widget.onLoggedOut))
-          ),
-        ),
-      ),
+    return Image(
+      image: assetImage, 
+      width: 186.0,
     );
   }
 
-  Widget _showBody() {
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-      child: Form(
-        child: ListView(
-          shrinkWrap: true,
-          children: _showTypeButtons(),
+  Widget _buildStoryPage(OrderSource orderSource, bool active) {
+    final double blur = active ? 30 : 0;
+    final double offset = active ? 20 : 0;
+    final double top = active ? 80 : 120;
+
+
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOutQuint,
+      margin: EdgeInsets.only(top: top, bottom: 40, right: 30),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black87, blurRadius: blur, offset: Offset(offset, offset))
+        ]
+      ),
+      child: RaisedButton(
+        color: Colors.grey[300],
+        child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _getImage(orderSource.image),
+                Text(orderSource.viewName, style: TextStyle(fontSize: 30, color: Colors.white)),
+              ],)
+          ),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrderPage(
+          orderSource: orderSource,
+          onLoggedOut: widget.onLoggedOut)
+          )
         ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        )
       )
+    );
+  }
+
+  Widget _showBody(BuildContext context) {
+    List<OrderSource> slideList = OrderSources.validSources;
+
+    return Form(
+      child : PageView.builder(
+        controller: cntrl,
+        itemCount: slideList.length,
+        itemBuilder: (context, int currentIdx){
+          if (slideList.length > currentIdx) {
+                bool active = currentIdx == currentPage;
+                return _buildStoryPage(slideList[currentIdx ], active);
+          }
+        },
+        )
     );
   }
 
@@ -74,7 +107,7 @@ class _OrderSourcePageState extends State<OrderSourcePage> {
       appBar: BarWafi('Lugar'),
       body: Stack(
         children: <Widget>[
-          _showBody(),
+          _showBody(context),
         ],
       ),
       endDrawer: DrawerWafi(
